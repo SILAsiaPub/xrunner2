@@ -1,0 +1,21 @@
+begin               >                   '<?xml version="1.0" encoding="utf-8"?>' nl
+                                        '<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:f="myfunctions">'
+                                        store(char) 'abcdefghijklmnopqrstuvwxyz1234567890' 
+                                        store(rootout) '</xsl:stylesheet>'
+                                        store(newline) nl endstore 
+                                        use(main)
+
+
+group(main)
+'['                 >                   store(nul) use(section)
+prec(newline) any(char) >               '    <xsl:variable name="' dup
+'_list='            >                   d34 ' select=' d34 'tokenize(' d39 store(endtag) "',' ')" endstore
+'='                 >                   d34 ' select=' d34 d39 store(endtag) "'" endstore
+prec(char) nl       >                   out(endtag) d34 '/>' dup back(1)
+endfile             >                   out(rootout) dup
+nl nl               >                   ''
+
+
+
+group(section)
+']'                 >                   endstore use(main)

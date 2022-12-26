@@ -1,0 +1,24 @@
+begin               >                   store(docdef) '<?xml version="1.0" encoding="utf-8"?>' 
+                                        store(rootin) '<xsl:stylesheet xmlns:f="myfunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0" exclude-result-prefixes="f">'
+                                        store(rootout) '</xsl:stylesheet>' endstore
+                                        use(main)
+group(main)
+'[setup]' nl          >                 out(docdef) nl out(rootin) nl '<xsl:variable name="' store(name)
+nl nl               >                   nl back(1)
+                                        if(list)
+                                          nl '<xsl:variable name="' out(name) '" select="' 'tokenize($' out(name) "_list,'\s+')" '"/>'
+                                          clear(list)
+                                        end
+nl                  >                   "'" '"/>'
+                                        if(list)
+                                          nl '<xsl:variable name="' out(name) '" select="' 'tokenize($' out(name) "_list,'\s+')" '"/>'
+                                          clear(list)
+                                        end
+                                        nl '<xsl:variable name="'  store(name)
+'='                 >                   endstore out(name)  '" select="' "'"
+'_list='                 >              endstore out(name) '_list'  '" select="' "'" set(list)
+nl '[tools]'        >                   "'" '"/>'  nl out(rootout) nl store(nul) use(end)
+
+group(end)
+endfile             >                   dup
+

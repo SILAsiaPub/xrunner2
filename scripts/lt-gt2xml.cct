@@ -1,0 +1,9 @@
+begin               >                   use(main)
+
+group(main)
+'&lt;note'              >                   '<note' use(inhead)
+'&lt;/note&gt;'              >                   '</note>'
+
+group(inhead)
+'&gt;'              >                   '>' use(main)
+'""'                >                   '"'
