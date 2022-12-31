@@ -7,6 +7,9 @@ Set coFSO = CreateObject("Scripting.FileSystemObject")
 
 Dim strPath, dquote, WScript, shell, cmdline, projIni, labelIni, strUserProfile, projPath, projectTxt, projectInfo, setupvarxslt, projectxslt, title 
 Dim xrunini, xrundata, zero, tskgrp, texteditor, bConsoleSw, info1, info2, info3, info4, info5, level, boxlist, program, xmleditor, xrunxslt, tasklen 
+Dim WshShell, strCurDir
+Set WshShell = CreateObject("WScript.Shell")
+strCurDir    = WshShell.CurrentDirectory
 tskgrp =  Array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
 boxlist = Array("Checkbox1","Checkbox2","Checkbox3","Checkbox4","Checkbox5")
 zero = 0
@@ -297,7 +300,7 @@ Sub xrun(group)
     'If document.getElementById("unittest").checked  Then
     '   unittest = "unittest"
     'End If
-   call RunScript("brun2",projectTxt,group,level,pauseatend,"")
+   call RunScript("xrunner",projectTxt,group,level,pauseatend,"")
 End Sub
 
 Sub copy()
@@ -322,10 +325,11 @@ Sub RunScript(script,var1,var2,var3,var4,var5)
     'CmdPrompt(cmdline)
 End Sub
 
-Sub editFileExternal(file)
+Function editFileExternal(file)
+	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
     cmdline = texteditor & " " & file
     objShell.run(cmdline)
-End Sub
+End Function
 
 Sub editFileWithProgram(file,program)
     cmdline = dquote & program & dquote & " " & file
@@ -334,7 +338,7 @@ End Sub
 
 Function OpenTab(tabid)
     Dim tab, x, Elem, Elemon, Elemtab , Elemtc, ifrm, tabname, tabactive
-    tab = Array("project","projectdetail","projectinfo","Xrunnerinfo", "Xrunfunc", "expert")
+    tab = Array("project","projectinfo","Xrunnerinfo", "Xrunfunc", "expert")
     tabactive = tabid & "tab"
     For x = 0 To Ubound(tab)
       tabname = tab(x) & "tab"
