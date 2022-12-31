@@ -1,0 +1,20 @@
+begin    >   use(main)
+
+group(main)
+'[variables]'   >   '<data>'
+nl '#'          >   store(nul) use(comment)
+nl nl           >   nl back(1)
+
+nl              >   dup '<var name="'
+'='             >   '">' use(value)
+nl '['             >   store(nul) use(waste)
+
+group(value)
+nl              >   '</var>' dup back(1) use(main)
+
+group(waste)
+nl              >   store(nul)
+endfile         >   endstore nl '</data>' dup
+
+group(comment)
+nl              >   endstore dup back(1) use(main)
