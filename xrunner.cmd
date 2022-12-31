@@ -18,7 +18,9 @@ goto :eof
 
 :main
 :: Description: Main Loop, does setup and gets variables then runs group loops.
-:: Depends on: :setup, :taskgroup and may use unittestaccumulate
+:: Usage: call :main
+:: Purpose: control
+:: Functions used: funcbegin funcend time2sec setup project.cmd
   @call :funcbegin %0 "%~1"
   echo ==============================================================================
   echo                                     Xrunner2    
@@ -37,23 +39,19 @@ goto :eof
 
   setlocal enabledelayedexpansion
   color 07
-  @echo Xrunner Started: %time:~0,8%
+  @if defined info1 echo Xrunner Started: %time:~0,8%
   call :time2sec starttime
-  rem @echo Start Seconds: %starttime%
+  @if defined info3 echo Start Seconds: %starttime%
   call :setup
+  if not defined group set fatal=on
   if defined fatal goto :eof
-  if defined group set taskgroup=%group%
-  rem if exist "%scripts%\xrun.xslt" del "%scripts%\xrun.xslt"
-  rem if exist "%scripts%\project.xslt" del "%scripts%\project.xslt"
-  rem call project.cmd
   call "%projcmd%" %group%
-  @if defined info2 echo Info: xrun finished!
-  if defined espeak if defined info2 call "%espeak%" "x run finished"
+  @if defined info2 echo Info: xrunner finished!
+  if defined espeak if defined info2 call "%espeak%" "x runner finished"
   @call :funcend :main
   call :time2sec endtime
   set /A sec=%endtime%-%starttime%
   @echo Completed in %sec% seconds at %time:~0,8%
-  rem if defined pauseatend call :exit-prompt
   @call :funcend xrun
   if defined pauseatend pause
 goto :eof
@@ -62,6 +60,8 @@ goto :eof
 :checkdir
 :: Description: checks if dir exists if not it is created
 :: Usage: call :checkdir C:\path\name.ext
+:: Purpose: make folder
+:: Functions used: funcbegin funcend 
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   set checkpath=%~1
   set drivepath=%~dp1
@@ -72,15 +72,18 @@ goto :eof
   if exist "%checkpath%" if defined info3 echo Info: found path %checkpath%
   if not exist "%checkpath%" if defined info3 echo Info: creating path %checkpath%
   if not exist "%checkpath%" mkdir "%checkpath%"
-  rem set utreturn=%checkpath%
   @call :funcend %0
 goto :eof
 
 :date
 :: Description: Returns multiple variables with date in three formats, the year in wo formats, month and day date.
-:: Required variables: detectdateformat
+:: Usage: call :date
+:: Purpose: create date variables
+:: Variables created: fdd fmm fyyyy curdate curisodate yyyy-mm-dd curyyyymmdd curyymmdd curUSdate curAUdate curyyyy curyy curmm curdd
+:: Functions used: funcbegin funcend detectdateformat
+:: Variables used: dateformat dateseparator timeseparator
 :: Created: 2016-05-04
-rem got this from: http://www.robvanderwoude.com/datetiment.php#IDate
+:: Source url: http://www.robvanderwoude.com/datetiment.php#IDate
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   FOR /F "tokens=1-4 delims=%dateseparator% " %%A IN ("%date%") DO (
       IF "%dateformat%"=="0" (
@@ -116,6 +119,9 @@ goto :eof
 :detectdateformat
 :: Description: Get the date format from the Registery: 0=US 1=AU 2=iso
 :: Usage: call :detectdateformat
+:: Purpose: check registry, create variables
+:: Functions used: funcbegin funcend
+:: Variables created: dateformat dateseparator timeseparator
   @call :funcbegin %0
   set KEY_DATE="HKCU\Control Panel\International"
   rem get dateformat number
@@ -128,41 +134,12 @@ goto :eof
   @call :funcend %0
 goto :eof
 
-:drivepath
-:: Description: returns the drive and path from a full drive:\path\filename
-:: Usage: call :drivepath C:\path\name.ext|path\name.ext
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  if defined fatal goto :eof
-  set utdp=%~dp1
-  set drive=%~d1
-  set justpath=%~p1
-  set drivelet=%drive:~0,1%
-  set drivepath=%utdp:~0,-1%
-  rem set utreturn=%drivepath%
-  @call :funcend %0
-goto :eof
-
-:dummy
-goto :eof
-
-:echo
-:: Description: Echo a message
-:: Usage: call :echo "message text"
-  set nl=%~2
-  if defined nl (
-    @echo.
-  ) else (
-    @echo %~1
-  
-  )
-goto :eof
-
 :encoding
 :: Description: to check the encoding of a file
 :: Usage: call :encoding file [validate-against]
-:: Depends on: :infile
+:: Functions used: funcbegin funcend infile
 :: External program: file.exe http://gnuwin32.sourceforge.net/
-:: Required variables: encodingchecker
+:: Variables used: encodingchecker
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
 if not defined encodingchecker echo Encoding not checked. & echo %funcendtext% %0 error1 &goto :eof
 if not exist "%encodingchecker%" echo file.exe not found! %fileext% &echo Encoding not checked. & echo %funcendtext% %0 error2 & goto :eof
@@ -193,6 +170,8 @@ goto :eof
 :fatal
 :: Description: Used when fatal events occur
 :: Usage: call :fatal %0 "message 1" "message 2"
+:: Purpose: feedback
+:: Functions used: 
   set func=%~1
   set message=%~2
   set message2=%~3
@@ -205,16 +184,12 @@ goto :eof
   set fatal=on
 goto :eof
 
-:fb
-:: Description: Used to give common feed back
-  echo %~1: %~2 >> log\log.txt
-  if "%~1" == "info" Echo %green%Info: %~2%reset%
-  if "%~1" == "error" Echo %redbg%Error: %~2%reset%
-  if "%~1" == "output" Echo %green%Output: %~2%reset%
-goto :eof
-
 :funcbegin
 :: Descriptions: takes initialization out of funcs
+:: Usage: @call :funcbegin %0 '%~1' '%~2' 'etc'
+:: Purpose: feedback
+:: Functions used: 
+:: Variables used: magentabg reset funcstarttext 
   @set func=%~1
   @rem the following line removes the func colon at the begining. Not removing it causes a crash.
   @set funcname=%func:~1%
@@ -225,7 +200,10 @@ goto :eof
 @goto :eof
 :funcendtest
 :: Description: Used with func that output files. Like XSLT, cct, command2file
-:: Usage: call :funcend %0
+:: Usage: @call :funcend %0
+:: Purpose: feedback
+:: Functions used: 
+:: Variables used: outfile green reset redbg 
   set functest=%~1
   @if defined info2 if exist "%outfile%" echo.
   @if defined info1 if exist "%outfile%" echo %green%Output: %outfile% %reset%
@@ -233,16 +211,15 @@ goto :eof
   @if defined outfile if not exist "%outfile%" Echo %redbg%Task failed: Output file not created! %reset%
   @if defined outfile if not exist "%outfile%" set utret4=color 06
   @if defined outfile if exist "%outfile%" set utret4=
-  @if not defined info4 set utret5=
-  @if defined info4 set utret5=%funcendtext% %functest%
-  @if defined outfile if not exist "%outfile%" set skiptasks=on  & if not defined unittest pause
-  rem set utreturn= %functest%, %info1%, %info4%, %utret3%, %utret4%, %utret5%
-  @call :funcend %functest%
+  @if defined outfile if not exist "%outfile%" set skiptasks=on  & pause
 @goto :eof
 
 :funcend
 :: Description: Used for non ouput file func
-:: Usage: call :funcend %0
+:: Usage: @call :funcend %0
+:: Purpose: feedback
+:: Functions used: 
+:: Variables used: funcendtext
   @set func=%~1
   @if defined info4 echo %func% %funcendtext%
   @if defined %func:~1%pause pause
@@ -250,17 +227,13 @@ goto :eof
   @if defined !func:~1!echo echo ========= !func:~1!echo switched OFF =========& echo off
 @goto :eof
 
-:exit-prompt
-:: Description: runs an exe file that brings up a prompt
-exit-cmd.exe
-if exist "%tmp%\yes" (set ans=exit & del /q /f "%tmp%\yes") else (set ans=echo.)
-%ans%
-goto :eof
-
 :setinfolevel
 :: Description: Used for initial setup and after xrun.ini and project.txt
-:: Usage: call :setinfolevel numb-level
+:: Usage: call :setinfolevel numb_level
 :: Note: numb-level range 0-5
+:: Purpose: create variables
+:: Functions used:
+:: Variables created: info1 info2 info3 info4 info5 funcstarttext funcendtext redbg magentabg green reset
   for /L %%v in (1,1,5) Do set info%%v=
   rem set info levels from input
   for /L %%v in (1,1,5) Do if "%~1" geq "%%v" set info%%v=on
@@ -278,7 +251,12 @@ goto :eof
 :setup
 :: Description: Sets up the variables and does some checking.
 :: Usage: call :setup
-:: Depends on: variableslist, detectdateformat, ini2xslt, iniparse4xslt, setinfolevel, fatal
+:: Purpose: create variables, create project.cmd
+:: Functions used: funcbegin funcend checkdir detectdateformat
+:: Programs used: ccw32 or ccw64 sys.cmd
+:: Variables used: projectpath ccw32 green reset
+:: Variables created: projectpath scripts cctparam syscmd taskscmd projcmd setupcct funccmd ccw32 count
+:: Variable cleared: firstxslt
   @call :funcbegin %0 "%~1 %~2 %~3"
   if "%PUBLIC%" == "C:\Users\Public" (
       rem if "%PUBLIC%" == "C:\Users\Public" above is to prevent the following command running on Windows XP
@@ -296,7 +274,6 @@ goto :eof
   set setupcct=%cd%\scripts\setup.cct
   set funccmd=%cd%\scripts\func.cmd
   set ccw32=C:\programs\xrunner2\tools\cct\Ccw64.exe
-  set /A count=0
   call :checkdir "%projectpath%\scripts\"
   call :checkdir "%projectpath%\tmp"
   call "%ccw32%" %cctparam% -t "%setupcct%" -o "%syscmd%" "setup\xrun.ini"
@@ -314,6 +291,10 @@ goto :eof
 :time
 :: Description: Retrieve time in several shorter formats than %time% provides
 :: Usage: call :time
+:: Purpose: create variables
+:: Functions used: funcbegin funcend
+:: Variables used: time
+:: Variables created: curhhmm curhhmmss curisohhmmss curhh_mm curhh_mm_ss
 :: Created: 2016-05-05
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   FOR /F "tokens=1-4 delims=:%timeseparator%." %%A IN ("%time%") DO (
@@ -327,20 +308,14 @@ goto :eof
 goto :eof
 
 :time2sec
+:: Description: Retrieve the time in seconds
+:: Usage: call :time2sec var_name
+:: Purpose: create variable
+:: Functions used:
+:: Variable used: time
+:: Variable created: var_name
 set varname=%~1
 for /F "tokens=1-3 delims=:.," %%a in ("%TIME%") do (
 	set /A "%varname%=(%%a*60+1%%b-100)*60+(1%%c-100)
 )
 goto :eof
-
-:sec2time
-set /A hh=%~2/%sph%
-set /A sh=%hh%*%sph%
-set /A mm=(%~2-%sh%)/%spm%
-set /A sm=%mm%*%spm%
-set /A ss=(%~2 - %sh% - %sm%) 
-if %mm% lss 10 set mm=0%mm%
-if %ss% lss 10 set ss=0%ss%
-set %~1=%hh%:%mm%:%ss%
-goto :eof
-
