@@ -1,3 +1,31 @@
+:ampmhour
+:: Description: Converts AM/PM time to 24hour format. 
+:: Usage: call :ampmhour ampm thh
+:: Created: 2016-05-04 
+:: Used by: getfiledatetime 
+
+if defined debugdefinefunc echo %beginfuncstring% %0 %debugstack% %beginfuncstringtail%
+set ampm=%~1
+set thh=%~2
+if "%ampm%" == "AM" (
+  if "%thh%" == "12" (
+    set fhh=00
+  ) else (
+    set fhh=%thh%
+  )
+) else if "%ampm%" == "PM" (
+  if "%thh%" == "12" (
+    set fhh=12
+  ) else (
+    rem added handling to prevent octal number error caused by leading zero
+    set fhh=%thh: =0%
+  )
+) else  (
+  set fhh=%thh%
+)
+if defined debugdefinefunc echo %endfuncstring% %0 %debugstack%
+goto :eof
+
 :appendfile
 :: Description: Appends one file to the end of another file.
 :: Usage: call : appendfile filetoadd filetoappendto
@@ -274,7 +302,7 @@ goto :eof
   if not defined appendfile  set curcommand=copy /y "%infile%" "%outfile%"
   if defined xcopy set curcommand=xcopy /y/s "%infile%" "%outfile%"
   if defined xcopy if "%fn1%" == "%fn2%" set curcommand=xcopy /y/s "%infile%" "%outpath%"
-  %curcommand%
+  %curcommand% > nul
   @call :funcendtest %0
 goto :eof
 
@@ -489,7 +517,7 @@ goto :eof
   @rem the following line removes the func colon at the begining. Not removing it causes a crash.
   @set funcname=%func:~1%
   @set fparams=%~2
-  @if defined info3 echo %func% %fparams%
+  @if defined info3 echo %magentabg%%func%%reset% %fparams%
   @if defined info4 echo %funcstarttext% %func% %fparams%
   @if defined info4 @if defined %funcname%echo echo  ============== %funcname%echo is ON =============== & echo on
 @goto :eof
@@ -524,6 +552,46 @@ goto :eof
   @if defined !func:~1!show @echo off
   @if defined !func:~1!show echo ========= !func:~1!echo switched OFF =========
 @goto :eof
+
+:getfiledatetime
+:: Description: Returns a variable with a files modification date and time in yyMMddhhmm  similar to setdatetime. Note 4 digit year makes comparison number too big for batch to handle.
+:: Revised: 2016-05-04
+:: Classs: command - internal - date -time
+:: Required parameters: varname file
+:: Depends on: :detectdateformat variables
+@call :funcbegin %0 "'%~1' '%~2'"
+if defined debugdefinefunc echo %beginfuncstring% %0 %debugstack% %beginfuncstringtail%
+set varname=%~1
+if not defined varname echo missing varname parameter & goto :eof
+set file=%~2
+if not exist "%file%" set %varname%=0 &goto :eof
+set filedate=%~t2
+rem got and mofified this from: http://www.robvanderwoude.com/datetiment.php#IDate
+FOR /F "tokens=1-6 delims=%timeseparator%%dateseparator% " %%A IN ("%~t2") DO (
+  IF "%dateformat%"=="0" (
+      SET fdd=%%B
+      SET fmm=%%A
+      SET fyyyy=%%C
+  )
+  IF "%dateformat%"=="1" (
+      SET fdd=%%A
+      SET fmm=%%B
+      SET fyyyy=%%C
+  )
+  IF "%dateformat%"=="2" (
+      SET fdd=%%C
+      SET fmm=%%B
+      SET fyyyy=%%A
+  )
+  set fnn=%%E
+  call :ampmhour %%F %%D
+)
+echo  %varname%=%fyyyy:~2%%fMM%%fdd%%fhh: =0%%fnn%>> file-time.txt
+set %varname%=%fyyyy:~2%%fMM%%fdd%%fhh: =0%%fnn%
+if defined debugdefinefunc echo %endfuncstring% %0 %debugstack%
+if defined info3 echo %green%%varname%=!%varname%!%reset%
+  @call :funcend  %0
+goto :eof
 
 :iconv
 :: Description: Converts files from CP1252 to UTF-8
@@ -669,10 +737,10 @@ goto :eof
   for /L %%v in (2,1,6) Do if defined param%%v if "!param%%v!" neq "!param%%v: =!" set param%%v="!param%%v!"
   rem set actionfirstlet=%param2:~0,1%
   if exist "%testfile%" (
-    if defined info2 echo Test: TRUE   %~nx1 does exist. Action: %param2% %~nx3 %~nx4 %~nx5 %~nx6
+    if defined info3 echo Test: TRUE   %~nx1 does exist. Action: %param2% %~nx3 %~nx4 %~nx5 %~nx6
     %param2% %param3% %param4% %param5% %param6%     
   ) else (
-    if defined info2 echo Test: FALSE  %~nx1 does not exist. Action: none.
+    if defined info3 echo Test: FALSE  %~nx1 does not exist. Action: none.
   )
   @if defined unittest set utreturn=%testfile%, %param2%, %param3%, %param4%, %param5%, %param6%
   @call :funcend %0
@@ -706,11 +774,11 @@ goto :eof
   rem if not exist "%testfile%" %param2% %numbparamine%
   set firstact=%param2:~0,1%
   if not exist "%testfile%" (
-    if defined info2 echo Test: TRUE   %filename% does not exist. 
-      if defined info3 echo %param2% %param3% %param4% %param5% %param6%
+    if defined info3 echo Test: TRUE   %testfile% does not exist. 
+      if defined info4 echo %param2% %param3% %param4% %param5% %param6%
       %param2% %param3% %param4% %param5% %param6% 
   ) else (
-    if defined info2 echo Test: FALSE   %~nx1 does exist. No action %param2% taken.
+    if defined info3 echo Test: FALSE   %filename% does exist. No action %param2% taken.
   )
   rem echo off
   @if defined unittest set utreturn=%testfile%, %action%, %param3%, %param4%, %param5%, %param6%
@@ -1579,69 +1647,36 @@ goto :eof
   @call :funcend %0
 goto :eof
 
-:setup
-:: Description: Sets up the variables and does some checking.
-:: Usage: call :setup
-:: Depends on: variableslist, detectdateformat, ini2xslt, iniparse4xslt, setinfolevel, fatal
-  if "%PUBLIC%" == "C:\Users\Public" (
-      rem if "%PUBLIC%" == "C:\Users\Public" above is to prevent the following command running on Windows XP
-      rem this still does not work for Chinese characters in the path
-      chcp 65001
-      )
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  set redbg=[101m
-  set magentabg=[105m
-  set green=[32m
-  set reset=[0m
-  if %infolevel% == 4 echo on
-  if %infolevel% == 4 @echo off
-  rem echo bsec=%bsec% bmin=%bmin% bginseconds=%beginseconds%
-  rem the following line cleans up from previous runs.
-  rem if not defined unittest if exist scripts\*.xrun del scripts\*.xrun
-  set scripts=%projectpath%\scripts
-  if not exist "%scripts%" md "%scripts%"
-  set /A count=0
-  echo.
-  set encodingchecker=C:\programs\gnuwin32\bin\file.exe
-  if defined checkencoding call :encoding "setup\xrun.ini" utf-8
-  if defined checkencoding call :encoding "%projectpath%\project.txt" utf-8
-  call :variableslist "setup\xrun.ini"
-  call :detectdateformat
-  call :setup-%setup-type%
-  @if defined info2 echo Setup: %green%complete%reset%
-  @echo.
-  set /A count=0
-  rem set utreturn=%scripts%
-  @call :funcend %0
-goto :eof
 
-:setup-batch
-:: Description: Sets up the xrun files from the project.txt
-:: Usage: call :setup-batch "%projectpath%\project.txt"
-:: Depends on: variableslist, task2cmd
-  @call :funcbegin %0 "'%~1'"
-  call :checkdir "%cd%\scripts"
-  rem call :variableslist "%projectpath%\project.txt" a
-  call :task2cmd "%projectpath%\project.txt"
-  @call :funcend %0
-goto :eof
+
 :setup-xslt2
 :: Description: Sets up the for using Java, Saxon and XSLT2
 :: Usage: call :setup-xslt2 "%projectpath%\project.txt"
 :: Depends on: variableslist, task2cmd
   @call :funcbegin %0 "'%~1'"
+  if defined firstxslt goto :eof
   if defined detectjava call :javahometest
   if defined nojava set fatal=on & goto :eof
   if "%needsaxon%" == "true" if not exist "%saxon%" call :fatal %0 "Saxon9he.jar not found." "This program will exit now!"  & goto :eof
+  if not exist "%scripts%\project.xslt" ( set newerthan=on)
+  if exist "%scripts%\project.xslt" (
+    call :newerthan "%projectpath%\project.txt" "%scripts%\project.xslt"
+    call :newerthan "%projectpath%\lists.tsv" "%scripts%\project.xslt"
+    call :newerthan "%projectpath%\keyvalue.tsv" "%scripts%\project.xslt"
+  )
+  if defined info 2 call :fb info "set newerthan = %newerthan%"
+  set firstxslt=on
   rem call :ini2xslt "%cd%\setup\xrun.ini" "%cd%\scripts\xrun.xslt" iniparse4xslt setup
   rem copy /y "scripts\dummy-xrun.xslt" "%projectpath%\scripts" >> log.txt
   rem if not exist "%cd%\scripts\xrun.xslt" call :fatal %0 "xrun.xslt not created" & goto :eof
   rem if exist "%scripts%\project.xslt" del "%scripts%\project.xslt"
   @rem if defined info2 echo Info: Java:saxon parse project.txt
   rem call xslt3 -xsl:"scripts\variable2xslt-3.sef.json" -s:blank.xml  -o:"%scripts%\project.xslt"
-  call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "blank.xml" "%cd%\scripts\projectvariables.xslt" projectpath="%projectpath%" xrunnerpath="%cd%" USERPROFILE=%USERPROFILE%
+ rem  if defined newerthan copy /y "%cd%\scripts\projectvariables-v2.xslt" "%projectpath%\scripts\"
+  if defined newerthan call "%ccw32%" %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
+  if defined newerthan call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
   if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & goto :eof
-  if exist "%scripts%\project.xslt" if defined info2 echo Setup: project.xslt from: project.txt
+  if defined newerthan if exist "%scripts%\project.xslt" if defined info2 echo Built: project.xslt from: project.txt
   @rem the following sets the default script path but it can be overridden by a scripts= in the project.txt
   set scripts=%projectpath%\scripts
   if not exist "%scripts%\inc-lookup.xslt" copy "%cd%\scripts\inc-lookup.xslt" "%scripts%\inc-lookup.xslt"
@@ -1652,69 +1687,17 @@ goto :eof
   @call :funcend %0
 goto :eof
 
-:setup-java
-:: Description: Sets up the for using Java, Saxon and XSLT
-:: Usage: call :setup-java "%projectpath%\project.txt"
-:: Depends on: variableslist, task2cmd
-  @call :funcbegin %0 "'%~1'"
-  if defined detectjava call :javahometest
-  if defined nojava set fatal=on & goto :eof
-  if "%needsaxon%" == "true" if not exist "%saxon%" call :fatal %0 "Saxon9he.jar not found." "This program will exit now!"  & goto :eof
-  call :ini2xslt "%cd%\setup\xrun.ini" "%cd%\scripts\xrun.xslt" iniparse4xslt setup
-  copy /y "scripts\xrun.xslt" "%projectpath%\scripts" >> log.txt
-  if not exist "%cd%\scripts\xrun.xslt" call :fatal %0 "xrun.xslt not created" & goto :eof
-  if exist "%scripts%\project.xslt" del "%scripts%\project.xslt"
-  @rem if defined info2 echo Info: Java:saxon parse project.txt
-  rem call xslt3 -xsl:"scripts\variable2xslt-3.sef.json" -s:blank.xml  -o:"%scripts%\project.xslt" 
-  call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "blank.xml" "scripts\variable2xslt-3.xslt" projectpath="%projectpath%" xrunnerpath="%cd%" unittest=%unittest% xsltoff=%xsltoff%  USERPROFILE=%USERPROFILE%
-  if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & goto :eof
-  if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & goto :eof
-  if exist "%scripts%\project.xslt" if defined info2 echo Setup: project.xslt from: project.txt
-  @rem the following sets the default script path but it can be overridden by a scripts= in the project.txt
-  set scripts=%projectpath%\scripts
-  if not exist "%scripts%\inc-lookup.xslt" copy "scripts\inc-lookup.xslt" "%scripts%\inc-lookup.xslt"
-  if not exist "%scripts%\inc-file2uri.xslt" copy "scripts\inc-file2uri.xslt" "%scripts%\inc-file2uri.xslt"
-  if not exist "%scripts%\inc-copy-anything.xslt" copy "scripts\inc-copy-anything.xslt" "%scripts%\inc-copy-anything.xslt"
-  call "%projectpath%\tmp\project.cmd"
-  if defined model call :loopfiles "%model%\*.*" :modelcheck "%model%"
+:newerthan
+:: Description: Compares two files an returns variable newerthan=on if true
+:: Usage: call :newerthan file1 file2
+  @call :funcbegin %0 "'%~1' '%~2'"
+  call :getfiledatetime file1 "%~1"
+  call :getfiledatetime file2 "%~2"
+  if defined info4 echo if %file1%. gtr %file2%. set newerthan=on
+  if %file1%. gtr %file2%. set newerthan=on
+  if defined info3 echo newerthan = %nererthan%
   @call :funcend %0
-goto :eof
-
-
-:setup-js
-:: Description: Sets up the for using Java, Saxon and XSLT
-:: Usage: call :setup-js "%projectpath%\project.txt"
-:: Depends on: variableslist, task2cmd
-  @call :funcbegin %0 "'%~1'"
-  if defined detectjava call :javahometest
-  if defined nojava set fatal=on & goto :eof
-  if "%needsaxon%" == "true" if not exist "%saxon%" call :fatal %0 "Saxon9he.jar not found." "This program will exit now!"  & goto :eof
-  call :ini2xslt "%cd%\setup\xrun.ini" "%cd%\scripts\xrun.xslt" iniparse4xslt setup
-  copy /y "scripts\xrun.xslt" "%projectpath%\scripts" >> log.txt
-  if not exist "%cd%\scripts\xrun.xslt" call :fatal %0 "xrun.xslt not created" & goto :eof
-  if exist "%scripts%\project.xslt" del "%scripts%\project.xslt"
-  @rem if defined info2 echo Info: Java:saxon parse project.txt
-  call xslt3 -xsl:"scripts\variable2xslt-3.sef.json" -s:blank.xml  -o:"%scripts%\project.xslt" 
-  rem call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "blank.xml" "scripts\variable2xslt-3.xslt" projectpath="%projectpath%" xrunnerpath="%cd%" unittest=%unittest% xsltoff=%xsltoff%  USERPROFILE=%USERPROFILE%
-  if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & goto :eof
-  if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & goto :eof
-  if exist "%scripts%\project.xslt" if defined info2 echo Setup: project.xslt from: project.txt
-  @rem the following sets the default script path but it can be overridden by a scripts= in the project.txt
-  set scripts=%projectpath%\scripts
-  if not exist "%scripts%\inc-lookup.xslt" copy "scripts\inc-lookup.xslt" "%scripts%\inc-lookup.xslt"
-  if not exist "%scripts%\inc-file2uri.xslt" copy "scripts\inc-file2uri.xslt" "%scripts%\inc-file2uri.xslt"
-  if not exist "%scripts%\inc-copy-anything.xslt" copy "scripts\inc-copy-anything.xslt" "%scripts%\inc-copy-anything.xslt"
-  call "%projectpath%\tmp\project.cmd"
-  if defined model call :loopfiles "%model%\*.*" :modelcheck "%model%"
-  @call :funcend %0
-goto :eof
-
-:setup-rexx
-  @rem call :rexxini "%projectpath%\project.txt" "%projectpath%\scripts\project.xslt" variables writexslt
-  @rem call :rexxini "%projectpath%\project.txt" "%cd%\scripts\%groupin%.xrun" %groupin% writecmdtasks
-  @rem call :rexxini "%projectpath%\project.txt" "%projectpath%\tmp\project.cmd" variables writecmdvar
-
-goto :eof
+  goto :eof
 
 :unicodecount
 :: Description: Count unicode characters in file
@@ -1836,6 +1819,34 @@ goto :eof
   @call :funcend %0 %sub2%
 goto :eof
 
+:taskcall
+:: Description: Loop that triggers each taskgroup.
+:: Usage: call :taskgroup group
+:: Depends on: unittestaccumulate. Can depend on any procedure in the input task group.
+@echo off
+  @if defined fatal if defined info4 echo %funcendtext% %0 "%~1 '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  @if defined fatal goto :eof
+  @call :funcbegin %0 "%~1 '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  set group=%~1
+  rem Do not remove these tgvarX variables some sub groups rely on them
+  set tgvar2=%~2
+  set tgvar3=%~3
+  set tgvar4=%~4
+  set tgvar5=%~5
+  set tgvar6=%~6
+  set tgvar7=%~7
+  set tgvar8=%~8
+  set tgvar9=%~9
+  rem if not exist "scripts\proj.cmd" call :fatal %0 "Project cmd file proj.cmd missing!" "Process can't preceed." & goto :eof
+  set taskend=!%~1count!
+  rem if not defined unittest FOR /L %%c IN (1,1,%taskend%) DO call :task %group%%%c
+  call :%group:"=%
+  rem set utreturn= %group%
+  if defined unittest FOR /L %%c IN (1,1,%taskend%) DO call :unittestaccumulate %group%%%c
+  @call :funcend %0 %~1
+goto :eof
+
+
 :taskgroup
 :: Description: Loop that triggers each task in the group.
 :: Usage: call :taskgroup group
@@ -1853,7 +1864,7 @@ goto :eof
   set tgvar7=%~7
   set tgvar8=%~8
   set tgvar9=%~9
-  if not exist "scripts\%group%.xrun" call :fatal %0 "Taskgroup file %group%.xrun missing!" "Process can't preceed." & goto :eof
+  rem if not exist "scripts\%group%.xrun" call :fatal %0 "Taskgroup file %group%.xrun missing!" "Process can't preceed." & goto :eof
 
   set taskend=!%~1count!
   rem if not defined unittest FOR /L %%c IN (1,1,%taskend%) DO call :task %group%%%c
@@ -2239,7 +2250,7 @@ goto :eof
 :: Required variables: java saxon9
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
-  if not exist "%scripts%\project.xslt" call :setup-xslt2
+  call :setup-xslt2
   call :inccount
   if defined scripts set script=%scripts%\%~1
   if not defined scripts set script=scripts\%~1
