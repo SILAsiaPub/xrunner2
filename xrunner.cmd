@@ -4,20 +4,27 @@
 :: Xrunner 2 uses CCW32 to generate the needed initial files.
 :: Now the tasklists are converted into functions. Appended to that is the xrun.ini variables, the xruni.ini tools and the project.txt variables and the old xrun.cmd functions.
 @echo off
+cls
 set projectfile=%1
 set projectpath=%~dp1
 set group=%2
 set infolevel=%3
 set pauseatend=%4
 :: Unit test is depreciated
-set unittest=%5
+:: set unittest=%5
+call :setinfolevel %infolevel%
 call :main
 goto :eof
 
 :main
 :: Description: Main Loop, does setup and gets variables then runs group loops.
 :: Depends on: :setup, :taskgroup and may use unittestaccumulate
-  @if defined info4 echo {---- :main %group%
+  @call :funcbegin %0 "%~1"
+  echo ==============================================================================
+  echo                                     Xrunner2    
+  echo ==============================================================================
+  echo Source: https://github.com/SILAsiaPub/xrunner2
+  echo Project: %projectfile%
   if "%infolevel%" == "5" echo on
   if not exist "%projectfile%" (
     rem This is to ensure there is a parameter for the project.txt file.
@@ -27,22 +34,18 @@ goto :eof
     pause
     goto :eof
   )
-  set projectpath=%projectpath:~0,-1%
-  set checkencoding=on
-  call :checkdir "%projectpath%\scripts\"
-  if not defined infolevel set infolevel=2
+
   setlocal enabledelayedexpansion
-  call :setinfolevel %infolevel%
-  @if defined info2 echo %0 "%1" %2 %3 %4 %5 
   color 07
-  call :time2sec starttime
-  @echo Start Seconds: %starttime%
   @echo Xrunner Started: %time:~0,8%
+  call :time2sec starttime
+  rem @echo Start Seconds: %starttime%
   call :setup
   if defined fatal goto :eof
   if defined group set taskgroup=%group%
-  if exist "%scripts%\xrun.xslt" del "%scripts%\xrun.xslt"
-  if exist "%scripts%\project.xslt" del "%scripts%\project.xslt"
+  rem if exist "%scripts%\xrun.xslt" del "%scripts%\xrun.xslt"
+  rem if exist "%scripts%\project.xslt" del "%scripts%\project.xslt"
+  rem call project.cmd
   call "%projcmd%" %group%
   @if defined info2 echo Info: xrun finished!
   if defined espeak if defined info2 call "%espeak%" "x run finished"
@@ -205,9 +208,9 @@ goto :eof
 :fb
 :: Description: Used to give common feed back
   echo %~1: %~2 >> log\log.txt
-  if "%~1" == "info" Echo Info: %~2
-  if "%~1" == "error" Echo Error: %~2
-  if "%~1" == "output" Echo Output: %~2
+  if "%~1" == "info" Echo %green%Info: %~2%reset%
+  if "%~1" == "error" Echo %redbg%Error: %~2%reset%
+  if "%~1" == "output" Echo %green%Output: %~2%reset%
 goto :eof
 
 :funcbegin
@@ -216,7 +219,7 @@ goto :eof
   @rem the following line removes the func colon at the begining. Not removing it causes a crash.
   @set funcname=%func:~1%
   @set fparams=%~2
-  @if defined info3 echo %func% %fparams%
+  @if defined info3 echo %magentabg%%func%%reset% %fparams%
   @if defined info4 echo %funcstarttext% %func% %fparams%
   @if defined info4 @if defined %funcname%echo echo  ============== %funcname%echo is ON =============== & echo on
 @goto :eof
@@ -241,7 +244,7 @@ goto :eof
 :: Description: Used for non ouput file func
 :: Usage: call :funcend %0
   @set func=%~1
-  @if defined info4 echo %funcendtext% %func%
+  @if defined info4 echo %func% %funcendtext%
   @if defined %func:~1%pause pause
   @rem the following form of %func:~1% removes the colon from the begining of the func.
   @if defined !func:~1!echo echo ========= !func:~1!echo switched OFF =========& echo off
@@ -254,33 +257,10 @@ if exist "%tmp%\yes" (set ans=exit & del /q /f "%tmp%\yes") else (set ans=echo.)
 %ans%
 goto :eof
 
-   
-:name
-:: Description: Returns a variable name containg just the name from the path.
-  @call :funcbegin %0 %~1
-  set name=%~n1
-  set ext=%~x1
-  @if defined info3 set name
-  @call :funcend %0
-goto :eof
-
-:nameext
-:: Description: Returns a variable nameext containg just the name and extension from the path.
-  @call :funcbegin %0 %~1
-  set nameext=%~nx1
-  set name=%~n1
-  set ext=%~x1
-  @if defined info3 set nameext
-  @call :funcend %0
-goto :eof
-
-
 :setinfolevel
 :: Description: Used for initial setup and after xrun.ini and project.txt
 :: Usage: call :setinfolevel numb-level
 :: Note: numb-level range 0-5
-  @call :funcbegin %0 "%~1"
-  rem reset info vars
   for /L %%v in (1,1,5) Do set info%%v=
   rem set info levels from input
   for /L %%v in (1,1,5) Do if "%~1" geq "%%v" set info%%v=on
@@ -289,67 +269,47 @@ goto :eof
   if "%~1" geq "3" set clfeedback=on
   set funcstarttext={---
   set funcendtext=       ----}
-  rem turn off echo for the remaining levels
-  rem if  "%~1" LSS "5" echo off
-  rem set utreturn=%~1, %info1%, %info2%, %info4%, %info3%, %info5%, %funcstarttext%, %funcendtext%
-  @call :funcend %0
+  set redbg=[101m
+  set magentabg=[105m
+  set green=[32m
+  set reset=[0m
 goto :eof
 
 :setup
 :: Description: Sets up the variables and does some checking.
 :: Usage: call :setup
 :: Depends on: variableslist, detectdateformat, ini2xslt, iniparse4xslt, setinfolevel, fatal
+  @call :funcbegin %0 "%~1 %~2 %~3"
   if "%PUBLIC%" == "C:\Users\Public" (
       rem if "%PUBLIC%" == "C:\Users\Public" above is to prevent the following command running on Windows XP
       rem this still does not work for Chinese characters in the path
       chcp 65001
       )
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  set redbg=[101m
-  set magentabg=[105m
-  set green=[32m
-  set reset=[0m
+  set projectpath=%projectpath:~0,-1%
+  rem set checkencoding=on
+  set firstxslt=
+  set scripts=%projectpath%\scripts
   set cctparam=-u -b -q -n
-
-  set syscmd=%projectpath%\scripts\sys.cmd
-  set taskscmd=%projectpath%\scripts\tasks.cmd
-  set projcmd=%projectpath%\scripts\proj.cmd
+  set syscmd=%scripts%\sys.cmd
+  set taskscmd=%scripts%\tasks.cmd
+  set projcmd=%scripts%\proj.cmd
   set setupcct=%cd%\scripts\setup.cct
   set funccmd=%cd%\scripts\func.cmd
-  copy /y "%setupcct%" "%projectpath%\scripts"
-  set ccw32=C:\programs\cc\Ccw32.exe
-  rem the following line cleans up from previous runs.
-  if not defined unittest if exist scripts\*.xrun del scripts\*.xrun
-  set scripts=%projectpath%\scripts
-  if not exist "%scripts%" md "%scripts%"
+  set ccw32=C:\programs\xrunner2\tools\cct\Ccw64.exe
   set /A count=0
-  if exist "%syscmd%" del "%syscmd%"
+  call :checkdir "%projectpath%\scripts\"
+  call :checkdir "%projectpath%\tmp"
   call "%ccw32%" %cctparam% -t "%setupcct%" -o "%syscmd%" "setup\xrun.ini"
-  rem call :cct setup.cct "setup\xrun.ini" "%syscmd%"
-  echo.
   call :detectdateformat
   call %syscmd%
-  call :setup-batch
-  @if defined info1 echo Setup: complete
+  call "%ccw32%" %cctparam% -t "%setupcct%" -o "%taskscmd%" "%projectpath%\project.txt"
+  copy "%taskscmd%"+"%funccmd%"+"%syscmd%" "%projcmd%" > nul
+  @if defined info1 echo %green%Setup: complete%reset%
+  @if defined info1 echo.
   set /A count=0
-  rem set utreturn=%scripts%
   @call :funcend %0
   if "%~3" == "5" echo on
 goto :eof
-
-:setup-batch
-:: Description: Sets up the xrun files from the project.txt
-:: Usage: call :setup-batch "%projectpath%\project.txt"
-:: Depends on: variableslist, task2cmd
-  @call :funcbegin %0 "'%~1'"
-  call :checkdir "%cd%\scripts"
-  rem if exist "%projcmd%" del "%projcmd%"
-  rem call :variableslist "%projectpath%\project.txt" a
-  call "%ccw32%" %cctparam% -t "%setupcct%" -o "%taskscmd%" "%projectpath%\project.txt"
-  copy "%taskscmd%"+"%funccmd%"+"%syscmd%" "%projcmd%"
-  @call :funcend %0
-goto :eof
-
 
 :time
 :: Description: Retrieve time in several shorter formats than %time% provides
