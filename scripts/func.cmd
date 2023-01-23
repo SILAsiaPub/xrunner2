@@ -181,7 +181,7 @@ goto :eof
   if defined commandpath call :checkdir "%commandpath%"
   if defined commandpath pushd "%commandpath%"
   @if defined info3 echo %green%Info: current path: %cd%%reset%
-  @if defined info2 echo %blue%%curcommand%%reset%
+  @if defined info2 echo %cyan%%curcommand%%reset%
   call %curcommand%
   if defined commandpath popd
     @if defined outfile (call :funcendtest %0) else (call :funcend %0)
@@ -478,8 +478,8 @@ goto :eof
   @rem the following line removes the func colon at the begining. Not removing it causes a crash.
   @set funcname=%func:~1%
   @set fparams=%~2
-  @if defined info4 echo %funcstarttext%
-  @if defined info3 echo %magentabg%%func%%reset% %fparams%
+  @if defined info4 echo %magenta%%funcstarttext%%reset%
+  @if defined info3 echo %magentabg%%func%%reset%  %fparams%
   @if defined info4 @if defined %funcname%echo echo  ============== %funcname%echo is ON =============== & echo on
 @goto :eof
 
@@ -492,7 +492,7 @@ goto :eof
   @set message2=%~3
   @if defined message1 echo %message1%
   @if defined message2 echo %message2%
-  @if defined info4 echo ------------------------------------ %func% %funcendtext%
+  @if defined info4 echo %magenta%------------------------------------ %func% %funcendtext%%reset%
   @if defined %func:~1%pause pause
   @rem the following form of %func:~1% removes the colon from the begining of the func.
   @if defined !func:~1!show @echo off
@@ -811,7 +811,7 @@ goto :eof
   set callingfunc=%~2
   @if not defined infile set infile=%outfile%
   @if not exist "%infile%" call :fatal %0 "infile %~nx1 not found for %callingfunc%"
-  @if defined info4 echo Info: infile = %infile%
+  @if defined info4 echo Info: %green%infile = %infile%%reset%
   @call :funcend %0
 goto :eof
 
@@ -1186,10 +1186,11 @@ goto :eof
   set startnumb=%~1
   set endnumb=%~2
   for /L %%v in (%startnumb%,1,%endnumb%) Do if defined param%%v if "!param%%v!" neq "!param%%v: =!" set param%%v='!param%%v!'
-  if %startnumb%. == 1 set multivar=%param1% %param2% %param3% %param4% %param5% %param6% %param7% %param8% %param9%
-  if %startnumb%. == 2 set multivar=%param2% %param3% %param4% %param5% %param6% %param7% %param8% %param9%
-  if %startnumb%. == 3 set multivar=%param3% %param4% %param5% %param6% %param7% %param8% %param9%
-  if %startnumb%. == 4 set multivar=%param4% %param5% %param6% %param7% %param8% %param9%
+  if %startnumb%. == 1. set multivar=%param1% %param2% %param3% %param4% %param5% %param6% %param7% %param8% %param9%
+  if %startnumb%. == 2. set multivar=%param2% %param3% %param4% %param5% %param6% %param7% %param8% %param9%
+  if %startnumb%. == 3. set multivar=%param3% %param4% %param5% %param6% %param7% %param8% %param9%
+  if %startnumb%. == 4. set multivar=%param4% %param5% %param6% %param7% %param8% %param9%
+  if defined info3 echo %green%Info: multivar = %multivar%%reset%
   @call :funcend %0
 goto :eof
 
@@ -1641,15 +1642,18 @@ goto :eof
   )
   set build=%build%%build1%%build2%%build3%
   if defined info3 echo %green%Info: build = %build%%reset% 
-  if defined info3 if not defined build echo %green%Info: Existing project.xslt is up to date.%reset% 
-  if defined build if defined info3 echo call "%ccw32%" %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
-  if defined build if defined info3 echo.
-  if defined build call "%ccw32%" %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
-  if not exist "%projectpath%\tmp\proj-var.xml" call :fatal %0 "proj-var.xml not created" & call :funcend %0 & goto :eof
-  if defined build if defined info3 echo call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
-  if defined build call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
-  if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
-  if defined build if exist "%scripts%\project.xslt" if defined info2 echo %green%Built: project.xslt from: project.txt%reset%
+  if not defined build (
+    if defined info3 echo %green%Info: Existing project.xslt is up to date.%reset% 
+  ) else (
+    if defined info3 echo call "%ccw32%" %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
+    if defined info3 echo.
+    call "%ccw32%" %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
+    if not exist "%projectpath%\tmp\proj-var.xml" call :fatal %0 "proj-var.xml not created" & call :funcend %0 & goto :eof
+    if defined info3 echo call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
+    call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
+    if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
+    if exist "%scripts%\project.xslt" if defined info2 echo %green%Built: project.xslt from: project.txt%reset%
+  )
   @rem the following sets the default script path but it can be overridden by a scripts= in the project.txt
   set scripts=%projectpath%\scripts
   if not exist "%scripts%\inc-lookup.xslt" copy "%cd%\scripts\inc-lookup.xslt" "%scripts%\inc-lookup.xslt"
@@ -1902,19 +1906,19 @@ goto :eof
   if defined params set params=%params:'="%
   if defined fatal goto :eof
   if "%xslt%" == "xslt1" (
-    @if defined info2 echo %xml% tr "%script%" "%infile%" ^> "%outfile%"
+    @if defined info2 echo %cyan%%xml% tr "%script%" "%infile%" ^> "%outfile%"%reset%
     call "%xml%" tr "%script%" "%infile%" > "%outfile%" 
   )  
   if "%xslt%" == "xslt1ms" (
-    @if defined info2 echo %xml% tr "%script%" "%infile%" ^> "%outfile%"
+    @if defined info2 echo %cyan%%xml% tr "%script%" "%infile%" ^> "%outfile%"%reset%
     call "%msxsl%" "%infile%" "%script%" -o "%outfile%" 
   ) 
   if "%xslt%" == "xslt2" (
-    @if defined info2 echo %java% -jar "%saxon%" -o:"%outfile%" "%infile%" "%script%" %params%
+    @if defined info2 echo %cyan%%java% -jar "%saxon%" -o:"%outfile%" "%infile%" "%script%" %params%%reset%
     %java% -Xmx1024m  %suppressXsltNamespaceCheck% -jar "%saxon%" -o:"%outfile%" "%infile%" "%script%" %params%
   )
   if "%xslt%" == "xslt3" (
-    @if defined info2 echo xslt3 -xsl:"%script%" -s:"%infile%" -o:"%outfile%" %params%
+    @if defined info2 echo %cyan%xslt3 -xsl:"%script%" -s:"%infile%" -o:"%outfile%" %params%%reset%
     call :xslt3 -xsl:"%script%" -s:"%infile%" -o:"%outfile%" %params%
   ) 
   @call :funcendtest %0
