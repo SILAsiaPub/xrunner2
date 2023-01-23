@@ -12,6 +12,7 @@ set infolevel=%3
 set pauseatend=%4
 :: Unit test is depreciated
 :: set unittest=%5
+call :colorvar
 call :setinfolevel %infolevel%
 call :main
 goto :eof
@@ -26,19 +27,23 @@ goto :eof
   echo                                     Xrunner2    
   echo ==============================================================================
   echo Source: https://github.com/SILAsiaPub/xrunner2
-  echo Project: %projectfile%
-  if "%infolevel%" == "5" echo on
-  if not exist "%projectfile%" (
+  if exist "%projectfile%" (
+    echo Project: %projectfile%
+    echo.
+    if "%infolevel%" == "5" echo on
+  ) else (
+    echo.
     rem This is to ensure there is a parameter for the project.txt file.
-    echo A valid project file must be provided. It is a required parameter.
-    echo Usage: xrunnner C:\path\project.txt [group [infolevel [pauseatend [unittest]]]]
-    echo This script will exit.
+    echo %redbg%A valid project file must be provided. It is a required parameter.%reset%
+    echo Usage: xrunnner C:\path\project.txt group [infolevel [pauseatend]]
+    echo.
+    echo %redbg%This script will exit.%reset%
+    echo.
     pause
     goto :eof
   )
 
   setlocal enabledelayedexpansion
-  color 07
   @if defined info1 echo Xrunner Started: %time:~0,8%
   call :time2sec starttime
   @if defined info3 echo Start Seconds: %starttime%
@@ -53,7 +58,7 @@ goto :eof
   set /A sec=%endtime%-%starttime%
   @echo Completed in %sec% seconds at %time:~0,8%
   @call :funcend xrun
-  if defined pauseatend pause
+  if defined pauseatend (pause ) else (timeout 30)
 goto :eof
 
 
@@ -194,24 +199,9 @@ goto :eof
   @rem the following line removes the func colon at the begining. Not removing it causes a crash.
   @set funcname=%func:~1%
   @set fparams=%~2
+  @if defined info4 echo %magenta%%funcstarttext%%reset%
   @if defined info3 echo %magentabg%%func%%reset% %fparams%
-  @if defined info4 echo %funcstarttext% %func% %fparams%
   @if defined info4 @if defined %funcname%echo echo  ============== %funcname%echo is ON =============== & echo on
-@goto :eof
-:funcendtest
-:: Description: Used with func that output files. Like XSLT, cct, command2file
-:: Usage: @call :funcend %0
-:: Purpose: feedback
-:: Functions used: 
-:: Variables used: outfile green reset redbg 
-  set functest=%~1
-  @if defined info2 if exist "%outfile%" echo.
-  @if defined info1 if exist "%outfile%" echo %green%Output: %outfile% %reset%
-  @if defined info1 if exist "%outfile%" set utret3=Output: %outfile%
-  @if defined outfile if not exist "%outfile%" Echo %redbg%Task failed: Output file not created! %reset%
-  @if defined outfile if not exist "%outfile%" set utret4=color 06
-  @if defined outfile if exist "%outfile%" set utret4=
-  @if defined outfile if not exist "%outfile%" set skiptasks=on  & pause
 @goto :eof
 
 :funcend
@@ -221,11 +211,28 @@ goto :eof
 :: Functions used: 
 :: Variables used: funcendtext
   @set func=%~1
-  @if defined info4 echo %func% %funcendtext%
+  @if defined info4 echo %magenta%------------------------------------ %func% %funcendtext%%reset%
   @if defined %func:~1%pause pause
   @rem the following form of %func:~1% removes the colon from the begining of the func.
   @if defined !func:~1!echo echo ========= !func:~1!echo switched OFF =========& echo off
 @goto :eof
+
+:colorvar
+:: Description: Sets the inline color variables.
+:: Usage: call :inlinecolor
+  set yellowbg=[103m
+  set redbg=[101m
+  set magentabg=[105m
+  set magenta=[35m
+  set green=[32m
+  set blue=[34m
+  set cyan=[96m
+  set red=[91m
+  set magenta=[95m
+  set black=[30m
+  set reset=[0m
+  set bold=[1m
+goto :eof
 
 :setinfolevel
 :: Description: Used for initial setup and after xrun.ini and project.txt
@@ -238,14 +245,10 @@ goto :eof
   rem set info levels from input
   for /L %%v in (1,1,5) Do if "%~1" geq "%%v" set info%%v=on
   @if defined info3 echo.
-  if defined info3 FOR /F %%i IN ('set info') DO echo Info: %%i
+  if defined info3 FOR /F %%i IN ('set info') DO echo %green%Info: %%i%reset%
   if "%~1" geq "3" set clfeedback=on
-  set funcstarttext={---
-  set funcendtext=       ----}
-  set redbg=[101m
-  set magentabg=[105m
-  set green=[32m
-  set reset=[0m
+  set funcstarttext={============================================================
+  set funcendtext=  ----}
 goto :eof
 
 :setup
