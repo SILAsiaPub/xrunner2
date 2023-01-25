@@ -129,7 +129,7 @@ goto :eof
 	@if defined info3 echo %green%Info: Output is being appended to output file.%reset%
   )
   set curcommand="%ccw32%" -u -b %cctparam% -t "%script%" -o "%outfile%" "%infile%"
-  @if defined info2 echo %blue%%curcommand%%reset%
+  @if defined info2 echo %cyan%%curcommand%%reset%
   pushd "%scripts%"
   call %curcommand%
   popd
@@ -490,8 +490,8 @@ goto :eof
   @set func=%~1
   @set message1=%~2
   @set message2=%~3
-  @if defined message1 echo %message1%
-  @if defined message2 echo %message2%
+  @if defined message1 echo %green%Info: %message1%%reset%
+  @if defined message2 echo %green%Info: %message2%%reset%
   @if defined info4 echo %magenta%------------------------------------ %func% %funcendtext%%reset%
   @if defined %func:~1%pause pause
   @rem the following form of %func:~1% removes the colon from the begining of the func.
@@ -558,24 +558,22 @@ goto :eof
 goto :eof
 
 :greaterthan
-:: Description: Compares two files an returns variable newerthan=on if true
+:: Description: Compares two file modified date-time and returns variable newerthan=on if true
 :: Usage: call :newerthan file1 file2 varname
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   set f1=%~1
   set f2=%~2
   set gtvarname=%~3
   set gtresult=
-  if not exist "%f1%" call :funcend %0 "First file not found!" & goto :eof
-  if not exist "%f2%" call :funcend %0 "Second file not found!" & goto :eof
+  if not exist "%f1%" call :funcend %0 "%0 func 1st file %~nx1 was not found, so comparison is aborted." & goto :eof
+  if not exist "%f2%" call :funcend %0 "%0 func 2nd file %~nx2 was not found, so comparison is aborted." & goto :eof
   call :getfiledatetime "%f1%" file1
   call :getfiledatetime "%f2%" file2
   if %file1%. gtr %file2%. (
     set gtresult=on
-    @if defined info4 echo %green%Info: %file1%. greater than %file2%.%reset% 
-    @if defined info4 echo %green%Info: "%f1%" greater than "%f2%"%reset%
-  )
-  if %file1%. lss %file2%. (
-    if defined info4 echo %green%Info: "%f1%" is less than "%f2%"%reset%
+    @if defined info4 echo %green%Info: %~nx1 %file1% greater than %~nx2 %file2%.%reset% 
+  ) else (
+    @if defined info4 echo %green%Info: %~nx1 %file1%  is less than %~nx2 %file2%%reset%
   )
   set %gtvarname%=%gtresult%
   @if defined info3 echo %green%Info: %gtvarname% = !%gtvarname%!%reset%
