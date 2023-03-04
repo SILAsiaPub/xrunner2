@@ -7,8 +7,8 @@
 :: Created: 2016-05-04 
 :: Used by: getfiledatetime 
   @call :funcbegin %0 "'%~1' '%~2' %~3"
-  set ampm=%~1
-  set thh=%~2
+  set thh=%~1
+  set ampm=%~2
   set zerostart=
   if "%ampm%" == "AM" (
     if "%thh:~1,1%" == "" set single=true
@@ -110,16 +110,17 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' %~5"
   call :inccount
   set script=%~1
-  call :infile "%~2"
+  set infile=%~2
   set append=%~4
+  if defined infile if "%infile%" neq "%infile:,=%" set commainput=true
+  if not defined infile set infile=%ouptfile%
+  if defined commainput if defined info2 echo %green%Info: Comma separated input files supplied. Existent not checked.%reset%
+  if not defined commainput call :infile "%infile%" %0
   if defined append set append=append
   set scriptout=%script:.cct,=_%
   call :outfile "%~3" "%projectpath%\tmp\%group%-%count%-%scriptout%.xml" %append%
   if not defined script call :fatal %0 "CCT script not supplied!" & goto :eof
   if not exist "%scripts%\%script%" call :scriptfind "%script%" %0
-  if "%infile%" neq "%infile:,=%" set commainput=true
-  if defined commainput if defined info2 echo %green%Info: Comma separated input files supplied. Existent not checked.%reset%
-  if not defined commainput call :infile "%infile%" %0
   if not exist "%scripts%\%script%" call :fatal %0 "Script not found!" & goto :eof
   if not exist "%ccw32%" call :fatal %0 "missing ccw32.exe file" & goto :eof
   call :checkdir "%outfile%"
@@ -185,6 +186,36 @@ goto :eof
   call %curcommand%
   if defined commandpath popd
     @if defined outfile (call :funcendtest %0) else (call :funcend %0)
+goto :eof
+
+:cmd
+:: Description: A way of passing any commnand from a tasklist. It does not use infile and outfile.
+:: Usage: call :usercommand "copy /y 'c:\patha\file.txt' 'c:\pathb\file.txt'" [ "output file to test for" ["path to run  command in"]]
+:: Functions called: inccount, checkdir, funcend or any function
+:: External program: May use any external program
+:: Note: Single quotes get converted to double quotes before the command is used.
+  if defined fatal goto :eof
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :inccount
+  set curcommand=%~1
+  set outfile=%~2
+  set commandpath=%~3
+  if defined outfile call :checkdir "%outfile%"
+  set basepath=%cd%
+  if exist "%outfile%" move /y "%outfile%" "%outfile%.prev"
+  if not defined curcommand (
+    echo missing curcommand 
+    call :funcend %0
+    goto :eof
+    )
+  set curcommand=%curcommand:'="%
+  if defined commandpath call :checkdir "%commandpath%"
+  if defined commandpath pushd "%commandpath%"
+  @if defined info3 echo %green%Info: current path: %cd%%reset%
+  @if defined info2 echo %cyan%%curcommand%%reset%
+  call %curcommand%
+  if defined commandpath popd
+  @if defined outfile (call :funcendtest %0) else (call :funcend %0)
 goto :eof
 
 :command2file
@@ -478,9 +509,10 @@ goto :eof
   @rem the following line removes the func colon at the begining. Not removing it causes a crash.
   @set funcname=%func:~1%
   @set fparams=%~2
+  @if defined button echo %magenta%   ----  %button%   ----%reset%& set button=
   @if defined info4 echo %magenta%%funcstarttext%%reset%
   @if defined info3 echo %magentabg%%func%%reset%  %fparams%
-  @if defined info4 @if defined %funcname%echo echo  ============== %funcname%echo is ON =============== & echo on
+  @if defined echofunc FOR %%s IN (%echofunc%) DO if "%%s" == "%funcname%" echo  ============== %func% echo is ON =============== & echo on
 @goto :eof
 
 :funcend
@@ -493,10 +525,9 @@ goto :eof
   @if defined message1 echo %green%Info: %message1%%reset%
   @if defined message2 echo %green%Info: %message2%%reset%
   @if defined info4 echo %magenta%------------------------------------ %func% %funcendtext%%reset%
-  @if defined %func:~1%pause pause
+  @if defined pausefunc FOR %%s IN (%pausefunc%) DO if "%%s" == "%funcname%" echo ========= %func% paused for review ========= & pause
   @rem the following form of %func:~1% removes the colon from the begining of the func.
-  @if defined !func:~1!show @echo off
-  @if defined !func:~1!show echo ========= !func:~1!echo switched OFF =========
+  @if defined echofunc FOR %%s IN (%echofunc%) DO @if "%%s" == "%funcname%" echo ========= %func% echo switched OFF ========= & echo off
 @goto :eof
 
 :funcendtest
@@ -546,7 +577,12 @@ goto :eof
         SET fyyyy=%%A
     )
     set fnn=%%E
-    call :ampmhour %%F %%D
+    if "%timeformat:~0,2%" == "HH" (
+        set fhh=%%D
+    )
+    if "%timeformat:~0,2%" == "hh" (
+      call :ampmhour %%D %%F
+    )
   )
   set tyy=%fyyyy:~2%
   set thh=%fhh%
@@ -622,7 +658,7 @@ goto :eof
   call :multivarlist 3 9
   set firstact=%action:~0,1%
   if defined %varname% (
-    @if defined info2 echo Test: TRUE - variable %~1 is defined
+    @if defined info2 echo %xtestt% variable %~1 is defined
     if ~%firstact% neq ~: (
       @if defined info3 echo call :%action% %multivar:'="%
       call :%action% %multivar:'="%
@@ -631,7 +667,7 @@ goto :eof
       call %action% %multivar:'="%
     )
   ) else (
-    @if defined info2 echo Test: FALSE - variable %~1 is not defined
+    @if defined info2 echo %xtestf% variable %~1 is not defined
   )
 goto :eof
 
@@ -653,10 +689,10 @@ goto :eof
   call :multivarlist 3 9
   set firstact=%action:~0,1%
   if "%t1%" == "%t2%" (
-    @if defined info3 echo "%t1%" ==  "%t2%" are equal
+    @if defined info3 echo %xtestt% "%t1%" ==  "%t2%" are equal
     %multivar:'="%
   ) else (
-    @if defined info3 echo "%t1%" ==  "%t2%" are NOT equal
+    @if defined info3 echo %xtestf% "%t1%" ==  "%t2%" are NOT equal
   )
   @call :funcend %0
 goto :eof
@@ -683,11 +719,11 @@ goto :eof
   if not defined param2 call :funcend %0 "Error: missing action param2" "%funcendtext% %0 error2" & goto :eof
   call :multivarlist 2 6
   if exist "%testfile%" (
-    if defined info3 echo Test: TRUE  %nameext% does exist. Action: %multivar:'="%
+    if defined info3 echo %xtestt% %nameext% does exist. %green%Action:%reset% %multivar:'="%
     %multivar:'="%
     rem %param2% %param3% %param4% %param5% %param6%     
   ) else (
-    if defined info3 echo Test: FALSE  %nameext% does not exist. Action: none.
+    if defined info3 echo %xtestf% %nameext% does not exist. %green%Action:%reset% none.
   )
   @call :funcend %0
 goto :eof
@@ -708,7 +744,7 @@ goto :eof
   call :multivarlist 3 9
   set firstact=%action:~0,1%
   if not defined %varname% (
-    @if defined info2 echo Test: TRUE - variable %~1 is not defined
+    @if defined info2 echo %xtestt% variable %~1 is not defined
     if ~%firstact% neq ~: (
       @if defined info3 echo call :%action% %multivar:'="%
       call :%action% %multivar:'="%
@@ -717,7 +753,7 @@ goto :eof
       call %action% %multivar:'="%
     )
   ) else (
-    @if defined info2 echo Test: FALSE - variable %~1 is defined
+    @if defined info2 echo %xtestf% variable %~1 is defined
   )
 goto :eof
 
@@ -738,11 +774,11 @@ goto :eof
   set param9=%~9
   call :multivarlist 4 9
     if "%t1%" neq "%t2%" (
-    @if defined info3 echo "%t1%" ==  "%t2%" are not equal
+    @if defined info3 echo %xtestt% "%t1%" ==  "%t2%" are not equal
     @if defined info4 echo %multivar:'="%
     %multivar:'="%
   ) else (
-    @if defined info3 echo "%t1%" ==  "%t2%" are equal
+    @if defined info3 echo %xtestf% "%t1%" ==  "%t2%" are equal
   )
   @call :funcend %0
 goto :eof
@@ -771,11 +807,11 @@ goto :eof
   call :multivarlist 2 6
   set firstact=%param2:~0,1%
   if not exist "%testfile%" (
-    if defined info3 echo Test: TRUE   %testfile% does not exist. 
+    if defined info3 echo %xtestt% %testfile% does not exist. 
       if defined info4 echo %multivar:'="%
       %multivar:'="%
   ) else (
-    if defined info3 echo Test: FALSE   %filename% does exist. No action %param2% taken.
+    if defined info3 echo %xtestf% %filename% does exist. No action %param2% taken.
   )
   @call :funcend %0
 
@@ -794,8 +830,6 @@ goto :eof
 :: Usage: call :inccount
   @call :funcbegin %0
   set /A count=%count%+1
-  set writecount=%count%
-  if %count% lss 10 set writecount=%space%%count%
   @if defined info3 echo %green%Info: count = %count%%reset%
   @call :funcend %0
 goto :eof
@@ -807,8 +841,8 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2'"
   set infile=%~1
   set callingfunc=%~2
-  @if not defined infile set infile=%outfile%
-  @if not exist "%infile%" call :fatal %0 "infile %~nx1 not found for %callingfunc%"
+  if not defined infile set infile=%outfile%
+  if not exist "%infile%" call :fatal %0 "infile %~nx1 not found for %callingfunc%"
   @if defined info4 echo Info: %green%infile = %infile%%reset%
   @call :funcend %0
 goto :eof
@@ -1639,19 +1673,20 @@ goto :eof
     call :greaterthan "%projectpath%\keyvalue.tsv" "%scripts%\project.xslt" build3
   )
   set build=%build%%build1%%build2%%build3%
-  if defined info3 echo %green%Info: build = %build%%reset% 
-  if not defined build (
-    if defined info3 echo %green%Info: Existing project.xslt is up to date.%reset% 
-  ) else (
-    if defined info3 echo call "%ccw32%" %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
+  if defined info2 echo %green%Info: build = %build%%reset% 
+  if defined build (
+    if defined info3 echo call "%ccw32%" -u -b %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
     if defined info3 echo.
-    call "%ccw32%" %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
+    call "%ccw32%" -u -b %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
     if not exist "%projectpath%\tmp\proj-var.xml" call :fatal %0 "proj-var.xml not created" & call :funcend %0 & goto :eof
     if defined info3 echo call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
     call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
     if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
-    if exist "%scripts%\project.xslt" if defined info2 echo %green%Built: project.xslt from: project.txt%reset%
   )
+  rem the following info lines don't work as expected in side the multi line if statement.
+  if not defined build if defined info2 echo %green%Info: Existing project.xslt is up to date.%reset% 
+  if exist "%scripts%\project.xslt" if defined info2 echo %green%Built: project.xslt from: project.txt %reset%
+  if defined build if defined info2 echo %green%Info: project.xslt updated %reset%
   @rem the following sets the default script path but it can be overridden by a scripts= in the project.txt
   set scripts=%projectpath%\scripts
   if not exist "%scripts%\inc-lookup.xslt" copy "%cd%\scripts\inc-lookup.xslt" "%scripts%\inc-lookup.xslt"

@@ -14,7 +14,9 @@ set pauseatend=%4
 :: set unittest=%5
 call :colorvar
 call :setinfolevel %infolevel%
-call :main
+@if defined info4 echo %magenta%%funcstarttext%%reset%
+@if defined info3 echo %magentabg%:xrunner%reset% %fparams%
+call :main %group%
 goto :eof
 
 :main
@@ -30,7 +32,7 @@ goto :eof
   if exist "%projectfile%" (
     echo Project: %projectfile%
     echo.
-    if "%infolevel%" == "5" echo on
+    if defined info5 echo on
   ) else (
     echo.
     rem This is to ensure there is a parameter for the project.txt file.
@@ -57,7 +59,7 @@ goto :eof
   call :time2sec endtime
   set /A sec=%endtime%-%starttime%
   @echo Completed in %sec% seconds at %time:~0,8%
-  @call :funcend xrun
+  @call :funcend :xrunner
   if defined pauseatend (pause ) else (timeout 30)
 goto :eof
 
@@ -135,6 +137,7 @@ goto :eof
   FOR /F "usebackq skip=2 tokens=3" %%A IN (`REG QUERY %KEY_DATE% /v sDate`) DO set dateseparator=%%A
   rem get the time separator: : or ?
   FOR /F "usebackq skip=2 tokens=3" %%A IN (`REG QUERY %KEY_DATE% /v sTime`) DO set timeseparator=%%A
+  FOR /F "usebackq skip=2 tokens=3" %%A IN (`REG QUERY %KEY_DATE% /v sShortTime`) DO set timeformat=%%A
   rem set project log file name by date
   @call :funcend %0
 goto :eof
@@ -220,18 +223,33 @@ goto :eof
 :colorvar
 :: Description: Sets the inline color variables.
 :: Usage: call :inlinecolor
-  set yellowbg=[103m
-  set redbg=[101m
-  set magentabg=[105m
-  set magenta=[35m
-  set green=[32m
-  set blue=[34m
-  set cyan=[96m
-  set red=[91m
-  set magenta=[95m
-  set black=[30m
+:: Reference: https://stackoverflow.com/questions/2048509/how-to-echo-with-different-colors-in-the-windows-command-line
   set reset=[0m
-  set bold=[1m
+  rem dull forground colors
+  set black=[30m
+  set red=[31m
+  set green=[32m
+  set yellow=[33m
+  set blue=[34m
+  set magenta=[35m
+  set cyan=[36m
+  set white=[37m
+  rem strong forground colors
+  set redb=[91m
+  set greenb=[92m
+  set yellowb=[93m
+  set blueb=[94m
+  set magentab=[95m
+  set cyanb=[96m
+  set whiteb=[97m
+  rem strong background colors
+  set redbg=[101m
+  set greenbg=[102m
+  set yellowbg=[103m
+  set bluebg=[104m
+  set magentabg=[105m
+  set bluebg=[106m
+  set whitebg=[107m
 goto :eof
 
 :setinfolevel
@@ -274,9 +292,12 @@ goto :eof
   set syscmd=%scripts%\sys.cmd
   set taskscmd=%scripts%\tasks.cmd
   set projcmd=%scripts%\proj.cmd
-  set setupcct=%cd%\scripts\setup.cct
+  set setupcct=%cd%\scripts\setup2.cct
   set funccmd=%cd%\scripts\func.cmd
   set ccw32=C:\programs\xrunner2\tools\cct\Ccw64.exe
+  set xtest=%red%%yellowbg% Test: %reset%
+  set xtestt=%xtest% %greenbg%%whiteb% TRUE %reset% -
+  set xtestf=%xtest% %redbg% FALSE %reset% -
   call :checkdir "%projectpath%\scripts\"
   call :checkdir "%projectpath%\tmp"
   call "%ccw32%" %cctparam% -t "%setupcct%" -o "%syscmd%" "setup\xrun.ini"
