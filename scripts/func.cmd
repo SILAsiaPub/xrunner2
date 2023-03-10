@@ -1648,8 +1648,6 @@ goto :eof
   @call :funcend %0
 goto :eof
 
-
-
 :setup-xslt2
 :: Description: Sets up the for using Java, Saxon and XSLT2
 :: Usage: call :setup-xslt2 "%projectpath%\project.txt"
