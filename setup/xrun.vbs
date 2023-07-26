@@ -246,7 +246,7 @@ Function buttonShow(file)
   dim x, group, grplen, buttonlen
   For x = 0 To Ubound(tskgrp)
     group = tskgrp(x)
-    grplen = len(ReadIni(file,group,"label")) + len(ReadIni(file,group,"g"))
+    grplen = len(ReadIni(file,group,"label")) + len(ReadIni(file,group,"g")) + len(ReadIni(file,group,"l"))
     buttonlen = len(ReadIni(file,group,"button")) + len(ReadIni(file,group,"b"))
     tasklen = len(ReadIni(file,group,"t")) + len(ReadIni(file,group,"ut"))
     If grplen > zero Then
