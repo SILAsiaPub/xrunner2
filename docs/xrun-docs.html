@@ -1,0 +1,241 @@
+<!DOCTYPE html []>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="MarkdownViewer++" />
+    <title>xrun-docs.md</title>
+    <style type="text/css">
+            
+/* Avoid page breaks inside the most common attributes, especially for exports (i.e. PDF) */
+td, h1, h2, h3, h4, h5, p, ul, ol, li {
+    page-break-inside: avoid; 
+}
+
+        </style>
+  </head>
+  <body>
+    <h1 id="xrunner-documentation">Xrunner Documentation</h1>
+    <h2 id="index">Index <a id="index" /></h2>
+    <p>
+      <a href="#appendfile">:appendfile</a>  
+<a href="#appendnumbparam">:appendnumbparam</a>  
+<a href="#calcnumbparam">:calcnumbparam</a>  
+<a href="#cct">:cct</a>  
+<a href="#checkdir">:checkdir</a>  
+<a href="#command">:command</a>  
+<a href="#command2file">:command2file</a>  
+<a href="#command2var">:command2var</a>  
+<a href="#copy">:copy</a>  
+<a href="#copy2usb">:copy2usb</a>  
+<a href="#date">:date</a>  
+<a href="#dec">:dec</a>  
+<a href="#detectdateformat">:detectdateformat</a>  
+<a href="#drivepath">:drivepath</a>  
+<a href="#echo">:echo</a>  
+<a href="#encoding">:encoding</a>  
+<a href="#fatal">:fatal</a>  
+<a href="#fb">:fb</a>  
+<a href="#funcend">:funcend</a>  
+<a href="#iconv">:iconv</a>  
+<a href="#ifexist">:ifexist</a>  
+<a href="#ifnotexist">:ifnotexist</a>  
+<a href="#inc">:inc</a>  
+<a href="#inccount">:inccount</a>  
+<a href="#infile">:infile</a>  
+<a href="#ini2xslt">:ini2xslt</a>  
+<a href="#iniline2var">:iniline2var</a>  
+<a href="#iniparse4xslt">:iniparse4xslt</a>  
+<a href="#inisection">:inisection</a>  
+<a href="#inputfile">:inputfile</a>  
+<a href="#jade">:jade</a>  
+<a href="#last">:last</a>  
+<a href="#loopfiles">:loopfiles</a>  
+<a href="#loopstring">:loopstring</a>  
+<a href="#main">:main</a>  
+<a href="#mergevar">:mergevar </a>  
+<a href="#modelcheck">:modelcheck</a>  
+<a href="#name">:name</a>  
+<a href="#nameext">:nameext</a>  
+<a href="#outfile">:outfile</a>  
+<a href="#outputfile">:outputfile</a>  
+<a href="#paratextio">:paratextio</a>  
+<a href="#pause">:pause</a>  
+<a href="#prince">:prince</a>  
+<a href="#ptbook">:ptbook</a>  
+<a href="#regex">:regex</a>  
+<a href="#rho">:rho</a>  
+<a href="#setinfolevel">:setinfolevel</a>  
+<a href="#setup">:setup</a>  
+<a href="#spawnbat">:spawnbat</a>  
+<a href="#start">:start</a>  
+<a href="#start2">:start2</a>  
+<a href="#sub">:sub</a>  
+<a href="#taskgroup">:taskgroup</a>  
+<a href="#taskwritexrun">:taskwritexrun</a>  
+<a href="#test">:test</a>  
+<a href="#tidy">:tidy</a>  
+<a href="#time">:time</a>  
+<a href="#unittest">:unittest</a>  
+<a href="#unittestaccumulate">:unittestaccumulate</a>  
+<a href="#v2">:v2</a>  
+<a href="#validate">:validate</a>  
+<a href="#var">:var</a>  
+<a href="#variableset">:variableset</a>  
+<a href="#variableslist">:variableslist</a>  
+<a href="#xquery">:xquery</a>  
+<a href="#xslt">:xslt</a>  </p>
+    <h2 id="function-reference">Function reference</h2>
+    <ul>
+      <li>
+        <strong>_Initialize</strong>
+        <ul>
+          <li>
+            <em>Description:</em> xrun</li>
+          <li>
+            <em>Project Usage:</em>
+            <code>xrun C:\path\project.txt [group [infolevel [pauseatend [unittest]]]]</code>
+          </li>
+          <li>
+            <em>Internal Usage:</em>
+            <code>xrun C:\path\project.txt [group [infolevel [pauseatend [unittest]]]]</code>
+          </li>
+          <li>
+            <em>Note:</em> Xrun requires a project file. The group parameter is normally a letter a-t but can be nothing. If nothing all groups are run.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>:appendfile</strong>  <a id="appendfile" href="#top">index</a><ul><li><em>Description:</em> Appends one file to the end of another file.</li><li><em>Project Usage:</em><code>t=: appendfile filetoadd filetoappendto</code></li><li><em>Internal Usage:</em><code>call : appendfile filetoadd filetoappendto</code></li></ul></li>
+      <li>
+        <strong>:appendnumbparam</strong>  <a id="appendnumbparam" href="#top">index</a><ul><li><em>Description:</em> Append numbered parameters on the end of a given variable name. Used from a loop like :loopfiles.</li><li><em>Project Usage:</em><code>t=:appendnumbparam prepart-of-par-name seed-numb out_var_name</code></li><li><em>Internal Usage:</em><code>call :appendnumbparam prepart-of-par-name seed-numb out_var_name</code></li></ul></li>
+      <li>
+        <strong>:calcnumbparam</strong>  <a id="calcnumbparam" href="#top">index</a><ul><li><em>Description:</em> Append numbered parameters on the end of a predefined %preaddnumbparam% string</li><li><em>Project Usage:</em><code>t=:calcnumbparam prepart-of-par-name seed-numb [value-to-add-or-subtract]</code></li><li><em>Internal Usage:</em><code>call :calcnumbparam prepart-of-par-name seed-numb [value-to-add-or-subtract]</code></li><li><em>Note:</em> Default value to add or subtract is -0</li></ul></li>
+      <li>
+        <strong>:cct</strong>  <a id="cct" href="#top">index</a><ul><li><em>Description:</em> Privides interface to CCW32.</li><li><em>Project Usage:</em><code>t=:cct script.cct ["infile.txt" ["outfile.txt"]]</code></li><li><em>Internal Usage:</em><code>call :cct script.cct ["infile.txt" ["outfile.txt"]]</code></li><li><em>Depends on:</em> inccount, infile, outfile, funcend</li><li><em>External program:</em> ccw32.exe <a href="https://software.sil.org/cc/">https://software.sil.org/cc/</a></li><li><em>Required variable:</em> ccw32</li></ul></li>
+      <li>
+        <strong>:checkdir</strong>  <a id="checkdir" href="#top">index</a><ul><li><em>Description:</em> checks if dir exists if not it is created</li><li><em>Project Usage:</em><code>t=:checkdir C:\path\name.ext</code></li><li><em>Internal Usage:</em><code>call :checkdir C:\path\name.ext</code></li></ul></li>
+      <li>
+        <strong>:command</strong>  <a id="command" href="#top">index</a><ul><li><em>Description:</em> A way of passing any commnand from a tasklist. It does not use infile and outfile.</li><li><em>Project Usage:</em><code>t=:usercommand "copy /y 'c:\patha\file.txt' 'c:\pathb\file.txt'" ["path to run command in" "output file to test for"]</code></li><li><em>Internal Usage:</em><code>call :usercommand "copy /y 'c:\patha\file.txt' 'c:\pathb\file.txt'" ["path to run command in" "output file to test for"]</code></li><li><em>Depends on:</em> inccount, checkdir, funcend or any function</li><li><em>External program:</em> May use any external program</li><li><em>Note:</em> Single quotes get converted to double quotes before the command is used.</li></ul></li>
+      <li>
+        <strong>:command2file</strong>  <a id="command2file" href="#top">index</a><ul><li><em>Description:</em> Used with commands that only give stdout, so they can be captued in a file.</li><li><em>Project Usage:</em><code>t=:command2file "command" "outfile" ["commandpath"]</code></li><li><em>Internal Usage:</em><code>call :command2file "command" "outfile" ["commandpath"]</code></li><li><em>Depends on:</em> inccount, outfile, funcend or any function</li><li><em>External program:</em> May call any external program</li><li><em>Note:</em> This command does its own expansion of single quotes to double quotes so cannont be fed directly from a ifdefined or ifnotdefined. Instead define a task that is fired by the ifdefined.</li></ul></li>
+      <li>
+        <strong>:command2var</strong>  <a id="command2var" href="#top">index</a><ul><li><em>Description:</em> creates a variable from the command line</li><li><em>Project Usage:</em><code>t=:command2var varname "command" "comment"</code></li><li><em>Internal Usage:</em><code>call :command2var varname "command" "comment"</code></li></ul></li>
+      <li>
+        <strong>:copy</strong>  <a id="copy" href="#top">index</a><ul><li><em>Description:</em> Provides copying with exit on failure</li><li><em>Project Usage:</em><code>t=:copy infile outfile [append] [xcopy]</code></li><li><em>Internal Usage:</em><code>call :copy infile outfile [append] [xcopy]</code></li><li><em>Depends on:</em> :infile, :outfile, :inccount :funcend</li><li><em>Uddated:</em> 2018-11-03</li></ul></li>
+      <li>
+        <strong>:copy2usb</strong>  <a id="copy2usb" href="#top">index</a><ul><li><em>Description:</em> Set up to cop files to USB drive and optionally format.</li><li><em>Project Usage:</em><code>t=:copy2usb source_path target_drive target_folder [format_first]</code></li><li><em>Internal Usage:</em><code>call :copy2usb source_path target_drive target_folder [format_first]</code></li><li><em>Depends on:</em> external program xcopy (a part of Windows)</li></ul></li>
+      <li>
+        <strong>:date</strong>  <a id="date" href="#top">index</a><ul><li><em>Description:</em> Returns multiple variables with date in three formats, the year in wo formats, month and day date.</li><li><em>Required variables:</em> detectdateformat</li><li><em>Created:</em> 2016-05-04</li></ul></li>
+      <li>
+        <strong>:dec</strong>  <a id="dec" href="#top">index</a><ul><li><em>Description:</em> Decrease the number variable</li><li><em>Project Usage:</em><code>t=:dec varname</code></li><li><em>Internal Usage:</em><code>call :dec varname</code></li></ul></li>
+      <li>
+        <strong>:detectdateformat</strong>  <a id="detectdateformat" href="#top">index</a><ul><li><em>Description:</em> Get the date format from the Registery: 0=US 1=AU 2=iso</li><li><em>Project Usage:</em><code>t=:detectdateformat</code></li><li><em>Internal Usage:</em><code>call :detectdateformat</code></li></ul></li>
+      <li>
+        <strong>:drivepath</strong>  <a id="drivepath" href="#top">index</a><ul><li><em>Description:</em> returns the drive and path from a full drive:\path\filename</li><li><em>Project Usage:</em><code>t=:drivepath C:\path\name.ext|path\name.ext</code></li><li><em>Internal Usage:</em><code>call :drivepath C:\path\name.ext|path\name.ext</code></li></ul></li>
+      <li>
+        <strong>:echo</strong>  <a id="echo" href="#top">index</a><ul><li><em>Description:</em> Echo a message</li><li><em>Project Usage:</em><code>t=:echo "message text"</code></li><li><em>Internal Usage:</em><code>call :echo "message text"</code></li></ul></li>
+      <li>
+        <strong>:encoding</strong>  <a id="encoding" href="#top">index</a><ul><li><em>Description:</em> to check the encoding of a file</li><li><em>Project Usage:</em><code>t=:encoding file [validate-against]</code></li><li><em>Internal Usage:</em><code>call :encoding file [validate-against]</code></li><li><em>Depends on:</em> :infile</li><li><em>External program:</em> file.exe <a href="http://gnuwin32.sourceforge.net/">http://gnuwin32.sourceforge.net/</a></li><li><em>Required variables:</em> encodingchecker</li></ul></li>
+      <li>
+        <strong>:fatal</strong>  <a id="fatal" href="#top">index</a><ul><li><em>Description:</em> Used when fatal events occur</li><li><em>Project Usage:</em><code>t=:fatal %0 "message 1" "message 2"</code></li><li><em>Internal Usage:</em><code>call :fatal %0 "message 1" "message 2"</code></li></ul></li>
+      <li>
+        <strong>:fb</strong>  <a id="fb" href="#top">index</a><ul><li><em>Description:</em> Used to give common feed back</li></ul></li>
+      <li>
+        <strong>:funcend</strong>  <a id="funcend" href="#top">index</a><ul><li><em>Description:</em> Used with func that out put files. Like XSLT, cct, command2file</li><li><em>Project Usage:</em><code>t=:funcend %0</code></li><li><em>Internal Usage:</em><code>call :funcend %0</code></li></ul></li>
+      <li>
+        <strong>:iconv</strong>  <a id="iconv" href="#top">index</a><ul><li><em>Description:</em> Converts files from CP1252 to UTF-8</li><li><em>Project Usage:</em><code>t=:iconv infile outfile OR t=:iconv file_nx inpath outpath</code></li><li><em>Internal Usage:</em><code>call :iconv infile outfile OR call :iconv file_nx inpath outpath</code></li><li><em>Depends on:</em> infile, outfile, funcend</li><li><em>External program:</em> iconv.exe <a href="http://gnuwin32.sourceforge.net/">http://gnuwin32.sourceforge.net/</a></li></ul></li>
+      <li>
+        <strong>:ifexist</strong>  <a id="ifexist" href="#top">index</a><ul><li><em>Description:</em></li><li><em>Project Usage:</em><code>t=:ifexist testfile action</code></li><li><em>Internal Usage:</em><code>call :ifexist testfile action</code></li><li><em>Depends on:</em> inccount</li></ul></li>
+      <li>
+        <strong>:ifnotexist</strong>  <a id="ifnotexist" href="#top">index</a><ul><li><em>Description:</em> If a file or folder do not exist, then performs an action.</li><li><em>Project Usage:</em><code>t=:ifnotexist testfile action</code></li><li><em>Internal Usage:</em><code>call :ifnotexist testfile action</code></li><li><em>Depends on:</em> inccount</li></ul></li>
+      <li>
+        <strong>:inc</strong>  <a id="inc" href="#top">index</a><ul><li><em>Description:</em> Increase the number variable</li><li><em>Project Usage:</em><code>t=:inc varname</code></li><li><em>Internal Usage:</em><code>call :inc varname</code></li></ul></li>
+      <li>
+        <strong>:inccount</strong>  <a id="inccount" href="#top">index</a><ul><li><em>Description:</em> Increments the count variable</li><li><em>Project Usage:</em><code>t=:inccount</code></li><li><em>Internal Usage:</em><code>call :inccount</code></li></ul></li>
+      <li>
+        <strong>:infile</strong>  <a id="infile" href="#top">index</a><ul><li><em>Description:</em> If infile is specifically set then uses that else uses previous outfile.</li><li><em>Project Usage:</em><code>t=:infile "%file%" calling-func</code></li><li><em>Internal Usage:</em><code>call :infile "%file%" calling-func</code></li><li><em>Depends on:</em> fatal</li></ul></li>
+      <li>
+        <strong>:ini2xslt</strong>  <a id="ini2xslt" href="#top">index</a><ul><li><em>Description:</em> Convert ini file to xslt</li><li><em>Project Usage:</em><code>t=:ini2xslt file.ini output.xslt function sectionexit</code></li><li><em>Internal Usage:</em><code>call :ini2xslt file.ini output.xslt function sectionexit</code></li><li><em>Depends on:</em> inccount, infile, outfile.</li></ul></li>
+      <li>
+        <strong>:iniline2var</strong>  <a id="iniline2var" href="#top">index</a><ul><li><em>Description:</em> Sets variables from one section</li><li><em>Project Usage:</em><code>t=:variableset line sectionget</code></li><li><em>Internal Usage:</em><code>call :variableset line sectionget</code></li><li><em>Unused:</em></li></ul></li>
+      <li>
+        <strong>:iniparse4xslt</strong>  <a id="iniparse4xslt" href="#top">index</a><ul><li><em>Description:</em> Parse the = delimited data and write to xslt . Skips sections and can exit when</li><li><em>Project Usage:</em><code>t=:iniparse4xslt outfile sectionexit element att1name att1val att2name att2val</code></li><li><em>Internal Usage:</em><code>call :iniparse4xslt outfile sectionexit element att1name att1val att2name att2val</code></li><li><em>Depends on:</em> inccount</li></ul></li>
+      <li>
+        <strong>:inisection</strong>  <a id="inisection" href="#top">index</a><ul><li><em>Description:</em> Handles variables list supplied in a file.</li><li><em>Project Usage:</em><code>t=:variableslist inifile sectionget linefunc</code></li><li><em>Internal Usage:</em><code>call :variableslist inifile sectionget linefunc</code></li><li><em>Unused:</em></li></ul></li>
+      <li>
+        <strong>:inputfile</strong>  <a id="inputfile" href="#top">index</a><ul><li><em>Description:</em> Sets the starting file of a serial tasklist, by assigning it to the var outfile</li><li><em>usage:</em> call :inputfile "drive:\path\file.ext"</li></ul></li>
+      <li>
+        <strong>:jade</strong>  <a id="jade" href="#top">index</a><ul><li><em>Description:</em> Create html/xml from jade file (now pug) Still uses jade extension</li><li><em>Project Usage:</em><code>t=:jade "infile" "outfile"</code></li><li><em>Internal Usage:</em><code>call :jade "infile" "outfile"</code></li><li><em>Depends on:</em> inccount, infile, outfile, nameext, name, funcend</li><li><em>External program:</em> NodeJS npm program jade</li></ul></li>
+      <li>
+        <strong>:last</strong>  <a id="last" href="#top">index</a><ul><li><em>Description:</em> Find the last parameter in a set of numbered params. Usually called by a loop.</li><li><em>Project Usage:</em><code>t=:last par_name number</code></li><li><em>Internal Usage:</em><code>call :last par_name number</code></li></ul></li>
+      <li>
+        <strong>:loopfiles</strong>  <a id="loopfiles" href="#top">index</a><ul><li><em>Description:</em> Used to loop through a subset of files specified by the filespec from a single directory</li><li><em>Project Usage:</em><code>t=:loopfiles file_specs sub_name [param[3-9]]</code></li><li><em>Internal Usage:</em><code>call :loopfiles file_specs sub_name [param[3-9]]</code></li><li><em>Depends on:</em> appendnumbparam, last, taskgroup. Can also use any other function.</li></ul></li>
+      <li>
+        <strong>:loopstring</strong>  <a id="loopstring" href="#top">index</a><ul><li><em>Description:</em> Loops through a list supplied in a space separated string.</li><li><em>Project Usage:</em><code>t=:loopstring action "string" ["comment"]</code></li><li><em>Internal Usage:</em><code>call :loopstring action "string" ["comment"]</code></li><li><em>Depends on:</em> appendnumbparam, last, taskgroup. Can also use any other function.</li><li><em>Note:</em> action may have multiple parts</li></ul></li>
+      <li>
+        <strong>:main</strong>  <a id="main" href="#top">index</a><ul><li><em>Description:</em> Main Loop, does setup and gets variables then runs group loops.</li><li><em>Depends on:</em> :setup, :taskgroup and may use unittestaccumulate</li></ul></li>
+      <li>**:mergevar **  <a id="mergevar " href="#top">index</a><ul><li><em>Description:</em> Merge two numbered variable into one with a space between them</li></ul></li>
+      <li>
+        <strong>:modelcheck</strong>  <a id="modelcheck" href="#top">index</a><ul><li><em>Description:</em> Copies in files from Model project</li><li><em>Project Usage:</em><code>t=:modelcheck "file.ext" "modelpath"</code></li><li><em>Internal Usage:</em><code>call :modelcheck "file.ext" "modelpath"</code></li></ul></li>
+      <li>
+        <strong>:name</strong>  <a id="name" href="#top">index</a><ul><li><em>Description:</em> Returns a variable name containg just the name from the path.</li></ul></li>
+      <li>
+        <strong>:nameext</strong>  <a id="nameext" href="#top">index</a><ul><li><em>Description:</em> Returns a variable nameext containg just the name and extension from the path.</li></ul></li>
+      <li>
+        <strong>:outfile</strong>  <a id="outfile" href="#top">index</a><ul><li><em>Description:</em> If out file is specifically set then uses that else uses supplied name.</li><li><em>Project Usage:</em><code>t=:outfile "C:\path\file.ext" "%cd%\tmp\%script%.xml" nocheck</code></li><li><em>Internal Usage:</em><code>call :outfile "C:\path\file.ext" "%cd%\tmp\%script%.xml" nocheck</code></li></ul></li>
+      <li>
+        <strong>:outputfile</strong>  <a id="outputfile" href="#top">index</a><ul><li><em>Description:</em> Copies last out file to new name. Used to make a static name other tasklists can use.</li><li><em>Project Usage:</em><code>:outputfile drive:\path\file.ext [start] [validate]</code></li><li><em>Internal Usage:</em><code>:outputfile drive:\path\file.ext [start] [validate]</code></li><li><em>Depends on:</em> checkdir, funcend, validate</li></ul></li>
+      <li>
+        <strong>:paratextio</strong>  <a id="paratextio" href="#top">index</a><ul><li><em>Description:</em> Loops through a list of books and extracts USX files.</li><li><em>Project Usage:</em><code>t=:paratextio project "book_list" [outpath] [write] [usfm]</code></li><li><em>Internal Usage:</em><code>call :paratextio project "book_list" [outpath] [write] [usfm]</code></li><li><em>Depends on:</em> ptbook</li></ul></li>
+      <li>
+        <strong>:pause</strong>  <a id="pause" href="#top">index</a><ul><li><em>Description:</em> Used in project.txt to pause the processing</li></ul></li>
+      <li>
+        <strong>:prince</strong>  <a id="prince" href="#top">index</a><ul><li><em>Description:</em> Make PDF using PrinceXML</li><li><em>Project Usage:</em><code>t=:prince [infile [outfile [css]]]</code></li><li><em>Internal Usage:</em><code>call :prince [infile [outfile [css]]]</code></li><li><em>Depends on:</em> infile, outfile, funcend</li><li><em>External program:</em> prince.exe <a href="https://www.princexml.com/">https://www.princexml.com/</a></li><li><em>External program:</em> prince</li></ul></li>
+      <li>
+        <strong>:ptbook</strong>  <a id="ptbook" href="#top">index</a><ul><li><em>Description:</em> Extract USX from Paratext</li><li><em>Project Usage:</em><code>t=:ptbook project book [outpath] [write] [usfm]</code></li><li><em>Internal Usage:</em><code>call :ptbook project book [outpath] [write] [usfm]</code></li><li><em>Depends on:</em> outfile, funcend</li><li><em>External program:</em> rdwrtp8.exe from <a href="https://pt8.paratext.org/">https://pt8.paratext.org/</a></li><li><em>Required variables:</em> rdwrtp8</li></ul></li>
+      <li>
+        <strong>:regex</strong>  <a id="regex" href="#top">index</a><ul><li><em>Description:</em> Run a regex on a file</li><li><em>Project Usage:</em><code>t=:regex find replace infile outfile</code></li><li><em>Internal Usage:</em><code>call :regex find replace infile outfile</code></li><li><em>Depends on:</em> inccount, infile, outfile, funcend</li><li><em>External program:</em> rxrepl.exe <a href="https://sites.google.com/site/regexreplace/">https://sites.google.com/site/regexreplace/</a></li></ul></li>
+      <li>
+        <strong>:rho</strong>  <a id="rho" href="#top">index</a><ul><li><em>Description:</em> Create xml from .rho file markup</li><li><em>Project Usage:</em><code>t=:rho infile outfile</code></li><li><em>Internal Usage:</em><code>call :rho infile outfile</code></li><li><em>Depends on:</em> infile, outfile, funcend NodeJS NPM program Rho</li><li><em>External program:</em> NodeJS npm program Rho</li></ul></li>
+      <li>
+        <strong>:setinfolevel</strong>  <a id="setinfolevel" href="#top">index</a><ul><li><em>Description:</em> Used for initial setup and after xrun.ini and project.txt</li><li><em>Project Usage:</em><code>t=:setinfolevel numb-level</code></li><li><em>Internal Usage:</em><code>call :setinfolevel numb-level</code></li><li><em>Note:</em> numb-level range 0-5</li></ul></li>
+      <li>
+        <strong>:setup</strong>  <a id="setup" href="#top">index</a><ul><li><em>Description:</em> Sets up the variables and does some checking.</li><li><em>Project Usage:</em><code>t=:setup</code></li><li><em>Internal Usage:</em><code>call :setup</code></li><li><em>Depends on:</em> variableslist, detectdateformat, ini2xslt, iniparse4xslt, setinfolevel, fatal</li></ul></li>
+      <li>
+        <strong>:spawnbat</strong>  <a id="spawnbat" href="#top">index</a><ul><li><em>Depreciated:</em></li></ul></li>
+      <li>
+        <strong>:start</strong>  <a id="start" href="#top">index</a><ul><li><em>Description:</em> Start a program but don't wait for it.</li></ul></li>
+      <li>
+        <strong>:start2</strong>  <a id="start2" href="#top">index</a><ul><li><em>Description:</em> Start a program but don't wait for it.</li></ul></li>
+      <li>
+        <strong>:sub</strong>  <a id="sub" href="#top">index</a><ul><li><em>Description:</em> Starts a sub loop, this is similar to taskgroup</li><li><em>Project Usage:</em><code>t=:sub "subname" ['param1' ['param2' ['param3' ['param4']]]]</code></li><li><em>Internal Usage:</em><code>call :sub "subname" ['param1' ['param2' ['param3' ['param4']]]]</code></li><li><em>Depends on:</em> appendnumbparam and when unit testing: unittestaccumulate</li></ul></li>
+      <li>
+        <strong>:taskgroup</strong>  <a id="taskgroup" href="#top">index</a><ul><li><em>Description:</em> Loop that triggers each task in the group.</li><li><em>Project Usage:</em><code>t=:taskgroup group</code></li><li><em>Internal Usage:</em><code>call :taskgroup group</code></li><li><em>Depends on:</em> unittestaccumulate. Can depend on any procedure in the input task group.</li></ul></li>
+      <li>
+        <strong>:taskwritexrun</strong>  <a id="taskwritexrun" href="#top">index</a><ul><li><em>Description:</em> Sets variables from one section</li><li><em>Project Usage:</em><code>t=:variableset line sectiontoexit</code></li><li><em>Internal Usage:</em><code>call :variableset line sectiontoexit</code></li></ul></li>
+      <li>
+        <strong>:test</strong>  <a id="test" href="#top">index</a><ul><li><em>Description:</em> Used for unit testing</li><li><em>Project Usage:</em><code>t=:test val1 val2 valn report</code></li><li><em>Internal Usage:</em><code>call :test val1 val2 valn report</code></li><li><em>Depends on:</em> calcnumbparam, last</li></ul></li>
+      <li>
+        <strong>:tidy</strong>  <a id="tidy" href="#top">index</a><ul><li><em>Description:</em> Convert HTML to XHTML</li><li><em>Project Usage:</em><code>t=:tidy ["infile"] ["outfile"]</code></li><li><em>Internal Usage:</em><code>call :tidy ["infile"] ["outfile"]</code></li><li><em>Depends on:</em> infile, outfile, inccount, funcend</li><li><em>External program:</em> tidy.exe <a href="http://tidy.sourceforge.net/">http://tidy.sourceforge.net/</a></li><li><em>Required variables:</em> tidy</li></ul></li>
+      <li>
+        <strong>:time</strong>  <a id="time" href="#top">index</a><ul><li><em>Description:</em> Retrieve time in several shorter formats than %time% provides</li><li><em>Project Usage:</em><code>t=:time</code></li><li><em>Internal Usage:</em><code>call :time</code></li><li><em>Created:</em> 2016-05-05</li></ul></li>
+      <li>
+        <strong>:unittest</strong>  <a id="unittest" href="#top">index</a><ul><li><em>Description:</em> Used for unit testing</li><li><em>Project Usage:</em><code>only used internally</code></li><li><em>Internal Usage:</em><code>only used internally</code></li><li><em>Depends on:</em> setup,</li></ul></li>
+      <li>
+        <strong>:unittestaccumulate</strong>  <a id="unittestaccumulate" href="#top">index</a><ul><li><em>Description:</em> Acumulate %utreturn% variables into a coma space separated list.</li></ul></li>
+      <li>
+        <strong>:v2</strong>  <a id="v2" href="#top">index</a><ul><li><em>Depreciated:</em> no longer needed or used.</li></ul></li>
+      <li>
+        <strong>:validate</strong>  <a id="validate" href="#top">index</a><ul><li><em>Description:</em> Validate an XML file</li><li><em>Project Usage:</em><code>t=:validate "xmlfile"</code></li><li><em>Internal Usage:</em><code>call :validate "xmlfile"</code></li><li><em>Depends on:</em> External program 'xml.exe' from XMLstarlet <a href="http://xmlstar.sourceforge.net/">http://xmlstar.sourceforge.net/</a></li></ul></li>
+      <li>
+        <strong>:var</strong>  <a id="var" href="#top">index</a><ul><li><em>Description:</em> Set a variable within a taskgroup</li><li><em>Project Usage:</em><code>t=:var varname "varvalue"</code></li><li><em>Internal Usage:</em><code>t=:var varname "varvalue"</code></li></ul></li>
+      <li>
+        <strong>:variableset</strong>  <a id="variableset" href="#top">index</a><ul><li><em>Description:</em> Sets variables sent from variableslist.</li><li><em>Project Usage:</em><code>t=:variableset line sectiontoexit</code></li><li><em>Internal Usage:</em><code>call :variableset line sectiontoexit</code></li></ul></li>
+      <li>
+        <strong>:variableslist</strong>  <a id="variableslist" href="#top">index</a><ul><li><em>Description:</em> Handles variables list supplied in a file.</li><li><em>Project Usage:</em><code>t=:variableslist list varsetalt</code></li><li><em>Internal Usage:</em><code>call :variableslist list varsetalt</code></li><li><em>Depends on:</em> :variableset</li></ul></li>
+      <li>
+        <strong>:xquery</strong>  <a id="xquery" href="#top">index</a><ul><li><em>Description:</em> Provides interface to xquery by saxon9he.jar</li><li><em>Project Usage:</em><code>t=:xquery scriptname ["infile"] ["outfile"] [allparam]</code></li><li><em>Internal Usage:</em><code>call :xquery scriptname ["infile"] ["outfile"] [allparam]</code></li><li><em>Depends on:</em> inccount, infile, outfile, funcend, fatal</li><li><em>External program:</em> java.exe <a href="https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</a></li><li><em>Java application:</em> saxon9he.jar <a href="https://sourceforge.net/projects/saxon/">https://sourceforge.net/projects/saxon/</a></li><li><em>Required variables:</em> java saxon9</li><li><em>created:</em> 2018-11-27</li></ul></li>
+      <li>
+        <strong>:xslt</strong>  <a id="xslt" href="#top">index</a><ul><li><em>Description:</em> Runs Java with saxon to process XSLT transformations.</li><li><em>Project Usage:</em><code>t=:xslt script.xslt [input.xml [output.xml [parameters]]]</code></li><li><em>Internal Usage:</em><code>call :xslt script.xslt [input.xml [output.xml [parameters]]]</code></li><li><em>Depends on:</em> inccount, infile, outfile, fatal, funcend</li><li><em>External program:</em> java.exe <a href="https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</a></li><li><em>Java application:</em> saxon9he.jar <a href="https://sourceforge.net/projects/saxon/">https://sourceforge.net/projects/saxon/</a></li><li><em>Required variables:</em> java saxon9</li></ul></li>
+    </ul>
+  </body>
+</html>
