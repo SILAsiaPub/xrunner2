@@ -64,7 +64,7 @@ goto :eof
 
 :autoit
 :: Description: Pass a script and variables to autoit.
-::Usage: call :autoit script.au3 infile outfile parm1 etc
+:: Usage: call :autoit script.au3 infile outfile parm1 etc
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :inccount %count%
@@ -166,6 +166,7 @@ goto :eof
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :inccount
+  setlocal DISABLEDELAYEDEXPANSION
   set curcommand=%~1
   set commandpath=%~2
   set outfile=%~3
@@ -178,12 +179,13 @@ goto :eof
     call :funcend %0
     goto :eof
     )
-  set curcommand=%curcommand:'="%
   if defined commandpath call :checkdir "%commandpath%"
   if defined commandpath pushd "%commandpath%"
   @if defined info3 echo %green%Info: current path: %cd%%reset%
   @if defined info2 echo %cyan%%curcommand%%reset%
+  set curcommand=%curcommand:'="%
   call %curcommand%
+  SETLOCAL ENABLEDELAYEDEXPANSION
   if defined commandpath popd
     @if defined outfile (call :funcendtest %0) else (call :funcend %0)
 goto :eof
@@ -404,9 +406,6 @@ goto :eof
   @call :funcend %0
 goto :eof
 
-:dummy
-goto :eof
-
 :echo
 :: Description: Echo a message
 :: Usage: call :echo "message text"
@@ -418,6 +417,8 @@ goto :eof
 goto :eof
 
 :elapsed
+:: Description: calculates the elapsed time since the starttime
+:: Required variables: starttime
 call :time2sec cursec
 set /A elapsed=%cursec%-%starttime%
 echo Info: Elapsed seconds: %elapsed%
@@ -437,7 +438,7 @@ goto :eof
   set retname=enc%~n1
   call :infile "%testfile%"
   set nameext=%~nx1
-  FOR /F "usebackq tokens=1-2 delims=;," %%A IN (`%encodingchecker% --mime-encoding "%infile%"`) DO set fencoding=%%B & echo %%~nxA is %magentabg%%%B %reset%
+  FOR /F "usebackq tokens=1-2 delims=;," %%A IN (`%encodingchecker% --mime-encoding "%infile%"`) DO set fencoding=%%B 
   @rem echo %magentabg%%fencoding%%reset%
   if defined validateagainst (
     if "%fencoding%" == " %validateagainst% "  ( 
@@ -456,7 +457,6 @@ goto :eof
   )
   set %retname%=%badencoding%
   if defined info3 echo %retname% = %badencoding%
-  echo.
   @call :funcend %0
 goto :eof
 
@@ -478,6 +478,7 @@ goto :eof
 
 :fb
 :: Description: Used to give common feed back
+:: Usage: call :fb info_or_error_or_output message
   echo %~1: %~2 >> log\log.txt
   if "%~1" == "info" Echo Info: %~2
   if "%~1" == "error" Echo Error: %~2
@@ -491,11 +492,9 @@ goto :eof
 :: Uddated: 2018-11-03
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set action=%~1
   call :infile "%~2" %0
   call :outfile "%~3" "%~dpn2-copy%~x2"
-  set fn1=%~nx2
-  set fn2=%~? 3
-  set action=%~1
   if not defined action call :funcend %0 "missing parm 3 append|xcopy|move|copy" & goto :eof
   if defined missinginput call :funcend %0 "missing input file" & goto :eof
   call :inccount
@@ -985,6 +984,8 @@ goto :eof
 goto :eof
 
 :javahometest
+:: Description: Tests for a Java home installations
+:: Note: Not currently used.
   @call :funcbegin %0
   set JAVA_HOME=%JAVA_HOME:"=%
   set JAVA_EXE=%JAVA_HOME%/bin/java.exe
@@ -996,6 +997,7 @@ goto :eof
 goto :eof
 
 :javainpathtest
+:: Description: Tests if Java is included in the path
   @call :funcbegin %0
   set JAVA_EXE=java.exe
   %JAVA_EXE% -version >NUL 2>&1
@@ -1008,6 +1010,7 @@ goto :eof
 goto :eof
 
 :javanotfound
+:: Description: This is an error report if Java is not found
 echo.
 if defined javahome echo %javahome%
 if defined javapath echo %javapath%
@@ -1128,10 +1131,31 @@ goto :eof
     if "%grouporfunc:~0,1%" == ":" (
         FOR /F " delims=" %%s IN (%listfile%) DO  call %grouporfunc% "%%s" %multivar:'="%
       ) else (
-        FOR /F " delims=" %%s IN (%listfile%) DO  call :%grouporfunc% "%%s" %multivar:'="%
+        FOR /F " delims= " %%s IN (%listfile%) DO  call :%grouporfunc% "%%s" %multivar:'="%
   )  
     )  
   )  
+  @call :funcend %0
+goto :eof
+
+:looplistspace
+:: Description: Used to loop through list supplied in a file
+:: Usage: call :looplist sub_name list-file_specs [param[3-9]]
+:: Functions called: appendnumbparam, last, taskgroup. Can also use any other function.
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  if defined fatal goto :eof
+  set grouporfunc=%~1
+  set listfile=%~2
+  if not defined grouporfunc echo %error% Missing func parameter[2]%reset%
+  if not defined grouporfunc if defined info4 echo %funcendtext% %0 
+  if not defined grouporfunc goto :eof
+  if not defined listfile echo %error% Missing list-file parameter[1]%reset%
+  if not defined listfile if defined info4 echo %funcendtext% %0 
+  if not defined listfile goto :eof
+  if not exist "%listfile%" echo %error% Missing source: %listfile% %reset%
+  if not exist "%listfile%" if defined info4 echo %funcendtext% %0 
+  if not exist "%listfile%" goto :eof
+  FOR /F "tokens=* delims= " %%a IN (%listfile%) DO  call :%grouporfunc% %%a %%b %%c %%d %%e %%f %%g %%h
   @call :funcend %0
 goto :eof
 
@@ -1197,6 +1221,26 @@ goto :eof
   @call :funcend %0
   rem @echo off
 goto :eof
+
+:make
+:: Description: Run a make file
+:: Usage: call make [makepath makefile] 
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  set workpath=%~1
+  set makefile=%~2
+  pushd "%workpath%"  
+  if defined makefile (
+    if defined info2 echo %green%Checking: %makefile%%cyan%
+    call %make% -f %makefile%
+  ) else (
+    if defined info2 echo %green%Checking: makefile in %workpath%
+    call %make%
+  )
+  echo %green%------- End check: %reset%
+  popd
+  @call :funcend %0
+goto :eof
+
 
 :mergevar
 :: Description: Merge two numbered variable into one with a space between them
@@ -1396,12 +1440,13 @@ goto :eof
   set infile5=%~7
   set infile6=%~8
   set infile7=%~9
-  if defined infile2 set infile2="%infile2%"
-  if defined infile3 set infile3="%infile3%"
-  if defined infile4 set infile4="%infile4%"
-  if defined infile5 set infile5="%infile5%"
-  if defined infile6 set infile6="%infile6%"
-  if defined infile7 set infile7="%infile7%"
+  set infile="%infile%"
+  if defined infile2 set infile="%infile%" "%infile2%" 
+  if defined infile3 set infile="%infile%" "%infile3%" 
+  if defined infile4 set infile="%infile%" "%infile4%" 
+  if defined infile5 set infile="%infile%" "%infile5%"
+  if defined infile6 set infile="%infile%" "%infile6%"
+  if defined infile7 set infile="%infile%" "%infile7%"
   if defined css set css=-s "%css%"
   set curcommand=call "%prince%" %css% "%infile%" %infile2% %infile3% %infile4% %infile5% %infile6% %infile7% -o "%outfile%"
   @if defined info2 echo %curcommand%
@@ -1538,6 +1583,15 @@ goto :eof
   @call :funcendtest %0
 goto :eof
 
+:qrcode
+:: Description: Generate QR code
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set url=%~1
+  set qrnumb=000%~2
+  call qrcode -o "%projectpath%\output\qr\qr-%qrnumb:~-3%.png" -t png -w 400 "%url%"
+  @call :funcendtest %0
+goto :eof
+
 :regex
 :: Description: Run a regex on a file
 :: Usage: call :regex find replace infile outfile
@@ -1579,6 +1633,8 @@ goto :eof
 goto :eof
 
 :rexxini
+:: Description: Setup for Rexx scripting
+:: Note: unused
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :inccount
   call :infile "%~1" %0
@@ -1628,6 +1684,7 @@ goto :eof
 goto :eof
 
 :sec2time
+:: Description: convert seconds to time
 set /A hh=%~2/%sph%
 set /A sh=%hh%*%sph%
 set /A mm=(%~2-%sh%)/%spm%
@@ -1655,68 +1712,6 @@ goto :eof
   @call :funcend %0
 goto :eof
 
-:setup-xslt2
-:: Description: Sets up the for using Java, Saxon and XSLT2
-:: Usage: call :setup-xslt2 "%projectpath%\project.txt"
-:: Functions called: variableslist, task2cmd
-:: Variables used: green reset needsaxon saxon scripts ccw32 java cctparam
-  @call :funcbegin %0 "'%~1'"
-  if defined firstxslt (
-    if defined info3 echo %green%Info: XSLT setup already%reset%
-	call :funcend %0
-	goto :eof
-  )
-  if defined detectjava call :javahometest
-  if defined nojava set fatal=on & @call :funcend %0 & goto :eof
-  if "%needsaxon%" == "true" if not exist "%saxon%" call :fatal %0 "Saxon9he.jar not found." "This program will exit now!"  & goto :eof
-  set build=
-  if not exist "%scripts%\project.xslt" set build=on
-  if defined info3 if defined build echo %green%Info: project.xslt not found. It wil be built.%reset%
-  if exist "%scripts%\project.xslt" (
-    call :greaterthan "%projectpath%\project.txt" "%scripts%\project.xslt" build1
-    call :greaterthan "%projectpath%\lists.tsv" "%scripts%\project.xslt" build2
-    call :greaterthan "%projectpath%\keyvalue.tsv" "%scripts%\project.xslt" build3
-  )
-  set build=%build%%build1%%build2%%build3%
-  if exist %projectpath%\xbuild.txt set build=1
-  if defined info2 echo %green%Info: build = %build%%reset% 
-  if defined build (
-    if defined info3 echo call "%ccw32%" -u -b %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
-    if defined info3 echo.
-    rem this is a file if it exiast that will cause project.xslt to be rebuilt even if nothing else cause a rebuild.
-    echo xbuild > %projectpath%\xbuild.txt
-    call "%ccw32%" -u -b %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
-    if not exist "%projectpath%\tmp\proj-var.xml" call :fatal %0 "proj-var.xml not created" & call :funcend %0 & goto :eof
-    if defined info3 echo call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
-    set badencoding=0
-    set MAGIC=%cd%\tools\GnuWin32\share\misc\magic
-    call :encoding "setup\xrun.ini" utf-8
-    call :encoding "%projectpath%\project.txt" utf-8
-    if exist "%projectpath%\lists.tsv" call :encoding "%projectpath%\lists.tsv" utf-8
-    if exist "%projectpath%\keyvalue.tsv" call :encoding "%projectpath%\keyvalue.tsv" utf-8
-    set /A badencoding=%encxrun%+%encproject%+%enclists%+%enckeyvalue%
-    echo badencoding = %badencoding%  %encxrun%+%encproject%+%enclists%+%enckeyvalue%
-    if %badencoding%. gtr 0. (
-      echo %badencoding% Bad encoding of inputs detected. &   @call :funcend %0 & goto :eof
-    ) else (
-    call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
-    )
-    if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
-  )
-  set badencoding=0
-  rem the following info lines don't work as expected in side the multi line if statement.
-  if not defined build if defined info2 echo %green%Info: Existing project.xslt is up to date.%reset% 
-  if exist "%scripts%\project.xslt" if defined info2 echo %green%Built: project.xslt from: project.txt %reset%
-  if defined build if defined info2 echo %green%Info: project.xslt updated %reset%
-  @rem the following sets the default script path but it can be overridden by a scripts= in the project.txt
-  set scripts=%projectpath%\scripts
-  if not exist "%scripts%\inc-lookup.xslt" copy "%cd%\scripts\inc-lookup.xslt" "%scripts%\inc-lookup.xslt"
-  if not exist "%scripts%\inc-file2uri.xslt" copy "%cd%\scripts\inc-file2uri.xslt" "%scripts%\inc-file2uri.xslt"
-  if not exist "%scripts%\inc-copy-anything.xslt" copy "%cd%\scripts\inc-copy-anything.xslt" "%scripts%\inc-copy-anything.xslt"
-  set firstxslt=on
-  if defined firstxslt echo %green%Info: firstxslt = %firstxslt%%reset%  
-  @call :funcend %0
-goto :eof
 
 :start
 :: Description: Start a program but don't wait for it.
@@ -1823,11 +1818,75 @@ goto :eof
 goto :eof
 
 :time2sec
+:: Description: convert the current time to seconds
 set varname=%~1
 for /F "tokens=1-3 delims=:.," %%a in ("%TIME%") do (
 	set /A "%varname%=(%%a*60+1%%b-100)*60+(1%%c-100)
 )
 goto :eof
+
+:tsv2xml
+:: Description: Convert TSV to XML via NodeJS 
+:: Usage: call :tsv2xml inputfile outputfile
+:: Created: 2023-05-03
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :inccount
+  call :infile "%~1"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%coun%-%0.xml"
+  set cmdline=parsjs -d tab -o xml -s "%outfile%" "%infile%"
+  if defined info2 echo %cyan%%cmdline%%reset%
+  call %cmdline% > nul
+  set outfile=%outfile%.xml
+  @call :funcendtest %0
+goto :eof
+
+:tsv2multixml
+:: Description: Convert TSV to XML via NodeJS 
+:: Usage: call :tsv2xml inputpath inputfiles outputfile
+:: Created: 2023-07-11
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :inccount
+  set wkpath=%~1
+  set input=%~2
+  call :outfile "%~3" "%projectpath%\tmp\%group%-%coun%-%0.xml"
+  set inputs=%input:'="%
+  set cmdline=tsv2xml %inputs% ^> "%outfile%"
+  if defined info2 echo %cyan%%cmdline% ^> "%outfile%"%reset%
+  pushd "%wkpath%"
+  call %cmdline% > "%outfile%
+  popd
+  @call :funcendtest %0
+goto :eof
+
+:csv2tsv
+:: Description: Convert TSV to XML via NodeJS 
+:: Usage: call :csv2tsv inputfile outputfile
+:: Created: 2023-05-03
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :inccount
+  call :infile "%~1"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%coun%-%0.tsv"
+  set cmdline=%csvtk% csv2tab "%infile%" 
+  @echo %cyan%%cmdline% ^> "%outfile%" %reset%
+  call %cmdline% > "%outfile%"
+  @call :funcendtest %0
+goto :eof
+
+:csv2xml
+:: Description: Convert TSV to XML via NodeJS 
+:: Usage: call :csv2xml inputfile outputfile
+:: Created: 2023-05-03
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :inccount
+  call :infile "%~1"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%coun%-%0.xml"
+  set cmdline=parsjs -d comma -o xml -s "%outfile%" "%infile%"
+  echo %cyan%%cmdline%%reset%
+  call %cmdline% > nul
+  set outfile=%outfile%.xml
+  @call :funcendtest %0
+goto :eof
+
 
 :unicodecount
 :: Description: Count unicode characters in file
@@ -1906,6 +1965,8 @@ goto :eof
 goto :eof
 
 :wait
+:: Description: delay for x number of seconds
+:: Usage: call wait seconds_to_wait
   timeout /t %~1 /nobreak
 goto :eof
 
@@ -1943,7 +2004,8 @@ goto :eof
 :: Required variables: java saxon9
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
-  call :setup-xslt2
+  call :make "%projectpath%" "projxslt.make"
+  if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
   call :inccount
   set script=%~1
   if defined scripts set script=%scripts%\%~1
@@ -1993,6 +2055,7 @@ goto :eof
   call :infile "%~2" %0
   call :outfile "%~3" "%projectpath%\tmp\%group%-%count%-%~n1.xml"
   set params=%~4
+  if defined params set params= -s %params%
   rem if not exist "%script%" call :fatal %0 "missing script: %script%"
   if not exist "%script%" call :scriptfind "%script%" %0
   if defined missinginput call :fatal %0 "infile not found!"
@@ -2000,9 +2063,8 @@ goto :eof
   rem if defined params set params=%params:::==%
     )
   if defined fatal goto :eof
-  @if defined info2 echo.
-  @if defined info2 echo %xml% tr "%script%" "%infile%" ^> "%outfile%"
-  call "%xml%" tr "%script%" "%infile%" > "%outfile%"   
+  @if defined info2 echo %cyan%%xml% tr "%script%" "%infile%"%params% ^> "%outfile%"%reset%
+  call "%xml%" tr "%script%" "%infile%"%params% > "%outfile%"   
   @call :funcendtest %0
 goto :eof
 
@@ -2015,6 +2077,8 @@ goto :eof
 :: Required variables: java saxon9
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  call :make "%projectpath%" "projxslt.make"
+  if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
   call :inccount
   if defined scripts set script=%scripts%\%~1
   if not defined scripts set script=scripts\%~1
@@ -2057,7 +2121,7 @@ goto :eof
     )
   if defined fatal goto :eof
   @if defined info2 echo.
-  @if defined info2 echo %msxsl% "%script%" "%infile%" -o "%outfile%"
+  @if defined info2 echo %cyan%"%msxsl%" "%script%" "%infile%" -o "%outfile%"%reset%
   call "%msxsl%" "%infile%" "%script%" -o "%outfile%"   
   @call :funcendtest %0
 goto :eof

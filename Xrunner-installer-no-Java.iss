@@ -2,11 +2,10 @@
 ; Demonstrates copying 3 files and creating an icon.
 
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING .ISS SCRIPT FILES!
-#define scripts "C:\programs\xrunner2\scripts"
-#define icon "xslt.ico"
+#define icon "x2.ico"
 #define saxonjar "saxon-he-12.3.jar"
 #define saxonzip "SaxonHE12-3J.zip"
-#define ccwzip "Ccw64-8.1.8.zip"
+#define ccwzip "Ccw64.zip"
 #define ccwexe "ccw64.exe"
 #define makezip "make.zip"
 #define makeexe "make.exe"
@@ -16,7 +15,7 @@
 OutputBaseFilename=Xrunner2-installer
 AppName=Xrunner2
 AppVersion=2.0
-DefaultDirName=C:\programs\xrunner2
+DefaultDirName=C:\programs\xrunner2test
 DisableDirPage=true
 DefaultGroupName=Publishing
 UninstallDisplayIcon={app}\setup\{#icon}
@@ -34,32 +33,36 @@ Source: "*.xml"; DestDir: "{app}"
 Source: "LICENSE.txt"; DestDir: "{app}"
 ;Source: "*.md"; DestDir: "{app}"
 ;Source: "*.txt"; DestDir: "{app}" ; Flags: onlyifdoesntexist;
-Source: "scripts\*.xslt"; DestDir: "{#scripts}"
-Source: "scripts\*.cct"; DestDir: "{#scripts}"
-Source: "scripts\func.cmd"; DestDir: "{#scripts}"
+Source: "scripts\*.xslt"; DestDir: "{app}\scripts"
+Source: "scripts\*.cct"; DestDir: "{app}\scripts"
+Source: "scripts\func.cmd"; DestDir: "{app}\scripts"
 Source: "setup\*.html"; DestDir: "{app}\setup"
 ;Source: "setup\*.ini"; DestDir: "{app}\setup"
 ;Source: "docs\*.md"; DestDir: "{app}\docs"
 ;Source: "docs\*.html"; DestDir: "{app}\docs"
-Source: "_Xrunner_Projects\Unit-tests\*.*"; DestDir: "{app}\_Xrunner_Projects\Unit-tests"  ;
-Source: "_Xrunner_Projects\Complete_Concordance_Builder\My-Concordance\*.*"; DestDir: "{app}\_Xrunner_Projects\Complete_Concordance_Builder\My-Concordance" ; Flags: recursesubdirs
+;Source: "_Xrunner_Projects\Unit-tests\*.*"; DestDir: "{app}\_Xrunner_Projects\Unit-tests"  ;
+;Source: "_Xrunner_Projects\Complete_Concordance_Builder\My-Concordance\*.*"; DestDir: "{app}\_Xrunner_Projects\Complete_Concordance_Builder\My-Concordance" ; Flags: recursesubdirs
 ; Modify-LIFT
-Source: "_Xrunner2_Projects\Modify-LIFT\*.*"; DestDir: "{app}\_Xrunner_Projects\Modify-LIFT"  ;
-Source: "_Xrunner2_Projects\Modify-LIFT\scripts\*.*"; DestDir: "{app}\_Xrunner_Projects\Modify-LIFT\scripts"  ;
-Source: "_Xrunner2_Projects\Modify-LIFT\source\*.txt"; DestDir: "{app}\_Xrunner_Projects\Modify-LIFT\source"  ;
+;Source: "_Xrunner2_Projects\Modify-LIFT\*.*"; DestDir: "{app}\_Xrunner_Projects\Modify-LIFT"  ;
+;Source: "_Xrunner2_Projects\Modify-LIFT\scripts\*.*"; DestDir: "{app}\_Xrunner_Projects\Modify-LIFT\scripts"  ;
+;Source: "_Xrunner2_Projects\Modify-LIFT\source\*.txt"; DestDir: "{app}\_Xrunner_Projects\Modify-LIFT\source"  ;
 ; HymnBook contents menu
-Source: "_Xrunner2_Projects\Hymn_Menu\*.*"; DestDir: "{app}\_Xrunner_Projects\Hymn_Menu"  ;
-Source: "_Xrunner2_Projects\Hymn_Menu\scripts\*.*"; DestDir: "{app}\_Xrunner_Projects\Hymn_Menu\scripts"  ;
+;Source: "_Xrunner2_Projects\Hymn_Menu\*.*"; DestDir: "{app}\_Xrunner_Projects\Hymn_Menu"  ;
+;Source: "_Xrunner2_Projects\Hymn_Menu\scripts\*.*"; DestDir: "{app}\_Xrunner_Projects\Hymn_Menu\scripts"  ;
 
 ; tools
 ;Source: "..\..\..\installer-tools\jre-8u141-windows-x64.exe"; DestDir: "{tmp}"; DestName: "JREInstall.exe"; Check: IsWin64 AND InstallJava(); Flags: deleteafterinstall
 ;Source: "..\..\..\installer-tools\jre-8u66-windows-i586.exe"; DestDir: "{tmp}"; DestName: "JREInstall.exe"; Check: (NOT IsWin64) AND InstallJava(); Flags: deleteafterinstall
-Source: "..\..\..\installer-tools\UNZIP.EXE"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{tmp}\UNZIP.EXE');
-Source: "..\..\..\installer-tools\{#saxonzip}"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{app}\tools\saxon\{#saxonjar}');
-Source: "..\..\..\installer-tools\{#ccwzip}"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{app}\tools\cct\{#ccwexe}');
+;Source: "..\..\..\installer-tools\UNZIP.EXE"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{tmp}\UNZIP.EXE');
+;Source: "..\..\..\installer-tools\{#saxonzip}"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{app}\tools\saxon\{#saxonjar}');
+;Source: "..\..\..\installer-tools\{#ccwzip}"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{app}\tools\cct\{#ccwexe}');
 ;Source: "..\..\..\installer-tools\amazon-corretto-8.222.10.3-windows-x64-jre.zip"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{app}\tools\java\java.exe');
 ;Source: "..\..\..\{#makeinstall}" DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('C:\Program Files (x86)\GnuWin32\bin\make.exe');
-Source: "..\..\..\{#makezip}" DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('C:\programs\tools\bin\make.exe');
+Source: "D:\All-SIL-Publishing\installer-tools\{#makezip}"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('C:\{app}\tools\bin\make.exe');
+Source: "tools\bin\*.*"; DestDir: "{app}\tools\bin"    ; Flags: recursesubdirs
+Source: "tools\lib\*.*"; DestDir: "{app}\tools\lib"     ; Flags: recursesubdirs
+Source: "tools\cct\*.*"; DestDir: "{app}\tools\cct"     ; Flags: recursesubdirs
+Source: "tools\SaxonHE12-3J\*.*"; DestDir: "{app}\tools\saxon"     ; Flags: recursesubdirs
 
 [Icons]
 Name: "{group}\Xrunner2"; Filename: "{app}\xrunner.hta"; IconFilename: "{app}\setup\{#icon}"
@@ -68,8 +71,8 @@ Name: "{group}\Uninstallers\Xrunner2 Uninstall"; Filename: "{uninstallexe}"
 
  [Run]
 Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#saxonzip} -d {app}\tools\saxon";  Check: FileDoesNotExist('{app}\tools\saxon\{#saxonjar}');
-Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#ccwzip} -d '{app}\tools'";  Check: FileDoesNotExist('{app}\tools\{#ccwexe}');
-Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#makezip} -d '{app}\tools'";  Check: FileDoesNotExist('{app}\tools\bin\{#makeexe}');
+Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#ccwzip} -d '{app}\tools\cct'";  Check: FileDoesNotExist('{app}\tools\cct\{#ccwexe}');
+Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#makezip} -d '{app}\tools'";  Check: FileDoesNotExist('{app}\tools\{#makeexe}');
 ;Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\amazon-corretto-8.222.10.3-windows-x64-jre.zip -d '{app}\tools\java'";  Check: FileDoesNotExist('{app}\tools\java\java.exe');
 ;Filename: "{tmp}\JREInstall.exe"; Parameters: "/s"; Flags: nowait postinstall runhidden runascurrentuser; Check: InstallJava() ;
 ;Filename: "{tmp}\{#makeinstall}"; Parameters: "/s"; Flags: nowait postinstall runhidden runascurrentuser; Check: FileDoesNotExist('C:\Program Files (x86)\GnuWin32\bin\make.exe') ;
@@ -79,6 +82,12 @@ Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#makezip} -d '{app}\tools'";  C
 Name: "{app}\_Xrunner_Projects\Demos"
 Name: "{app}\_Xrunner_Projects\Modify-LIFT"
 Name: "{app}\docs"
+Name: "{app}\scripts"
+Name: "{app}\tools"
+Name: "{app}\tools\bin"
+Name: "{app}\tools\lib"
+Name: "{app}\tools\saxon"
+Name: "{app}\tools\cct"
 
 [INI]
 ;The following line is different to how it is tested on the computer

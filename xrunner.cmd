@@ -1,3 +1,4 @@
+:init
 :: Description: xrunner.cmd
 :: Usage: xrunner C:\path\project.txt [group [infolevel [pauseatend [unittest]]]]
 :: Note: xrunner requires a project file. The group parameter is normally a letter in the range a-z.
@@ -44,8 +45,6 @@ goto :eof
     pause
     goto :eof
   )
-
-  setlocal enabledelayedexpansion
   @if defined info1 echo Xrunner Started: %time:~0,8%
   call :time2sec starttime
   @if defined info3 echo Start Seconds: %starttime%
@@ -297,23 +296,48 @@ goto :eof
   set projcmd=%scripts%\proj.cmd
   set setupcct=%cd%\scripts\setup2.cct
   set funccmd=%cd%\scripts\func.cmd
-  set ccw32=C:\programs\xrunner2\tools\cct\Ccw64.exe
+  set ccw32=%cd%\tools\cct\Ccw64.exe
   set xtest=%red%%yellowbg% Test: %reset%
   set xtestt=%xtest% %greenbg%%whiteb% TRUE %reset% -
   set xtestf=%xtest% %redbg% FALSE %reset% -
-  call :checkdir "%projectpath%\scripts\"
-  call :checkdir "%projectpath%\tmp"
-  call "%ccw32%" %cctparam% -t "%setupcct%" -o "%syscmd%" "setup\xrun.ini"
+  set projxsltmake=%projectpath%\projxslt.make
   call :detectdateformat
+  call :makemake projsetup.make projectpath "%projectpath%" projectmpath %projectpath::=\:% ccw32 "%ccw32%"
+  call tools\bin\make.exe -f projsetup.make
+  rem call :checkdir "%projectpath%\scripts\"
+  rem call :checkdir "%projectpath%\tmp"
+  rem call "%ccw32%" %cctparam% -t "%setupcct%" -o "%syscmd%" "setup\xrun.ini"
   call %syscmd%
-  call "%ccw32%" %cctparam% -t "%setupcct%" -o "%taskscmd%" "%projectpath%\project.txt"
-  copy "%taskscmd%"+"%funccmd%"+"%syscmd%" "%projcmd%" > nul
+  rem call "%ccw32%" %cctparam% -t "%setupcct%" -o "%taskscmd%" "%projectpath%\project.txt"
+  rem copy "%taskscmd%"+"%funccmd%"+"%syscmd%" "%projcmd%" > nul
+  call :makemake %projectpath%\projxslt.make xrunnerpath %cd% xrunnermpath %cd::=\:% saxon %saxon%
   @if defined info1 echo %green%Setup: complete%reset%
   @if defined info1 echo.
   set /A count=0
   @call :funcend %0
   if "%~3" == "5" echo on
 goto :eof
+
+:makemake
+:: Description: Create makefile with relevant variables
+:: Usage: call :makevar fileto add to
+:: Note: the body of the make fiels should be in setup folder and in the form filename-make.txt
+  set file=%~1
+  set filenx=%~nx1
+  set n1=%~2
+  set v1=%~3
+  set n2=%~4
+  set v2=%~5
+  set n3=%~6
+  set v3=%~7
+  set n4=%~8
+  set v4=%~9
+  if defined v1 echo %n1% := %v1%> %file%
+  if defined v2 echo %n2% := %v2%>> %file%
+  if defined v3 echo %n3% := %v3%>> %file%
+  if defined v4 echo %n4% := %v4%>> %file%
+  copy /y %file%+setup\%filenx:.=-%.txt %file% >nul
+goto :eof 
 
 :time
 :: Description: Retrieve time in several shorter formats than %time% provides
@@ -345,4 +369,13 @@ set varname=%~1
 for /F "tokens=1-3 delims=:.," %%a in ("%TIME%") do (
 	set /A "%varname%=(%%a*60+1%%b-100)*60+(1%%c-100)
 )
+goto :eof
+
+:tsv2xml
+:: Description: Convert TSV to XML via NodeJS 
+:: Usage: call :tsv2xml inputfile outputfile
+:: Created: 2023-05-03
+  call :infile "%~1"
+  call :outfile "%~2"
+  call parsjs -m -d tab -o xml -s "%outfile%" "%infile%"
 goto :eof
