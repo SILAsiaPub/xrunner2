@@ -345,6 +345,7 @@ rem got this from: http://www.robvanderwoude.com/datetiment.php#IDate
   set curdate=%fyyyy%-%fmm%-%fdd%
   set curisodate=%fyyyy%-%fmm%-%fdd%
   set yyyy-mm-dd=%fyyyy%-%fmm%-%fdd%
+  set curyyyy-mm=%fyyyy%-%fmm%
   set curyyyymmdd=%fyyyy%%fmm%%fdd%
   set curyymmdd=%fyyyy:~2%%fmm%%fdd%
   set curUSdate=%fmm%/%fdd%/%fyyyy%
@@ -429,27 +430,33 @@ goto :eof
 :: External program: file.exe http://gnuwin32.sourceforge.net/
 :: Required variables: encodingchecker
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-rem if not defined encodingchecker echo Encoding not checked. Encoding Checker not defined. & echo %funcendtext% %0 error1 &goto :eof
-if not exist "%encodingchecker%" call :funcend %0 "file.exe not found! %fileext%" "Encoding not checked." & goto :eof
-set testfile=%~1
-set validateagainst=%~2
-call :infile "%testfile%"
-set nameext=%~nx1
-FOR /F "usebackq tokens=1-2" %%A IN (`%encodingchecker% --mime-encoding "%infile%"`) DO set fencoding=%%B
-if defined validateagainst (
-    if "%fencoding%" == "%validateagainst%"  ( echo Encoding check: %green%%nameext% is %fencoding% %reset% 
+  rem if not defined encodingchecker echo Encoding not checked. Encoding Checker not defined. & echo %funcendtext% %0 error1 &goto :eof
+  if not exist "%encodingchecker%" call :funcend %0 "file.exe not found! %fileext%" "Encoding not checked." & goto :eof
+  set testfile=%~1
+  set validateagainst=%~2
+  set retname=enc%~n1
+  call :infile "%testfile%"
+  set nameext=%~nx1
+  FOR /F "usebackq tokens=1-2 delims=;," %%A IN (`%encodingchecker% --mime-encoding "%infile%"`) DO set fencoding=%%B & echo %%~nxA is %magentabg%%%B %reset%
+  @rem echo %magentabg%%fencoding%%reset%
+  if defined validateagainst (
+    if "%fencoding%" == " %validateagainst% "  ( 
+      echo Encoding check: %green%%nameext%%reset% is %greenbg% %validateagainst% %reset%
+      set /A badencoding=0+%badencoding%
     ) else (
-    if "%fencoding%" == "us-ascii" ( echo Encoding check: %green%%nameext% is %fencoding% -- OK. %reset% &  goto :eof  
+      if "%fencoding%" == " us-ascii " ( 
+        echo Encoding check: %green%%nameext%%reset% is %magentabg%%fencoding%%reset% which is %greenbg% UTF-8 %reset% compatible.
+        if "%validateagainst%" == "utf-8" set /A badencoding=0+%badencoding%
       ) else (
-        echo Encoding check:  %redbg%%nameext% is  %fencoding%! %reset% 
-        echo %redbg% But it was expected to be: %validateagainst%. %reset%
-        set errorsuspendprocessing=on
+        echo Encoding check:  %red%%nameext%%reset% is %redbg%%fencoding%%reset% But expected to be: %redbg% %validateagainst% %reset%
+        set /A badencoding=1+%badencoding%
+        
       )
-      )
-) else  (              
-    echo Encoding is: %magentabg% %fencoding% %reset% for file %nameext%.
-    pause
-) 
+    )
+  )
+  set %retname%=%badencoding%
+  if defined info3 echo %retname% = %badencoding%
+  echo.
   @call :funcend %0
 goto :eof
 
@@ -487,7 +494,7 @@ goto :eof
   call :infile "%~2" %0
   call :outfile "%~3" "%~dpn2-copy%~x2"
   set fn1=%~nx2
-  set fn2=%~nx3
+  set fn2=%~? 3
   set action=%~1
   if not defined action call :funcend %0 "missing parm 3 append|xcopy|move|copy" & goto :eof
   if defined missinginput call :funcend %0 "missing input file" & goto :eof
@@ -1671,16 +1678,32 @@ goto :eof
     call :greaterthan "%projectpath%\keyvalue.tsv" "%scripts%\project.xslt" build3
   )
   set build=%build%%build1%%build2%%build3%
+  if exist %projectpath%\xbuild.txt set build=1
   if defined info2 echo %green%Info: build = %build%%reset% 
   if defined build (
     if defined info3 echo call "%ccw32%" -u -b %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
     if defined info3 echo.
+    rem this is a file if it exiast that will cause project.xslt to be rebuilt even if nothing else cause a rebuild.
+    echo xbuild > %projectpath%\xbuild.txt
     call "%ccw32%" -u -b %cctparam%  -t "%cd%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
     if not exist "%projectpath%\tmp\proj-var.xml" call :fatal %0 "proj-var.xml not created" & call :funcend %0 & goto :eof
     if defined info3 echo call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
+    set badencoding=0
+    set MAGIC=%cd%\tools\GnuWin32\share\misc\magic
+    call :encoding "setup\xrun.ini" utf-8
+    call :encoding "%projectpath%\project.txt" utf-8
+    if exist "%projectpath%\lists.tsv" call :encoding "%projectpath%\lists.tsv" utf-8
+    if exist "%projectpath%\keyvalue.tsv" call :encoding "%projectpath%\keyvalue.tsv" utf-8
+    set /A badencoding=%encxrun%+%encproject%+%enclists%+%enckeyvalue%
+    echo badencoding = %badencoding%  %encxrun%+%encproject%+%enclists%+%enckeyvalue%
+    if %badencoding%. gtr 0. (
+      echo %badencoding% Bad encoding of inputs detected. &   @call :funcend %0 & goto :eof
+    ) else (
     call %java% -jar "%saxon%" -o:"%scripts%\project.xslt" "%projectpath%\tmp\proj-var.xml" "%cd%\scripts\projectvariables-v2.xslt" projectpath="%projectpath%" USERPROFILE=%USERPROFILE%
+    )
     if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
   )
+  set badencoding=0
   rem the following info lines don't work as expected in side the multi line if statement.
   if not defined build if defined info2 echo %green%Info: Existing project.xslt is up to date.%reset% 
   if exist "%scripts%\project.xslt" if defined info2 echo %green%Built: project.xslt from: project.txt %reset%

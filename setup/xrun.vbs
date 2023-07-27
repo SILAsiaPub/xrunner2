@@ -4,23 +4,31 @@ Option Explicit
 Dim coFSO, objShell
 Set objShell = CreateObject("Wscript.Shell")
 Set coFSO = CreateObject("Scripting.FileSystemObject")
-
-Dim strPath, dquote, WScript, shell, cmdline, projIni, labelIni, strUserProfile, projPath, projectTxt, projectInfo, setupvarxslt, projectxslt, title 
-Dim xrunini, xrundata, zero, tskgrp, texteditor, bConsoleSw, info1, info2, info3, info4, info5, level, boxlist, program, xmleditor, xrunxslt, tasklen 
-Dim WshShell, strCurDir
+' Project files
+Dim projIni, projPath, projectTxt, projectInfo, projectxslt 
+' Setup files
+Dim dquote, shell, cmdline, strUserProfile, setupvarxslt, title, xrundata, tskgrp 
+Dim xrunini, zero, level, boxlist, tasklen
+' Programs 
+Dim texteditor, program, xmleditor, xrunxslt, npp 
+Dim WshShell, strCurDir, WScript 
+' Unused: xrundata, info1, info2, info3, info4, info5, strPath, labelIni, bConsoleSw, 
 Set WshShell = CreateObject("WScript.Shell")
 strCurDir    = WshShell.CurrentDirectory
 tskgrp =  Array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
 boxlist = Array("Checkbox1","Checkbox2","Checkbox3","Checkbox4","Checkbox5")
 zero = 0
 zero = CInt(zero)
-xrundata = "setup\"
+' xrundata = "setup\"
 xrunini = "setup\xrun.ini"
 projPath =  ReadIni(xrunini,"setup","projecthome")
-setupvarxslt =  ReadIni(xrunini,"setup","xrunnerpath") & "\scripts\variable2xslt-3.xslt"
+setupvarxslt =  "scripts\projectvariables-v2.xslt"
 xrunxslt =  ReadIni(xrunini,"setup","xrunnerpath") & "\scripts\xrun.xslt"
 texteditor =  ReadIni(xrunini,"tools","editor")
+npp =  ReadIni(xrunini,"tools","npp")
 xmleditor =  ReadIni(xrunini,"tools","xmleditor")
+projectInfo =  projPath & "\project-info.txt" 
+
 projIni = "blank.txt"
 level = 0
 dquote = chr(34)

@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+   <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+      <meta name="generator" content="PSPad editor, www.pspad.com"/>
+      <title>xrunner.cmd</title>
+   </head>
+   <body>
+      <h1 id="xrunner-fund.cmd-documentation">Xrunner xrunner.cmd Documentation</h1>
+      <h2 id="index">Index <a id="index"/>
+      </h2>
+      <div class="index">
+         <a href="#checkdir">checkdir</a> 
+         <a href="#colorvar">colorvar</a> 
+         <a href="#date">date</a> 
+         <a href="#detectdateformat">detectdateformat</a> 
+         <a href="#encoding">encoding</a> 
+         <a href="#fatal">fatal</a> 
+         <a href="#funcbegin">funcbegin</a> 
+         <a href="#funcend">funcend</a> 
+         <a href="#main">main</a> 
+         <a href="#makemake">makemake</a> 
+         <a href="#setinfolevel">setinfolevel</a> 
+         <a href="#setup">setup</a> 
+         <a href="#time">time</a> 
+         <a href="#time2sec">time2sec</a> 
+         <a href="#tsv2xml">tsv2xml</a> 
+         <a href="#xrunner.cmd">xrunner.cmd</a> 
+         <h2 id="index">Function reference</h2>
+         <ul>
+            <li id="checkdir">
+               <strong>:checkdir</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>checks if dir exists if not it is created</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :checkdir C:\path\name.ext</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>make folder</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span>funcbegin funcend </span>
+                  </li>
+               </ul>
+            </li>
+            <li id="colorvar">
+               <strong>:colorvar</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Sets the inline color variables.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :inlinecolor</span>
+                  </li>
+                  <li>
+                     <em>Reference:</em>
+                     <span>https://stackoverflow.com/questions/2048509/how-to-echo-with-different-colors-in-the-windows-command-line</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="date">
+               <strong>:date</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Returns multiple variables with date in three formats, the year in wo formats, month and day date.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :date</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>create date variables</span>
+                  </li>
+                  <li>
+                     <em>Variables created:</em>
+                     <span>fdd fmm fyyyy curdate curisodate yyyy-mm-dd curyyyymmdd curyymmdd curUSdate curAUdate curyyyy curyy curmm curdd</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span>funcbegin funcend detectdateformat</span>
+                  </li>
+                  <li>
+                     <em>Variables used:</em>
+                     <span>dateformat dateseparator timeseparator</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2016-05-04</span>
+                  </li>
+                  <li>
+                     <em>Source url:</em>
+                     <span>http://www.robvanderwoude.com/datetiment.php#IDate</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="detectdateformat">
+               <strong>:detectdateformat</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Get the date format from the Registery</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :detectdateformat</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>check registry, create variables</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span>funcbegin funcend</span>
+                  </li>
+                  <li>
+                     <em>Variables created:</em>
+                     <span>dateformat dateseparator timeseparator</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="encoding">
+               <strong>:encoding</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>to check the encoding of a file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :encoding file [validate-against]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>:infile</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>file.exe http://gnuwin32.sourceforge.net/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>encodingchecker</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>not the same as in func.cmd</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="fatal">
+               <strong>:fatal</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used when fatal events occur</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :fatal %0 "message 1" "message 2"</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>feedback</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span/>
+                  </li>
+               </ul>
+            </li>
+            <li id="funcbegin">
+               <strong>:funcbegin</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Descriptions:</em>
+                     <span>takes initialization out of funcs</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>@call :funcbegin %0 '%~1' '%~2' 'etc'</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>feedback</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span/>
+                  </li>
+                  <li>
+                     <em>Variables used:</em>
+                     <span>magentabg reset funcstarttext </span>
+                  </li>
+               </ul>
+            </li>
+            <li id="funcend">
+               <strong>:funcend</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used for non ouput file func</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>@call :funcend %0</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>feedback</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span/>
+                  </li>
+                  <li>
+                     <em>Variables used:</em>
+                     <span>funcendtext</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="main">
+               <strong>:main</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Main Loop, does setup and gets variables then runs group loops.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :main</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>control</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span>funcbegin funcend time2sec setup project.cmd</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="makemake">
+               <strong>:makemake</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Create makefile with relevant variables</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :makevar fileto add to</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>the body of the make fiels should be in setup folder and in the form filename-make.txt</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="setinfolevel">
+               <strong>:setinfolevel</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used for initial setup and after xrun.ini and project.txt</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :setinfolevel numb_level</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>numb-level range 0-5</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>create variables</span>
+                  </li>
+                  <li>
+                     <em>Functions used::</em>
+                     <span/>
+                  </li>
+                  <li>
+                     <em>Variables created:</em>
+                     <span>info1 info2 info3 info4 info5 funcstarttext funcendtext redbg magentabg green reset</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="setup">
+               <strong>:setup</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Sets up the variables and does some checking.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :setup</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>create variables, create project.cmd</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span>funcbegin funcend checkdir detectdateformat</span>
+                  </li>
+                  <li>
+                     <em>Programs used:</em>
+                     <span>ccw32 or ccw64 sys.cmd</span>
+                  </li>
+                  <li>
+                     <em>Variables used:</em>
+                     <span>projectpath ccw32 green reset</span>
+                  </li>
+                  <li>
+                     <em>Variables created:</em>
+                     <span>projectpath scripts cctparam syscmd taskscmd projcmd setupcct funccmd ccw32 count</span>
+                  </li>
+                  <li>
+                     <em>Variable cleared:</em>
+                     <span>firstxslt</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="time">
+               <strong>:time</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Retrieve time in several shorter formats than %time% provides</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :time</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>create variables</span>
+                  </li>
+                  <li>
+                     <em>Functions used:</em>
+                     <span>funcbegin funcend</span>
+                  </li>
+                  <li>
+                     <em>Variables used:</em>
+                     <span>time</span>
+                  </li>
+                  <li>
+                     <em>Variables created:</em>
+                     <span>curhhmm curhhmmss curisohhmmss curhh_mm curhh_mm_ss</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2016-05-05</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="time2sec">
+               <strong>:time2sec</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Retrieve the time in seconds</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :time2sec var_name</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>create variable</span>
+                  </li>
+                  <li>
+                     <em>Functions used::</em>
+                     <span/>
+                  </li>
+                  <li>
+                     <em>Variable used:</em>
+                     <span>time</span>
+                  </li>
+                  <li>
+                     <em>Variable created:</em>
+                     <span>var_name</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="tsv2xml">
+               <strong>:tsv2xml</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Convert TSV to XML via NodeJS </span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :tsv2xml inputfile outputfile</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2023-05-03</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="xrunner.cmd">
+               <strong>:xrunner.cmd</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>xrunner.cmd</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>xrunner C:\path\project.txt [group [infolevel [pauseatend [unittest]]]]</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>xrunner requires a project file. The group parameter is normally a letter in the range a-z.</span>
+                  </li>
+                  <li>
+                     <em>Xrunner 2 uses CCW32 to generate the needed initial files.:</em>
+                     <span/>
+                  </li>
+                  <li>
+                     <em>Now the tasklists are converted into functions. Appended to that is the xrun.ini variables, the xruni.ini tools and the project.txt variables and the old xrun.cmd functions.:</em>
+                     <span/>
+                  </li>
+               </ul>
+            </li>
+         </ul>
+      </div>
+   </body>
+</html>

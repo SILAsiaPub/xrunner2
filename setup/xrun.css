@@ -9,7 +9,7 @@ h2 {margin: 6pt 0 6pt 0;}
 iframe {margin: 6pt 0 0 0;}
 .widebutton {width:400px}
 .inibutton {width:300px;clear:left;display:block}
-.halfbutton {width:150px;display:inline}
+.halfbutton {width:210px;display:block;margin-bottom:4pt;}
 .label {padding-top:10pt}
 .sample {width:154px;height:123px;}
 .floatright {float:right;clear:both}

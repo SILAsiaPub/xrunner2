@@ -60,6 +60,8 @@ goto :eof
   set /A sec=%endtime%-%starttime%
   @echo Completed in %sec% seconds at %time:~0,8%
   @call :funcend :xrunner
+  rem when a set of tasks completes successfully the xbuild.txt is deleted. If it ixists on the next build, then the project.txt will be rebuilt.
+  if exist %projectpath%\xbuild.txt del %projectpath%\xbuild.txt
   if defined pauseatend (pause ) else (timeout 30)
 goto :eof
 
@@ -145,33 +147,34 @@ goto :eof
 :encoding
 :: Description: to check the encoding of a file
 :: Usage: call :encoding file [validate-against]
-:: Functions used: funcbegin funcend infile
+:: Functions called: :infile
 :: External program: file.exe http://gnuwin32.sourceforge.net/
-:: Variables used: encodingchecker
+:: Required variables: encodingchecker
+:: Note: not the same as in func.cmd
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-if not defined encodingchecker echo Encoding not checked. & echo %funcendtext% %0 error1 &goto :eof
-if not exist "%encodingchecker%" echo file.exe not found! %fileext% &echo Encoding not checked. & echo %funcendtext% %0 error2 & goto :eof
-set testfile=%~1
-set validateagainst=%~2
-call :infile "%testfile%"
-set nameext=%~nx1
-FOR /F "usebackq tokens=1-2" %%A IN (`%encodingchecker% --mime-encoding "%infile%"`) DO set fencoding=%%B
-if defined validateagainst (
-    if "%fencoding%" == "%validateagainst%"  (
-        echo %green% Encoding is: %fencoding% for file %nameext%. %reset%
-      ) else if "%fencoding%" == "us-ascii" (
-        echo %magentabg% Encoding is: %fencoding% not %validateagainst% but is usable. %reset%
+  if not defined encodingchecker echo Encoding not checked. Encoding Checker not defined. & echo %funcendtext% %0 error1 &goto :eof
+  if not exist "%encodingchecker%" call :funcend %0 "file.exe not found! %fileext%" "Encoding not checked." & goto :eof
+  set testfile=%~1
+  set validateagainst=%~2
+  set infile=%testfile%
+  set nameext=%~nx1
+  FOR /F "usebackq tokens=1-2 delims=;," %%A IN (`%encodingchecker% --mime-encoding "%infile%"`) DO set fencoding=%%B & echo %%~nxA is %magentabg%%%B %reset%
+  @rem echo %magentabg%%fencoding%%reset%
+  if defined validateagainst (
+    if "%fencoding%" == " %validateagainst% "  ( 
+      echo Encoding check: %green%%nameext%%reset% is %magentabg%%fencoding%%reset%
+      set /A badencoding=0+%badencoding%
+    ) else (
+      if "%fencoding%" == " us-ascii " ( 
+        echo Encoding check: %green%%nameext%%reset% is %magentabg%%fencoding%%reset% which is UTF-8 compatible.
+        if "%validateagainst%" == "utf-8" set /A badencoding=0+%badencoding%
       ) else (
-        echo %redbg% File %nameext% encoding is %fencoding%! %reset% 
-        echo %redbg% Encoding is: %fencoding%  But it was expected to be: %validateagainst%. %reset%
-        set errorsuspendprocessing=on
-        pause
+        echo Encoding check:  %red%%nameext%%reset% is %redbg%%fencoding% %reset% But it was expected to be: %red%%validateagainst%. %reset%
+        set /A badencoding=1+%badencoding%
+        
       )
-) else  (              
-    echo Encoding is: %magentabg% %fencoding% %reset% for file %nameext%.
-    pause
-) 
-  rem set utreturn=%testfile%, %validateagainst%, %fencoding%, %nameext%
+    )
+  )
   @call :funcend %0
 goto :eof
 

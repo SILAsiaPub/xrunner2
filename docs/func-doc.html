@@ -1,0 +1,2013 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+   <head>
+      <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+      <meta name="generator" content="PSPad editor, www.pspad.com"/>
+      <title>func.cmd</title>
+   </head>
+   <body>
+      <h1 id="xrunner-fund.cmd-documentation">Xrunner func.cmd Documentation</h1>
+      <h2 id="index">Index <a id="index"/>
+      </h2>
+      <div class="index">
+         <a href="#ampmhour">ampmhour</a> 
+         <a href="#appendfile">appendfile</a> 
+         <a href="#appendtofile">appendtofile</a> 
+         <a href="#autoit">autoit</a> 
+         <a href="#calc">calc</a> 
+         <a href="#cct">cct</a> 
+         <a href="#checkdir">checkdir</a> 
+         <a href="#cmd">cmd</a> 
+         <a href="#command">command</a> 
+         <a href="#command2file">command2file</a> 
+         <a href="#copy">copy</a> 
+         <a href="#copy2usb">copy2usb</a> 
+         <a href="#csv2tsv">csv2tsv</a> 
+         <a href="#csv2xml">csv2xml</a> 
+         <a href="#date">date</a> 
+         <a href="#dec">dec</a> 
+         <a href="#delfile">delfile</a> 
+         <a href="#detectdateformat">detectdateformat</a> 
+         <a href="#drivepath">drivepath</a> 
+         <a href="#echo">echo</a> 
+         <a href="#elapsed">elapsed</a> 
+         <a href="#encoding">encoding</a> 
+         <a href="#fatal">fatal</a> 
+         <a href="#fb">fb</a> 
+         <a href="#file">file</a> 
+         <a href="#funcbegin">funcbegin</a> 
+         <a href="#funcend">funcend</a> 
+         <a href="#funcendtest">funcendtest</a> 
+         <a href="#getfiledatetime">getfiledatetime</a> 
+         <a href="#greaterthan">greaterthan</a> 
+         <a href="#iconv">iconv</a> 
+         <a href="#ifdefined">ifdefined</a> 
+         <a href="#ifequal">ifequal</a> 
+         <a href="#ifexist">ifexist</a> 
+         <a href="#ifnotdefined">ifnotdefined</a> 
+         <a href="#ifnotequal">ifnotequal</a> 
+         <a href="#ifnotexist">ifnotexist</a> 
+         <a href="#inc">inc</a> 
+         <a href="#inccount">inccount</a> 
+         <a href="#infile">infile</a> 
+         <a href="#ini2xslt">ini2xslt</a> 
+         <a href="#ini2xslt2">ini2xslt2</a> 
+         <a href="#iniline2var">iniline2var</a> 
+         <a href="#iniparse4xslt">iniparse4xslt</a> 
+         <a href="#inisection">inisection</a> 
+         <a href="#inputfile">inputfile</a> 
+         <a href="#jade">jade</a> 
+         <a href="#javahometest">javahometest</a> 
+         <a href="#javainpathtest">javainpathtest</a> 
+         <a href="#javanotfound">javanotfound</a> 
+         <a href="#last">last</a> 
+         <a href="#loopfiles">loopfiles</a> 
+         <a href="#loopfolders">loopfolders</a> 
+         <a href="#looplist">looplist</a> 
+         <a href="#looplistspace">looplistspace</a> 
+         <a href="#loopnumber">loopnumber</a> 
+         <a href="#loopstring">loopstring</a> 
+         <a href="#make">make</a> 
+         <a href="#mergevar">mergevar</a> 
+         <a href="#modelcheck">modelcheck</a> 
+         <a href="#multivarlist">multivarlist</a> 
+         <a href="#name">name</a> 
+         <a href="#nameext">nameext</a> 
+         <a href="#outfile">outfile</a> 
+         <a href="#outputfile">outputfile</a> 
+         <a href="#paratextio">paratextio</a> 
+         <a href="#pause">pause</a> 
+         <a href="#perl">perl</a> 
+         <a href="#prerender">prerender</a> 
+         <a href="#prince">prince</a> 
+         <a href="#ptbkno">ptbkno</a> 
+         <a href="#ptbook">ptbook</a> 
+         <a href="#qrcode">qrcode</a> 
+         <a href="#regex">regex</a> 
+         <a href="#regexren">regexren</a> 
+         <a href="#rexxini">rexxini</a> 
+         <a href="#rho">rho</a> 
+         <a href="#scriptfind">scriptfind</a> 
+         <a href="#sec2time">sec2time</a> 
+         <a href="#setinfolevel">setinfolevel</a> 
+         <a href="#start">start</a> 
+         <a href="#starturl">starturl</a> 
+         <a href="#taskcall">taskcall</a> 
+         <a href="#tidy">tidy</a> 
+         <a href="#time">time</a> 
+         <a href="#time2sec">time2sec</a> 
+         <a href="#tsv2multixml">tsv2multixml</a> 
+         <a href="#tsv2xml">tsv2xml</a> 
+         <a href="#unicodecount">unicodecount</a> 
+         <a href="#uniqcount">uniqcount</a> 
+         <a href="#validate">validate</a> 
+         <a href="#validaterng">validaterng</a> 
+         <a href="#var">var</a> 
+         <a href="#wait">wait</a> 
+         <a href="#xquery">xquery</a> 
+         <a href="#xslt">xslt</a> 
+         <a href="#xslt1">xslt1</a> 
+         <a href="#xslt3">xslt3</a> 
+         <a href="#xsltcheck">xsltcheck</a> 
+         <a href="#xsltms">xsltms</a> 
+         <a href="#xsltnons">xsltnons</a> 
+         <h2 id="index">Function reference</h2>
+         <ul>
+            <li id="ampmhour">
+               <strong>:ampmhour</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Converts AM/PM time to 24hour format. </span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ampmhour ampm hours</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>modify variable</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend</span>
+                  </li>
+                  <li>
+                     <em>Variable created:</em>
+                     <span>fhh</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2016-05-04 </span>
+                  </li>
+                  <li>
+                     <em>Used by:</em>
+                     <span>getfiledatetime </span>
+                  </li>
+               </ul>
+            </li>
+            <li id="appendfile">
+               <strong>:appendfile</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Appends one file to the end of another file.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :appendfile filetoadd filetoappendto</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>append file</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend </span>
+                  </li>
+               </ul>
+            </li>
+            <li id="appendtofile">
+               <strong>:appendtofile</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Appends text to the end of a file.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :appendtofile text-to-append filetoappendto first</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="autoit">
+               <strong>:autoit</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Pass a script and variables to autoit.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :autoit script.au3 infile outfile parm1 etc</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="calc">
+               <strong>:calc</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Calculate an number and return in a variable.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :calc varname numbcalcstring</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="cct">
+               <strong>:cct</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Privides interface to CCW32.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :cct script.cct ["infile.txt" ["outfile.txt" [append]]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcendtest inccount infile outfile fatal scriptfind checkdir</span>
+                  </li>
+                  <li>
+                     <em>External apps:</em>
+                     <span>ccw32.exe </span>
+                  </li>
+                  <li>
+                     <em>External apps url:</em>
+                     <span>https://software.sil.org/cc/</span>
+                  </li>
+                  <li>
+                     <em>Required variable:</em>
+                     <span>ccw32</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="checkdir">
+               <strong>:checkdir</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>checks if dir exists if not it is created</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :checkdir C:\path\name.ext</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="cmd">
+               <strong>:cmd</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>A way of passing any commnand from a tasklist. It does not use infile and outfile.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :usercommand "copy /y 'c:\patha\file.txt' 'c:\pathb\file.txt'" [ "output file to test for" ["path to run  command in"]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, checkdir, funcend or any function</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>May use any external program</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>Single quotes get converted to double quotes before the command is used.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="command">
+               <strong>:command</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>A way of passing any commnand from a tasklist. It does not use infile and outfile.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :usercommand "copy /y 'c:\patha\file.txt' 'c:\pathb\file.txt'" ["path to run  command in"   "output file to test for"]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, checkdir, funcend or any function</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>May use any external program</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>Single quotes get converted to double quotes before the command is used.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="command2file">
+               <strong>:command2file</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used with commands that only give stdout, so they can be captued in a file.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :command2file "command" "outfile" ["commandpath" [append]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, checkdir, funcend funcbegin</span>
+                  </li>
+                  <li>
+                     <em>External app note:</em>
+                     <span>May call any external program</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>This command does its own expansion of single quotes to double quotes so cannont be fed directly from a ifdefined or ifnotdefined. Instead define a task that is fired by the ifdefined.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="copy">
+               <strong>:copy</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Provides copying with exit on failure</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :copy infile outfile [append] [xcopy]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>infile, outfile, inccount funcend funcbegin funcendtest</span>
+                  </li>
+                  <li>
+                     <em>Uddated:</em>
+                     <span>2018-11-03</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="copy2usb">
+               <strong>:copy2usb</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Set up to cop files to USB drive and optionally format.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :copy2usb source_path target_drive target_folder [format_first]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcend funcbegin</span>
+                  </li>
+                  <li>
+                     <em>External apps:</em>
+                     <span>xcopy</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>external program xcopy (a part of Windows)</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="csv2tsv">
+               <strong>:csv2tsv</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Convert TSV to XML via NodeJS </span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :csv2tsv inputfile outputfile</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2023-05-03</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="csv2xml">
+               <strong>:csv2xml</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Convert TSV to XML via NodeJS </span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :csv2xml inputfile outputfile</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2023-05-03</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="date">
+               <strong>:date</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Returns multiple variables with date in three formats, the year in wo formats, month and day date.</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>detectdateformat  funcend funcbegin</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>dateseparator</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2016-05-04</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="dec">
+               <strong>:dec</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Decrease the number variable</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :dec varname</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcend funcbegin</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="delfile">
+               <strong>:delfile</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Delete a file if it exists</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcend funcbegin</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="detectdateformat">
+               <strong>:detectdateformat</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Get the date format from the Registery</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :detectdateformat</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="drivepath">
+               <strong>:drivepath</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>returns the drive and path from a full drive:\path\filename</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :drivepath C:\path\name.ext|path\name.ext</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="echo">
+               <strong>:echo</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Echo a message</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :echo "message text"</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="elapsed">
+               <strong>:elapsed</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>calculates the elapsed time since the starttime</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>starttime</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="encoding">
+               <strong>:encoding</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>to check the encoding of a file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :encoding file [validate-against]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>:infile</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>file.exe http://gnuwin32.sourceforge.net/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>encodingchecker</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="fatal">
+               <strong>:fatal</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used when fatal events occur</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :fatal %0 "message 1" "message 2"</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="fb">
+               <strong>:fb</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used to give common feed back</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :fb info_or_error_or_output message</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="file">
+               <strong>:file</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Provides copying with exit on failure</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :copy append|xcopy|move|del infile outfile</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>:infile, :outfile, :inccount :funcend</span>
+                  </li>
+                  <li>
+                     <em>Uddated:</em>
+                     <span>2018-11-03</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="funcbegin">
+               <strong>:funcbegin</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Descriptions:</em>
+                     <span>takes initialization out of funcs</span>
+                  </li>
+                  <li>
+                     <em>Modified:</em>
+                     <span>2023-01-03</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="funcend">
+               <strong>:funcend</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used for non ouput file func</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :funcend %0</span>
+                  </li>
+                  <li>
+                     <em>Modified:</em>
+                     <span>2023-01-04</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="funcendtest">
+               <strong>:funcendtest</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used with func that output files. Like XSLT, cct, command2file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :funcendtest %0 [alt_text]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="getfiledatetime">
+               <strong>:getfiledatetime</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Returns a variable with a files modification date and time in yyMMddhhmm  similar to setdatetime. Note 4 digit year makes comparison number too big for batch to handle.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :getfiledatetime file varname</span>
+                  </li>
+                  <li>
+                     <em>Classs:</em>
+                     <span>command - internal - date -time</span>
+                  </li>
+                  <li>
+                     <em>Required parameters:</em>
+                     <span>varname file</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>:detectdateformat variables</span>
+                  </li>
+                  <li>
+                     <em>Updated:</em>
+                     <span>2016-05-04 2023-01-03</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="greaterthan">
+               <strong>:greaterthan</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Compares two file modified date-time and returns variable newerthan=on if true</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :newerthan file1 file2 varname</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="iconv">
+               <strong>:iconv</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Converts files from CP1252 to UTF-8</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :iconv infile outfile OR call :iconv file_nx inpath outpath</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>infile, outfile, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>iconv.exe http://gnuwin32.sourceforge.net/</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ifdefined">
+               <strong>:ifdefined</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Checks for value in variable</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ifdefined variablename action</span>
+                  </li>
+                  <li>
+                     <em>action note:</em>
+                     <span>the action can be a function or a projectfunc</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>multivarlist</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ifequal">
+               <strong>:ifequal</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Checks for value in variable</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ifdefined variablename action</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend multivarlist</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>the action can be a function or a project_function</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ifexist">
+               <strong>:ifexist</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>tests if a file exists</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ifexist testfile action par*</span>
+                  </li>
+                  <li>
+                     <em>action note:</em>
+                     <span>the action can be a dos command or call a xrun function or call a project taskgroup</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount funcbegin funcend</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ifnotdefined">
+               <strong>:ifnotdefined</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Checks if true</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ifnotdefined action par1 par 2 par3 par4</span>
+                  </li>
+                  <li>
+                     <em>action note:</em>
+                     <span>the action can be a function or a projectfunc</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ifnotequal">
+               <strong>:ifnotequal</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Checks for value in variable, if not equal</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ifdefined variablename action</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend multivarlist</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>the action can be a function or a project_function</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ifnotexist">
+               <strong>:ifnotexist</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>If a file or folder do not exist, then performs an action.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ifnotexist testfile action parm*</span>
+                  </li>
+                  <li>
+                     <em>action note:</em>
+                     <span>the action can be a dos command or call a xrun function or call a project taskgroup</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="inc">
+               <strong>:inc</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Increase the number variable</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :inc varname</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="inccount">
+               <strong>:inccount</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Increments the count variable</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :inccount</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="infile">
+               <strong>:infile</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>If infile is specifically set then uses that else uses previous outfile.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :infile "%file%" calling-func</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>fatal</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ini2xslt">
+               <strong>:ini2xslt</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Convert ini file to xslt</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ini2xslt file.ini output.xslt subfunc sectionexit</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, infile, outfile.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ini2xslt2">
+               <strong>:ini2xslt2</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Convert ini file to xslt</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ini2xslt file.ini output.xslt subfunc sectionexit</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, infile, outfile.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="iniline2var">
+               <strong>:iniline2var</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Sets variables from one section</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :variableset line sectionget</span>
+                  </li>
+                  <li>
+                     <em>Unused::</em>
+                     <span/>
+                  </li>
+               </ul>
+            </li>
+            <li id="iniparse4xslt">
+               <strong>:iniparse4xslt</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Parse the = delimited data and write to xslt . Skips sections and can exit when</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :iniparse4xslt outfile section element att1name att1val att2name att2val</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="inisection">
+               <strong>:inisection</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Handles variables list supplied in a file.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :variableslist inifile sectionget linefunc</span>
+                  </li>
+                  <li>
+                     <em>Unused::</em>
+                     <span/>
+                  </li>
+               </ul>
+            </li>
+            <li id="inputfile">
+               <strong>:inputfile</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Sets the starting file of a serial tasklist, by assigning it to the var outfile</span>
+                  </li>
+                  <li>
+                     <em>usage:</em>
+                     <span>call :inputfile "drive:\path\file.ext"</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="jade">
+               <strong>:jade</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Create html/xml from jade file (now pug) Still uses jade extension</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :jade "infile" "outfile" start</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, infile, outfile, nameext, name, funcend </span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>NodeJS npm program jade</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="javahometest">
+               <strong>:javahometest</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Tests for a Java home installations</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>Not currently used.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="javainpathtest">
+               <strong>:javainpathtest</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Tests if Java is included in the path</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="javanotfound">
+               <strong>:javanotfound</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>This is an error report if Java is not found</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="last">
+               <strong>:last</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Find the last parameter in a set of numbered params. Usually called by a loop.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :last par_name number</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="loopfiles">
+               <strong>:loopfiles</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used to loop through a subset of files specified by the filespec from a single directory</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :loopfiles sub_name file_specs [param[3-9]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>appendnumbparam, last, taskgroup. Can also use any other function.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="loopfolders">
+               <strong>:loopfolders</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Loops through all subfolders in a folder</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :loopdir grouporfunc basedir [param[3-9]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>* - May be any function or project Taskgroup</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="looplist">
+               <strong>:looplist</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used to loop through list supplied in a file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :looplist sub_name list-file_specs [param[3-9]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>appendnumbparam, last, taskgroup. Can also use any other function.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="looplistspace">
+               <strong>:looplistspace</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used to loop through list supplied in a file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :looplist sub_name list-file_specs [param[3-9]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>appendnumbparam, last, taskgroup. Can also use any other function.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="loopnumber">
+               <strong>:loopnumber</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Loops through a set of numbers.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :loopnumber grouporfunc start stop</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>taskgroup. Can also use any other function.</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>action may have multiple parts</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="loopstring">
+               <strong>:loopstring</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Loops through a list supplied in a space separated string.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :loopstring grouporfunc "string" [param[3-9]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>quotevar, last, taskgroup. Can also use any other function.</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>action may have multiple parts</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="make">
+               <strong>:make</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Run a make file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call make makepath [makefile] </span>
+                  </li>
+               </ul>
+            </li>
+            <li id="mergevar">
+               <strong>:mergevar</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Merge two numbered variable into one with a space between them</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="modelcheck">
+               <strong>:modelcheck</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Copies in files from Model project</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :modelcheck "file.ext" "modelpath"</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="multivarlist">
+               <strong>:multivarlist</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Descriptions:</em>
+                     <span>if varaible string contains a space put double quotes around it.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call quotevar var_name start_numb end_numb</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="name">
+               <strong>:name</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Returns a variable name containg just the name from the path.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="nameext">
+               <strong>:nameext</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Returns a variable nameext containg just the name and extension from the path.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="outfile">
+               <strong>:outfile</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>If out file is specifically set then uses that else uses supplied name.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :outfile "C:\path\file.ext" "%cd%\tmp\%script%.xml" nocheck_or_append</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcend</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="outputfile">
+               <strong>:outputfile</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Copies last out file to new name. Used to make a static name other tasklists can use.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>:outputfile drive:\path\file.ext [start] [validate] [copy]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>checkdir, funcend, validate</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="paratextio">
+               <strong>:paratextio</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Loops through a list of books and extracts USX files.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :paratextio project "book_list" [outpath] [write] [usfm]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>ptbook</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="pause">
+               <strong>:pause</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used in project.txt to pause the processing</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="perl">
+               <strong>:perl</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Privides interface to perl scripts</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :cct script.cct ["infile.txt" ["outfile.txt" ["par1"]]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, infile, outfile, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>ccw32.exe https://software.sil.org/cc/</span>
+                  </li>
+                  <li>
+                     <em>Required variable:</em>
+                     <span>ccw32</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="prerender">
+               <strong>:prerender</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Prerenders HTML with JS into plain HTML</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :prerender url outpath</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, infile, outfile, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>chrome.exe </span>
+                  </li>
+                  <li>
+                     <em>Required variable:</em>
+                     <span>chrome outpath</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="prince">
+               <strong>:prince</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Make PDF using PrinceXML</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :prince [infile [outfile [css]]] [infile2] [infile3] [infile4] [infile5] [infile6] [infile7]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>infile, outfile, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>prince.exe  https://www.princexml.com/</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>prince</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ptbkno">
+               <strong>:ptbkno</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>set bknumb variable based on book 3 letter book code</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ptbkno book</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="ptbook">
+               <strong>:ptbook</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Extract USX from Paratext</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :ptbook project book [outpath] [write] [usfm]</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>outfile, funcend, ptbkno</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>rdwrtp8.exe from https://pt8.paratext.org/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>rdwrtp8</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="qrcode">
+               <strong>:qrcode</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Generate QR code</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="regex">
+               <strong>:regex</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Run a regex on a file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :regex find replace infile outfile</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>inccount, infile, outfile, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>rxrepl.exe  https://sites.google.com/site/regexreplace/</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="regexren">
+               <strong>:regexren</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Rename with regular expression</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :regexren file path find replace options</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="rexxini">
+               <strong>:rexxini</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Setup for Rexx scripting</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>unused</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="rho">
+               <strong>:rho</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Create xml from .rho file markup</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :rho infile outfile</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>infile, outfile, funcend NodeJS NPM program Rho</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>NodeJS npm program Rho</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="scriptfind">
+               <strong>:scriptfind</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Find script if it does not exist in the scritps folder</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="sec2time">
+               <strong>:sec2time</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>convert seconds to time</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="setinfolevel">
+               <strong>:setinfolevel</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Used for initial setup and after xrun.ini and project.txt</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :setinfolevel numb-level</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>numb-level range 0-5</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="start">
+               <strong>:start</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Start a program but don't wait for it.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="starturl">
+               <strong>:starturl</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Start a program but don't wait for it.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="taskcall">
+               <strong>:taskcall</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Loop that triggers each taskgroup.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :taskcall group</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>unittestaccumulate. Can depend on any procedure in the input task group.</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="tidy">
+               <strong>:tidy</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Convert HTML to XHTML</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :tidy ["infile"] ["outfile"] [outspec(default=asxml)] [encoding(default=utf8)]</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>infile, outfile, inccount, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>tidy.exe http://tidy.sourceforge.net/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>tidy</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="time">
+               <strong>:time</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Retrieve time in several shorter formats than %time% provides</span>
+                  </li>
+                  <li>
+                     <em>Optional variables:</em>
+                     <span>timeseparator</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :time</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2016-05-05</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="time2sec">
+               <strong>:time2sec</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>convert the current time to seconds</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="tsv2multixml">
+               <strong>:tsv2multixml</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Convert TSV to XML via NodeJS </span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :tsv2xml inputpath inputfiles outputfile</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2023-07-11</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="tsv2xml">
+               <strong>:tsv2xml</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Convert TSV to XML via NodeJS </span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :tsv2xml inputfile outputfile</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2023-05-03</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="unicodecount">
+               <strong>:unicodecount</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Count unicode characters in file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>t=:unicodecount "infile" "outfile"</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>External program UnicodeCCount.exe from https://scripts.sil.org/cms/scripts/page.php?item_id=UnicodeCharacterCount</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="uniqcount">
+               <strong>:uniqcount</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Create a sorted ist that is then reduced to a Uniq list</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>t=:uniqcount infile outfile</span>
+                  </li>
+                  <li>
+                     <em>Purpose:</em>
+                     <span>process file</span>
+                  </li>
+                  <li>
+                     <em>Programs used:</em>
+                     <span>sort.exe from C:\Windows\System32\, uniq.exe from http://unixutils.sourceforge.net/</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>funcbegin funcendtest infile outfile</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="validate">
+               <strong>:validate</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Validate an XML file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :validate "xmlfile"</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>External program 'xml.exe' from  XMLstarlet http://xmlstar.sourceforge.net/</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="validaterng">
+               <strong>:validaterng</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Validate XML file against RNG schema</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>Call :validaterng "rngschema" "xmlfile"</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>External Program jing.jar from https://relaxng.org/jclark/jing.html downloaded from</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="var">
+               <strong>:var</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Set a variable within a taskgroup</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>t=:var varname "varvalue"</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="wait">
+               <strong>:wait</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>delay for x number of seconds</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="xquery">
+               <strong>:xquery</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Provides interface to xquery by saxon9he.jar</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :xquery scriptname ["infile"] ["outfile"] [allparam]</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>inccount, infile, outfile, funcend, fatal</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>java.exe https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</span>
+                  </li>
+                  <li>
+                     <em>Java application:</em>
+                     <span>saxon9he.jar  https://sourceforge.net/projects/saxon/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>java saxon9</span>
+                  </li>
+                  <li>
+                     <em>created:</em>
+                     <span>2018-11-27</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="xslt">
+               <strong>:xslt</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Runs Java with saxon to process XSLT transformations.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :xslt script.xslt [input.xml [output.xml [parameters]]]</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>inccount, infile, outfile, fatal, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program1:</em>
+                     <span>java.exe https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</span>
+                  </li>
+                  <li>
+                     <em>Java application:</em>
+                     <span>saxon9he.jar  https://sourceforge.net/projects/saxon/</span>
+                  </li>
+                  <li>
+                     <em>External program2:</em>
+                     <span>Node-JS   https://nodejs.org/en/</span>
+                  </li>
+                  <li>
+                     <em>Node application:</em>
+                     <span>XSLT3 https://www.saxonica.com/download/javascript.xml</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>java saxon9</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="xslt1">
+               <strong>:xslt1</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Runs Java with xmlScarlet to process XSLT1 transformations.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :xslt script.xslt [input.xml [output.xml [parameters]]]</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>inccount, infile, outfile, fatal, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>java.exe https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</span>
+                  </li>
+                  <li>
+                     <em>Java application:</em>
+                     <span>saxon9he.jar  https://sourceforge.net/projects/saxon/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>java saxon9</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="xslt3">
+               <strong>:xslt3</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Runs Java with saxon-js to process XSLT transformations.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :xslt3 script.xslt [input.xml [output.xml [parameters]]]</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>inccount, infile, outfile, fatal, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>java.exe https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</span>
+                  </li>
+                  <li>
+                     <em>Java application:</em>
+                     <span>saxon9he.jar  https://sourceforge.net/projects/saxon/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>java saxon9</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="xsltcheck">
+               <strong>:xsltcheck</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>This runs the makefile script for checking if the project.xslt is up to date</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="xsltms">
+               <strong>:xsltms</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Runs Java with xmlScarlet to process XSLT1 transformations.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :xslt script.xslt [input.xml [output.xml [parameters]]]</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>inccount, infile, outfile, fatal, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>java.exe https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</span>
+                  </li>
+                  <li>
+                     <em>Java application:</em>
+                     <span>saxon9he.jar  https://sourceforge.net/projects/saxon/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>java saxon9</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="xsltnons">
+               <strong>:xsltnons</strong> 
+               <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Runs Java with saxon to process XSLT transformations.</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :xslt script.xslt [input.xml [output.xml [parameters]]]</span>
+                  </li>
+                  <li>
+                     <em>Depends on:</em>
+                     <span>inccount, infile, outfile, fatal, funcend</span>
+                  </li>
+                  <li>
+                     <em>External program:</em>
+                     <span>java.exe https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</span>
+                  </li>
+                  <li>
+                     <em>Java application:</em>
+                     <span>saxon9he.jar  https://sourceforge.net/projects/saxon/</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>java saxon9</span>
+                  </li>
+               </ul>
+            </li>
+         </ul>
+      </div>
+   </body>
+</html>

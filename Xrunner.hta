@@ -1,36 +1,40 @@
 <!DOCTYPE HTML>
 <html xmlns:HTA="HyperTextApplication">
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-      <!--   Create GUI for bat file.      -->
-      <title>Xrunner2</title>
-      <HTA:application applicationName="xrunner2 app" singleinstance="yes" Icon="setup/xslt.ico"></HTA:application>
-      <link rel="stylesheet" href="setup/xrun.css"/>
-      <script type="text/vbscript" src="setup/xrun.vbs" ></script>
-      <script type="text/javascript" src="setup/xrun.js"></script>
-      <script language="JavaScript"></script>
-   </head>
-   <body  onload="call presets()">
-      <div class="floatright"><button onclick="SelectFolder(projPath)" name="ChoosePath" class="widebutton">1. Click here to select your project folder</button><br />
-      <input type="text" name="ShowSelectedFolder" size="60" maxLength="255" > </div>
-      <h2 id="title">Open project here &gt;</h2>
-         <!-- Tab links -->
-<div class="tab">
-  <button  class="tablinks active"onclick="OpenTab('project')" id="projecttab">Project Tasks</button>
-  <button class="tablinks" onclick="OpenTab('projectinfo')" id="projectinfotab">Project Info</button>
-  <button class="tablinks" onclick="OpenTab('Xrunnerinfo')" id="Xrunnerinfotab">Xrunner Info</button>
-  <button class="tablinks" onclick="OpenTab('Xrunfunc')" id="Xrunfunctab">Xrun func reference</button>
-  <button class="tablinks" onclick="OpenTab('expert')" id="experttab">Expert</button>
-</div>
-<!-- Tab content -->
-  <div id="project" class="tabcontent active"> <form>
-   <textarea name="DataArea" rows="18" cols=150 readonly></textarea>
-   <input type="BUTTON" value="Edit project.txt file" onclick="editFileExternal(projectTxt)" class="floatright halfbutton">
-   <input type="BUTTON" value="Refresh from source" onclick="reloadProject(projectTxt)" class="">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <!--   Create GUI for bat file.      -->
+        <title>Xrunner2</title>
+        <HTA:application applicationName="xrunner2 app" singleinstance="yes" Icon="setup/x2.ico"></HTA:application>
+        <link rel="stylesheet" href="setup/xrun.css"/>
+        <script type="text/vbscript" src="setup/xrun.vbs"></script>
+        <script type="text/javascript" src="setup/xrun.js"></script>
+        <!-- <script language="JavaScript"></script> -->
+    </head>
+    <body onload="call presets()">
+        <div class="floatright">
+            <button onclick="SelectFolder(projPath)" name="ChoosePath" class="widebutton">1. Click here to select your project folder</button>
+            <br/>
+            <input type="text" name="ShowSelectedFolder" size="60" maxLength="255">
+        </div>
+        <h2 id="title">Open project here &gt;</h2>
+        <!-- Tab links -->
+        <div class="tab">
+            <button class="tablinks active" onclick="OpenTab('project')" id="projecttab">Project Tasks</button>
+            <button class="tablinks" onclick="OpenTab('projectinfo')" id="projectinfotab">Project Info</button>
+            <button class="tablinks" onclick="OpenTab('Xrunnerinfo')" id="Xrunnerinfotab">Xrunner Info</button>
+            <button class="tablinks" onclick="OpenTab('Xrunfunc')" id="Xrunfunctab">Xrun func reference</button>
+            <button class="tablinks" onclick="OpenTab('expert')" id="experttab">Expert</button>
+        </div>
+        <!-- Tab content -->
+        <div id="project" class="tabcontent active">
+            <form>
+                <textarea name="DataArea" rows="18" cols=150 readonly></textarea>
+            </form>
+            <div class="settings">
+   <input type="BUTTON" value="Refresh from source" onclick="reloadProject(projectTxt)" class="halfbutton"/>
    <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="halfbutton" >Open Project folder</button>
-  </form>
+   <input type="BUTTON" value="Edit project.txt file" onclick="editFileExternal(projectTxt)" class="halfbutton"/>
 
-  <div class="settings">
          Show feedback info  <br /> level 0
       <input id="infoid0" onclick="" type="radio" value="0" name="inforadio"> &ensp; level 1
       <input id="infoid1" onclick="" type="radio" value="1" name="inforadio"> &ensp; level 2 
@@ -41,99 +45,94 @@
       <input id="pauseatend" onclick="" value="pause" type="checkbox" name="checkbox1"> Pause at the end of the tasks?<br />
      <!--   <input id="unittest" onclick="call toggleIni(xrunini,'unittest','unittest')" value="pause" type="checkbox" name="checkbox1"> Unit testing? -->    
   </div>
-  <div id="grouplabela"></div>
-  <button onclick="call xrun('a')" class="inibutton" id="buttona">Run group A tasks</button>
-  <div id="grouplabelb"></div>
-  <button onclick="call xrun('b')" class="inibutton" id="buttonb">Run group B tasks</button>
-  <div id="grouplabelc"></div>
-  <button onclick="call xrun('c')" class="inibutton" id="buttonc">Run group C tasks</button>
-  <div id="grouplabeld"></div>
-  <button onclick="call xrun('d')" class="inibutton" id="buttond">Run group D tasks</button>
-  <div id="grouplabele"></div>
-  <button onclick="call xrun('e')" class="inibutton" id="buttone">Run group E tasks</button>
-  <div id="grouplabelf"></div>
-  <button onclick="call xrun('f')" class="inibutton" id="buttonf">Run group F tasks</button>
-  <div id="grouplabelg"></div>
-  <button onclick="call xrun('g')" class="inibutton" id="buttong">Run group G tasks</button>
-  <div id="grouplabelh"></div>
-  <button onclick="call xrun('h')" class="inibutton" id="buttonh">Run group H tasks</button>
-  <div id="grouplabeli"></div>
-  <button onclick="call xrun('i')" class="inibutton" id="buttoni">Run group I tasks</button>
-  <div id="grouplabelj"></div>
-  <button onclick="call xrun('j')" class="inibutton" id="buttonj">Run group J tasks</button>
-  <div id="grouplabelk"></div>
-  <button onclick="call xrun('k')" class="inibutton" id="buttonk">Run group K tasks</button>
-  <div id="grouplabell"></div>
-  <button onclick="call xrun('l')" class="inibutton" id="buttonl">Run group L tasks</button>
-  <div id="grouplabelm"></div>
-  <button onclick="call xrun('m')" class="inibutton" id="buttonm">Run group M tasks</button>
-  <div id="grouplabeln"></div>
-  <button onclick="call xrun('n')" class="inibutton" id="buttonn">Run group N tasks</button>
-  <div id="grouplabelo"></div>
-  <button onclick="call xrun('o')" class="inibutton" id="buttono">Run group O tasks</button>
-  <div id="grouplabelp"></div>
-  <button onclick="call xrun('p')" class="inibutton" id="buttonp">Run group P tasks</button>
-  <div id="grouplabelq"></div>
-  <button onclick="call xrun('q')" class="inibutton" id="buttonq">Run group Q tasks</button>
-  <div id="grouplabelr"></div>
-  <button onclick="call xrun('r')" class="inibutton" id="buttonr">Run group R tasks</button>
-  <div id="grouplabels"></div>
-  <button onclick="call xrun('s')" class="inibutton" id="buttons">Run group S tasks</button>
-   <div id="grouplabelt"></div>
- <button onclick="call xrun('t')" class="inibutton" id="buttont">Run group T tasks</button>
-   <div id="grouplabelu"></div>
- <button onclick="call xrun('u')" class="inibutton" id="buttonu">Run group U tasks</button>
-   <div id="grouplabelv"></div>                          
- <button onclick="call xrun('v')" class="inibutton" id="buttonv">Run group V tasks</button>
-   <div id="grouplabelw"></div>
- <button onclick="call xrun('w')" class="inibutton" id="buttonw">Run group W tasks</button>
-   <div id="grouplabelx"></div>
- <button onclick="call xrun('x')" class="inibutton" id="buttonx">Run group X tasks</button>
-   <div id="grouplabely"></div>
- <button onclick="call xrun('y')" class="inibutton" id="buttony">Run group Y tasks</button>
-   <div id="grouplabelz"></div>
- <button onclick="call xrun('z')" class="inibutton" id="buttonz">Run group Z tasks</button>
-  <!-- <hr>
+            <div id="grouplabela"></div>
+            <button onclick="call xrun('a')" class="inibutton" id="buttona">Run group A tasks</button>
+            <div id="grouplabelb"></div>
+            <button onclick="call xrun('b')" class="inibutton" id="buttonb">Run group B tasks</button>
+            <div id="grouplabelc"></div>
+            <button onclick="call xrun('c')" class="inibutton" id="buttonc">Run group C tasks</button>
+            <div id="grouplabeld"></div>
+            <button onclick="call xrun('d')" class="inibutton" id="buttond">Run group D tasks</button>
+            <div id="grouplabele"></div>
+            <button onclick="call xrun('e')" class="inibutton" id="buttone">Run group E tasks</button>
+            <div id="grouplabelf"></div>
+            <button onclick="call xrun('f')" class="inibutton" id="buttonf">Run group F tasks</button>
+            <div id="grouplabelg"></div>
+            <button onclick="call xrun('g')" class="inibutton" id="buttong">Run group G tasks</button>
+            <div id="grouplabelh"></div>
+            <button onclick="call xrun('h')" class="inibutton" id="buttonh">Run group H tasks</button>
+            <div id="grouplabeli"></div>
+            <button onclick="call xrun('i')" class="inibutton" id="buttoni">Run group I tasks</button>
+            <div id="grouplabelj"></div>
+            <button onclick="call xrun('j')" class="inibutton" id="buttonj">Run group J tasks</button>
+            <div id="grouplabelk"></div>
+            <button onclick="call xrun('k')" class="inibutton" id="buttonk">Run group K tasks</button>
+            <div id="grouplabell"></div>
+            <button onclick="call xrun('l')" class="inibutton" id="buttonl">Run group L tasks</button>
+            <div id="grouplabelm"></div>
+            <button onclick="call xrun('m')" class="inibutton" id="buttonm">Run group M tasks</button>
+            <div id="grouplabeln"></div>
+            <button onclick="call xrun('n')" class="inibutton" id="buttonn">Run group N tasks</button>
+            <div id="grouplabelo"></div>
+            <button onclick="call xrun('o')" class="inibutton" id="buttono">Run group O tasks</button>
+            <div id="grouplabelp"></div>
+            <button onclick="call xrun('p')" class="inibutton" id="buttonp">Run group P tasks</button>
+            <div id="grouplabelq"></div>
+            <button onclick="call xrun('q')" class="inibutton" id="buttonq">Run group Q tasks</button>
+            <div id="grouplabelr"></div>
+            <button onclick="call xrun('r')" class="inibutton" id="buttonr">Run group R tasks</button>
+            <div id="grouplabels"></div>
+            <button onclick="call xrun('s')" class="inibutton" id="buttons">Run group S tasks</button>
+            <div id="grouplabelt"></div>
+            <button onclick="call xrun('t')" class="inibutton" id="buttont">Run group T tasks</button>
+            <div id="grouplabelu"></div>
+            <button onclick="call xrun('u')" class="inibutton" id="buttonu">Run group U tasks</button>
+            <div id="grouplabelv"></div>
+            <button onclick="call xrun('v')" class="inibutton" id="buttonv">Run group V tasks</button>
+            <div id="grouplabelw"></div>
+            <button onclick="call xrun('w')" class="inibutton" id="buttonw">Run group W tasks</button>
+            <div id="grouplabelx"></div>
+            <button onclick="call xrun('x')" class="inibutton" id="buttonx">Run group X tasks</button>
+            <div id="grouplabely"></div>
+            <button onclick="call xrun('y')" class="inibutton" id="buttony">Run group Y tasks</button>
+            <div id="grouplabelz"></div>
+            <button onclick="call xrun('z')" class="inibutton" id="buttonz">Run group Z tasks</button>
+            <!-- <hr>
       <div id=Results>&nbsp</div> -->
-
-</div>
-<div id="projectinfo" class="tabcontent">
- <form>
-   <textarea name="InfoArea" rows="18" readonly  cols=88></textarea>
-   <div class="floatright">
-   <input type="BUTTON" value="Refresh from source" onclick="call reloadText(projectInfo)" class="halfbutton">
-   <input type="BUTTON" value="Edit project-info.txt" onclick="call editFileExternal(projectInfo)" class="halfbutton">    
-   </div>
-
-  </form>
-
-      <!-- iframe id="" src="setup/project-info.txt" width="715" height="700" frameborder="2"></iframe> --> 
-</div>
-<div id="Xrunnerinfo" class="tabcontent">
-     <iframe src="setup/Xrunner.html" width="715" height="700" frameborder="2"></iframe>
-</div>
-<div id="Xrunfunc" class="tabcontent">
-     <iframe src="docs/xrun-docs.md.html" width="715" height="700" frameborder="2"></iframe>
-</div>
-<div id="expert" class="tabcontent">
-
-  <button onclick="editFileExternal(projectInfo)" name="LoadValues" id="LoadValues" class="inibutton">Edit Project-Info.txt</button>
-  <button onclick="editFileExternal(projectTxt)" name="LoadValues" id="LoadValues" class="inibutton">Edit project.txt</button>
-  <button onclick="editFileExternal('setup/xrun.css')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrun.css</button>
-  <button onclick="editFileExternal('setup/xrun.vbs')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrun.vbs</button>
-  <button onclick="editFileExternal('setup/xrun.js')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrun.js</button>
-  <button onclick="editFileExternal('setup/xrun.ini')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrun.ini</button>
-  <button onclick="editFileExternal('setup/xrunner.md')" name="LoadValues" id="LoadValues" class="inibutton">Edit Xrunner.md</button>
-  <button onclick="editFileExternal('Xrunner.hta')" name="LoadValues" id="LoadValues" class="inibutton">Edit Xrunner.hta</button>
-  <button onclick="editFileExternal('scripts/func.cmd')" name="LoadValues" id="LoadValues" class="inibutton">Edit func.cmd expert only!</button> 
-  <button onclick="editFileExternal('xrunner.cmd')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrunner.cmd expert only!</button> 
-  <button onclick="call RunCmd('setup/md2html.cmd', 'C:\ProgramData\xrun\xrunner.md')" class="inibutton" >Update Xrunner.html</button>
-  <button onclick="call editFileWithProgram('scripts\variable2xslt-3.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="inibutton">Edit variable2xslt-3.xslt</button>
-  <button onclick="call editFileWithProgram('scripts\xrun.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="inibutton">View xrun.xslt</button>
-  
-  <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="inibutton" >Open Project folder</button>
-  <button onclick="call RunCmd2('start', '', strCurDir)" class="inibutton" >Open Xrunner folder</button>
-</div>
-<div id="lastcmd"></div>
-       </body>
+        </div>
+        <div id="projectinfo" class="tabcontent">
+            <form>
+                <textarea name="InfoArea" rows="18" readonly cols=88></textarea>
+                <div class="floatright">
+                    <input type="BUTTON" value="Refresh from source" onclick="call reloadText(projectInfo)" class="halfbutton">
+                    <input type="BUTTON" value="Edit project-info.txt" onclick="call editFileExternal(projectInfo)" class="halfbutton">
+                </div>
+            </form>
+            <!-- iframe id="" src="setup/project-info.txt" width="715" height="700" frameborder="2"></iframe> -->
+        </div>
+        <div id="Xrunnerinfo" class="tabcontent">
+            <iframe src="setup/Xrunner.html" width="715" height="700" frameborder="2"></iframe>
+        </div>
+        <div id="Xrunfunc" class="tabcontent">
+            <iframe src="docs/xrun-docs.md.html" width="715" height="700" frameborder="2"></iframe>
+        </div>
+        <div id="expert" class="tabcontent">
+            <button onclick="editFileExternal(projectInfo)" name="LoadValues" id="LoadValues" class="inibutton">Edit Project-Info.txt</button>
+            <button onclick="editFileExternal(projectTxt)" name="LoadValues" id="LoadValues" class="inibutton">Edit project.txt</button>
+            <button onclick="editFileExternal('setup\xrun.css')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrun.css</button>
+            <button onclick="call editFileWithProgram('setup\xrun.vbs',npp)" name="LoadValues" id="LoadValues" class="inibutton">Edit xrun.vbs</button>
+            <button onclick="editFileExternal('setup\xrun.js')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrun.js</button>
+            <button onclick="editFileExternal('setup\xrun.ini')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrun.ini</button>
+            <button onclick="editFileExternal('setup\xrunner.md')" name="LoadValues" id="LoadValues" class="inibutton">Edit Xrunner.md</button>
+            <button onclick="call editFileWithProgram('Xrunner.hta',xmleditor)" name="LoadValues" id="LoadValues" class="inibutton">Edit Xrunner.hta</button>
+            <button onclick="editFileExternal('scripts\func.cmd')" name="LoadValues" id="LoadValues" class="inibutton">Edit func.cmd expert only!</button>
+            <button onclick="editFileExternal('xrunner.cmd')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrunner.cmd expert only!</button>
+            <button onclick="call RunCmd('setup/md2html.cmd', 'C:\ProgramData\xrun\xrunner.md')" class="inibutton">Update Xrunner.html</button>
+            <button onclick="call editFileWithProgram('scripts\projectvariables-v2.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="inibutton">Edit projectvariables-v2.xslt</button>
+            <button onclick="call editFileWithProgram('scripts\xrun.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="inibutton">View xrun.xslt</button>
+            <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="inibutton">Open Project folder</button>
+            <button onclick="call RunCmd2('start', '', strCurDir)" class="inibutton">Open Xrunner folder</button>
+        </div>
+        <div id="lastcmd"></div>
+    </body>
 </html>

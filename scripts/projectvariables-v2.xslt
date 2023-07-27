@@ -117,7 +117,7 @@
                         <xsl:text>'</xsl:text>
                     </xsl:attribute>
                 </xsl:element>
-                <xsl:if test="matches($varname,'list$') and not(matches($varname,'_file-list$'))">
+                <xsl:if test="matches($varname,'[-_]list$') and not(matches($varname,'_file-list$'))">
                     <!-- <xsl:variable name="list" select="tokenize($varname,'_')"/> -->
                     <xsl:variable name="separator" select="f:keyvalue($list-separator-kv,$list[2])"/>
                     <xsl:sequence select="f:toklist($varname,$listdelim)"/>
@@ -156,7 +156,7 @@
             </xsl:attribute>
         </xsl:element>
         <!-- <xsl:variable name="islist" select="matches($varname,'list$')"/> -->
-        <xsl:if test="matches($varname,'list$') and not(matches($varname,'_file-list$'))">
+        <xsl:if test="matches($varname,'[-_]list$') and not(matches($varname,'_file-list$'))">
             <xsl:variable name="list" select="tokenize($varname,'_')"/>
             <xsl:variable name="separator" select="f:keyvalue($list-separator-kv,$list[2])"/>
             <xsl:sequence select="f:toklist($varname,$separator)"/>
@@ -183,7 +183,7 @@
         <xsl:param name="separator"/>
         <xsl:element name="xsl:variable">
             <xsl:attribute name="name">
-                <xsl:value-of select="concat($name,'-key')"/>
+                <xsl:value-of select="concat(tokenize($name,'_')[1],'-key')"/>
             </xsl:attribute>
             <xsl:attribute name="select">
                 <xsl:value-of select="concat('tokenize($',$name,',',$sq,'=[^',$separator,']*[',$separator,']?',$sq,')')"/>
