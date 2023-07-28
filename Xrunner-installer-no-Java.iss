@@ -38,8 +38,8 @@ Source: "scripts\*.cct"; DestDir: "{app}\scripts"
 Source: "scripts\func.cmd"; DestDir: "{app}\scripts"
 Source: "setup\*.html"; DestDir: "{app}\setup"
 ;Source: "setup\*.ini"; DestDir: "{app}\setup"
-;Source: "docs\*.md"; DestDir: "{app}\docs"
-;Source: "docs\*.html"; DestDir: "{app}\docs"
+Source: "docs\*.png"; DestDir: "{app}\docs"
+Source: "docs\*.html"; DestDir: "{app}\docs"
 ;Source: "_Xrunner_Projects\Unit-tests\*.*"; DestDir: "{app}\_Xrunner_Projects\Unit-tests"  ;
 ;Source: "_Xrunner_Projects\Complete_Concordance_Builder\My-Concordance\*.*"; DestDir: "{app}\_Xrunner_Projects\Complete_Concordance_Builder\My-Concordance" ; Flags: recursesubdirs
 ; Modify-LIFT
@@ -58,7 +58,7 @@ Source: "setup\*.html"; DestDir: "{app}\setup"
 ;Source: "..\..\..\installer-tools\{#ccwzip}"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{app}\tools\cct\{#ccwexe}');
 ;Source: "..\..\..\installer-tools\amazon-corretto-8.222.10.3-windows-x64-jre.zip"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('{app}\tools\java\java.exe');
 ;Source: "..\..\..\{#makeinstall}" DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('C:\Program Files (x86)\GnuWin32\bin\make.exe');
-Source: "D:\All-SIL-Publishing\installer-tools\{#makezip}"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('C:\{app}\tools\bin\make.exe');
+;Source: "D:\All-SIL-Publishing\installer-tools\{#makezip}"; DestDir: "{tmp}"; Flags: deleteafterinstall ;  Check: FileDoesNotExist('C:\{app}\tools\bin\make.exe');
 Source: "tools\bin\*.*"; DestDir: "{app}\tools\bin"    ; Flags: recursesubdirs
 Source: "tools\lib\*.*"; DestDir: "{app}\tools\lib"     ; Flags: recursesubdirs
 Source: "tools\cct\*.*"; DestDir: "{app}\tools\cct"     ; Flags: recursesubdirs
@@ -70,9 +70,9 @@ Name: "{group}\Xrunner2"; Filename: "{app}\xrunner.hta"; IconFilename: "{app}\se
 Name: "{group}\Uninstallers\Xrunner2 Uninstall"; Filename: "{uninstallexe}" 
 
  [Run]
-Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#saxonzip} -d {app}\tools\saxon";  Check: FileDoesNotExist('{app}\tools\saxon\{#saxonjar}');
-Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#ccwzip} -d '{app}\tools\cct'";  Check: FileDoesNotExist('{app}\tools\cct\{#ccwexe}');
-Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#makezip} -d '{app}\tools'";  Check: FileDoesNotExist('{app}\tools\{#makeexe}');
+;Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#saxonzip} -d {app}\tools\saxon";  Check: FileDoesNotExist('{app}\tools\saxon\{#saxonjar}');
+;Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#ccwzip} -d '{app}\tools\cct'";  Check: FileDoesNotExist('{app}\tools\cct\{#ccwexe}');
+;Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\{#makezip} -d '{app}\tools'";  Check: FileDoesNotExist('{app}\tools\{#makeexe}');
 ;Filename: "{tmp}\UNZIP.EXE"; Parameters: "{tmp}\amazon-corretto-8.222.10.3-windows-x64-jre.zip -d '{app}\tools\java'";  Check: FileDoesNotExist('{app}\tools\java\java.exe');
 ;Filename: "{tmp}\JREInstall.exe"; Parameters: "/s"; Flags: nowait postinstall runhidden runascurrentuser; Check: InstallJava() ;
 ;Filename: "{tmp}\{#makeinstall}"; Parameters: "/s"; Flags: nowait postinstall runhidden runascurrentuser; Check: FileDoesNotExist('C:\Program Files (x86)\GnuWin32\bin\make.exe') ;
@@ -91,7 +91,7 @@ Name: "{app}\tools\cct"
 
 [INI]
 ;The following line is different to how it is tested on the computer
-Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "projecthome"; String: "C:\programs\xrunner\_xrunner_projects"; Flags: createkeyifdoesntexist
+Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "projecthome"; String: "{app}\_xrunner_projects"; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "taskgroup_list"; String: "a b c d e f g h i j k l m n o p q r s t u v w x y z"; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "button-or-label_list"; String: "button b label"; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "nonunique_list"; String: "t xt ut button b label com"; Flags: createkeyifdoesntexist
@@ -109,12 +109,12 @@ Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "projecthome"; String: 
 ;Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "detectjava"; String: ""; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "setup-type"; String: "java"; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "java"; String: "java"; Flags: createkeyifdoesntexist
-Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "ccw32"; String: "C:\programs\xrunner\tools\cct\{#ccwexe}"; Flags: createkeyifdoesntexist
-Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "saxon"; String: "C:\programs\xrunner\tools\saxon\{#saxonjar}"; Flags: createkeyifdoesntexist
+Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "ccw32"; String: "{app}\tools\cct\{#ccwexe}"; Flags: createkeyifdoesntexist
+Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "saxon"; String: "{app}\tools\saxon\{#saxonjar}"; Flags: createkeyifdoesntexist
 Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "java"; String: "java"; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "zip"; String: "C:\Program Files\7-Zip\7z.exe"; Flags: createkeyifdoesntexist
 Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "editor"; String: "C:\Windows\System32\notepad.exe"; Flags: createkeyifdoesntexist
-Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "make"; String: "C:\programs\xrunner2\tools\bin\make.exe"; Flags: createkeyifdoesntexist
+Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "make"; String: "{app}\tools\bin\make.exe"; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "foxe"; String: "C:\Program Files (x86)\firstobject\foxe.exe"; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "prince"; String: "C:\Program Files (x86)\Prince\engine\bin\prince.exe"; Flags: createkeyifdoesntexist
 ;Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "rdwrtp8"; String: "C:\Program Files (x86)\Paratext 8\rdwrtp8.exe"; Flags: createkeyifdoesntexist

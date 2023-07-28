@@ -2,7 +2,7 @@
 :: Description: xrunner.cmd
 :: Usage: xrunner C:\path\project.txt [group [infolevel [pauseatend [unittest]]]]
 :: Note: xrunner requires a project file. The group parameter is normally a letter in the range a-z.
-:: Xrunner 2 uses CCW32 to generate the needed initial files.
+:: Xrunner 2 uses ccw to generate the needed initial files.
 :: Now the tasklists are converted into functions. Appended to that is the xrun.ini variables, the xruni.ini tools and the project.txt variables and the old xrun.cmd functions.
 @echo off
 cls
@@ -11,10 +11,12 @@ set projectpath=%~dp1
 set group=%2
 set infolevel=%3
 set pauseatend=%4
-:: Unit test is depreciated
-:: set unittest=%5
 call :colorvar
 call :setinfolevel %infolevel%
+rem Required tools. May need to edit the next three lines
+set ccw=%cd%\tools\cct\Ccw64.exe
+set make=%cd%\tools\bin\make.exe
+set saxon=%cd%\tools\saxon\saxon12he.jar
 @if defined info4 echo %magenta%%funcstarttext%%reset%
 @if defined info3 echo %magentabg%:xrunner%reset% %fparams%
 call :main %group%
@@ -63,7 +65,6 @@ goto :eof
   if exist %projectpath%\xbuild.txt del %projectpath%\xbuild.txt
   if defined pauseatend (pause ) else (timeout 30)
 goto :eof
-
 
 :checkdir
 :: Description: checks if dir exists if not it is created
@@ -254,6 +255,20 @@ goto :eof
   set whitebg=[107m
 goto :eof
 
+:runmake
+:: Description: This runs the makefile script for checking if the project.xslt is up to date
+:: Usage: call :runmake makefile-path-filename
+:: Required variables: make 
+  rem @if defined info2 echo %green%Info: Checking if project.xslt is up to date.%cyan%
+  @call :funcbegin %0 "'%~1'"
+  set makepath=%~dp1
+  set makefile=%~nx1
+  pushd "%makepath%"
+  call %make% -f %makefile%
+  popd
+  @call :funcend %0
+goto :eof
+
 :setinfolevel
 :: Description: Used for initial setup and after xrun.ini and project.txt
 :: Usage: call :setinfolevel numb_level
@@ -276,9 +291,9 @@ goto :eof
 :: Usage: call :setup
 :: Purpose: create variables, create project.cmd
 :: Functions used: funcbegin funcend checkdir detectdateformat
-:: Programs used: ccw32 or ccw64 sys.cmd
-:: Variables used: projectpath ccw32 green reset
-:: Variables created: projectpath scripts cctparam syscmd taskscmd projcmd setupcct funccmd ccw32 count
+:: Programs used: ccw or ccw64 sys.cmd
+:: Variables used: projectpath ccw green reset
+:: Variables created: projectpath scripts cctparam syscmd taskscmd projcmd setupcct funccmd ccw count
 :: Variable cleared: firstxslt
   @call :funcbegin %0 "%~1 %~2 %~3"
   if "%PUBLIC%" == "C:\Users\Public" (
@@ -286,9 +301,9 @@ goto :eof
       rem this still does not work for Chinese characters in the path
       chcp 65001
       )
+  set setupxslt=on
   set projectpath=%projectpath:~0,-1%
   rem set checkencoding=on
-  set firstxslt=
   set scripts=%projectpath%\scripts
   set cctparam=-u -b -q -n
   set syscmd=%scripts%\sys.cmd
@@ -296,21 +311,20 @@ goto :eof
   set projcmd=%scripts%\proj.cmd
   set setupcct=%cd%\scripts\setup2.cct
   set funccmd=%cd%\scripts\func.cmd
-  set ccw32=%cd%\tools\cct\Ccw64.exe
   set xtest=%red%%yellowbg% Test: %reset%
   set xtestt=%xtest% %greenbg%%whiteb% TRUE %reset% -
   set xtestf=%xtest% %redbg% FALSE %reset% -
   set projxsltmake=%projectpath%\projxslt.make
   call :detectdateformat
-  call :makemake projsetup.make projectpath "%projectpath%" projectmpath %projectpath::=\:% ccw32 "%ccw32%"
-  call tools\bin\make.exe -f projsetup.make
+  call :makemake "%projectpath%\projsetup.make"
+  call :runmake "%projectpath%\projsetup.make" 
   rem call :checkdir "%projectpath%\scripts\"
   rem call :checkdir "%projectpath%\tmp"
-  rem call "%ccw32%" %cctparam% -t "%setupcct%" -o "%syscmd%" "setup\xrun.ini"
+  rem call "%ccw%" %cctparam% -t "%setupcct%" -o "%syscmd%" "setup\xrun.ini"
   call %syscmd%
-  rem call "%ccw32%" %cctparam% -t "%setupcct%" -o "%taskscmd%" "%projectpath%\project.txt"
+  rem call "%ccw%" %cctparam% -t "%setupcct%" -o "%taskscmd%" "%projectpath%\project.txt"
   rem copy "%taskscmd%"+"%funccmd%"+"%syscmd%" "%projcmd%" > nul
-  call :makemake %projectpath%\projxslt.make xrunnerpath %cd% xrunnermpath %cd::=\:% saxon %saxon%
+  call :makemake "%projectpath%\projxslt.make" 
   @if defined info1 echo %green%Setup: complete%reset%
   @if defined info1 echo.
   set /A count=0
@@ -332,7 +346,14 @@ goto :eof
   set v3=%~7
   set n4=%~8
   set v4=%~9
-  if defined v1 echo %n1% := %v1%> %file%
+  echo projectpath := %projectpath%> %file%
+  echo projectmpath := %projectpath::=\:%>> %file%
+  echo xrunnerpath := %cd%>> %file%
+  echo xrunnermpath := %cd::=\:%>> %file%
+  echo java := %java%>> %file%
+  echo saxon := %saxon%>> %file%
+  echo ccw := %ccw%>> %file%
+  if defined v1 echo %n1% := %v1%>> %file%
   if defined v2 echo %n2% := %v2%>> %file%
   if defined v3 echo %n3% := %v3%>> %file%
   if defined v4 echo %n4% := %v4%>> %file%

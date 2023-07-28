@@ -346,7 +346,7 @@ End Sub
 
 Function OpenTab(tabid)
     Dim tab, x, Elem, Elemon, Elemtab , Elemtc, ifrm, tabname, tabactive
-    tab = Array("project","projectinfo","Xrunnerinfo", "Xrunfunc", "expert")
+    tab = Array("project","projectinfo","Xrunner_info", "Xrunner_func", "Xrun_func","expert")
     tabactive = tabid & "tab"
     For x = 0 To Ubound(tab)
       tabname = tab(x) & "tab"

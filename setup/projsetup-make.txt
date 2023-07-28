@@ -11,16 +11,16 @@ $(projectmpath)\tmp:
 $(projectmpath)\scripts :
 	mkdir $(projectpath)\scripts
 
-$(projectmpath)/scripts/proj.cmd: $(projectmpath)/scripts/sys.cmd $(projectpath)/scripts/tasks.cmd scripts/func.cmd
+$(projectmpath)/scripts/proj.cmd: $(projectmpath)/scripts/sys.cmd $(projectmpath)/scripts/tasks.cmd $(xrunnermpath)/scripts/func.cmd
 	@echo $(cyan)Updating proj.cmd$(reset)
-	@copy $(projectpath)\scripts\tasks.cmd+$(projectpath)\scripts\sys.cmd+scripts\func.cmd $(projectpath)\scripts\proj.cmd > nul
+	@copy $(projectpath)\scripts\tasks.cmd+$(projectpath)\scripts\sys.cmd+$(xrunnerpath)\scripts\func.cmd $(projectpath)\scripts\proj.cmd > nul
 
-
-$(projectmpath)/scripts/sys.cmd: setup/xrun.ini
+	
+$(projectmpath)/scripts/sys.cmd: $(xrunnermpath)/setup/xrun.ini
 	@echo $(cyan)Updating sys.cmd$(reset)
-	@call "$(ccw32)" -u -b -q -n -t "scripts\setup2.cct" -o "$(projectpath)\scripts\sys.cmd" "setup\xrun.ini"
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup2.cct" -o "$(projectpath)\scripts\sys.cmd" "$(xrunnerpath)\setup\xrun.ini"
 
 $(projectpath)/scripts/tasks.cmd: $(projectmpath)\project.txt
 	@echo $(cyan)Updating task.cmd$(reset)
-	@call "$(ccw32)" -u -b -q -n -t "scripts\setup2.cct" -o "$(projectpath)\scripts\tasks.cmd" "$(projectpath)\project.txt"
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup2.cct" -o "$(projectpath)\scripts\tasks.cmd" "$(projectpath)\project.txt"
 

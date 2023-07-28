@@ -1,4 +1,5 @@
 files := tmp/proj-var.xml lists.tsv keyvalue.tsv $(xrunnermpath)/scripts/projectvariables-v2.xslt scripts/inc-lookup.xslt scripts/inc-file2uri.xslt scripts/inc-copy-anything.xslt scripts/xrun.xslt
+
 green := [32m
 reset := [0m
 cyan := [36m
@@ -11,13 +12,12 @@ createxslt: scripts/project.xslt
 scripts/project.xslt: $(files)
 	@echo $(cyan)Rebuilding: project.xslt$(reset)
 	@rem echo java -jar "$(xrunnerpath)\tools\saxon\saxon9he.jar" -o:"project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v2.xslt" projectpath=${CURDIR} USERPROFILE=$(USERPROFILE)
-	@java -jar "$(saxon)" -o:"scripts\project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v2.xslt" projectpath=${CURDIR} USERPROFILE=$(USERPROFILE)
-
+	@call "$(java)" -jar "$(saxon)" -o:"scripts\project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v2.xslt" projectpath=${CURDIR} USERPROFILE=$(USERPROFILE)
 
 tmp/proj-var.xml: project.txt
 	@if not exist "tmp\" md "tmp\"
 	@echo $(cyan)Rebuilding proj-var.xml$(reset)
-	@"D:\programs\xrunner2\tools\cct\Ccw64.exe" -u -b -q -n -t "$(xrunnerpath)\scripts\proj-var.cct" -o "tmp\proj-var.xml" "project.txt"
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\proj-var.cct" -o "tmp\proj-var.xml" "project.txt"
 
 scripts/inc-lookup.xslt: $(xrunnermpath)/scripts/inc-lookup.xslt
 	@echo $(cyan)Adding: inc-lookup.xslt into project$(reset)
@@ -31,7 +31,7 @@ scripts/inc-copy-anything.xslt: $(xrunnermpath)/scripts/inc-copy-anything.xslt
 	@echo $(cyan)Adding: inc-copy-anything.xslt into project$(reset)
 	@copy "$(xrunnerpath)\scripts\inc-copy-anything.xslt" "${CURDIR}\scripts\" > nul
 
-scripts/xrun.xslt: C\:\programs\xrunner2\scripts\xrun.xslt
+scripts/xrun.xslt: $(xrunnermpath)\scripts\xrun.xslt
 	@echo $(cyan)Adding: xrun.xslt into project$(reset)
 	@copy "$(xrunnerpath)\scripts\xrun.xslt" "${CURDIR}\scripts\" > nul
 
@@ -41,4 +41,17 @@ lists.tsv:
 
 keyvalue.tsv:
 	@if not exist keyvalue.tsv echo # keyvalue.tsv > keyvalue.tsv
-	@if exist keyvalue.tsv FOR /F "usebackq tokens=1-2 delims=;," %%A IN (`$(xrunnerpath)\tools\gnuwin32\bin\file.exe --mime-encoding "keyvalue.tsv"`) DO echo $(cyan)Encoding: keyvalue.tsv: %%B$(reset)
+	@if exist keyvalue.tsv FOR /F "usebackq tokens=1-2 delims=;," %%A IN (`$(xrunnerpath)\tools\gnuwin32\bin\file.exe --mime-encoding "keyvalue.tsv"`) DO echo $call $(cyan)Encoding: keyvalue.tsv: %%B$(reset)
+
+$(xrunnermpath)/scripts/inc-lookup.xslt:
+	@rem nothing to do
+
+$(xrunnermpath)/scripts/inc-file2uri.xslt:
+	@rem nothing to do
+
+$(xrunnermpath)/scripts/inc-copy-anything.xslt:
+	@rem nothing to do
+
+$(xrunnermpath)\scripts\xrun.xslt: $(xrunnermpath)\setup\xrun.ini
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "$(xrunnerpath)\scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"
+	@echo $(cyan)Updated: xrun.xslt$(reset)

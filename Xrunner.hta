@@ -19,10 +19,11 @@
         <h2 id="title">Open project here &gt;</h2>
         <!-- Tab links -->
         <div class="tab">
-            <button class="tablinks active" onclick="OpenTab('project')" id="projecttab">Project Tasks</button>
+            <button class="tablinks active" onclick="OpenTab('project')" id="projecttab">Project</button>
             <button class="tablinks" onclick="OpenTab('projectinfo')" id="projectinfotab">Project Info</button>
-            <button class="tablinks" onclick="OpenTab('Xrunnerinfo')" id="Xrunnerinfotab">Xrunner Info</button>
-            <button class="tablinks" onclick="OpenTab('Xrunfunc')" id="Xrunfunctab">Xrun func reference</button>
+            <button class="tablinks" onclick="OpenTab('Xrunner_info')" id="Xrunner_infotab">Introduction</button>
+            <button class="tablinks" onclick="OpenTab('Xrunner_func')" id="Xrunner_functab">xrunner.cmd doc</button>
+            <button class="tablinks" onclick="OpenTab('Xrun_func')" id="Xrun_functab">func.cmd doc</button>
             <button class="tablinks" onclick="OpenTab('expert')" id="experttab">Expert</button>
         </div>
         <!-- Tab content -->
@@ -110,12 +111,16 @@
             </form>
             <!-- iframe id="" src="setup/project-info.txt" width="715" height="700" frameborder="2"></iframe> -->
         </div>
-        <div id="Xrunnerinfo" class="tabcontent">
-            <iframe src="setup/Xrunner.html" width="715" height="700" frameborder="2"></iframe>
+        <div id="Xrunner_info" class="tabcontent">
+            <iframe src="index.html" width="715" height="700" frameborder="2"></iframe>
         </div>
-        <div id="Xrunfunc" class="tabcontent">
-            <iframe src="docs/xrun-docs.md.html" width="715" height="700" frameborder="2"></iframe>
+        <div id="Xrunner_func" class="tabcontent">
+            <iframe src="docs/xrunner-doc.html" width="715" height="700" frameborder="2"></iframe>
         </div>
+        <div id="Xrun_func" class="tabcontent">
+            <iframe src="docs/func-doc.html" width="715" height="700" frameborder="2"></iframe>
+        </div>
+
         <div id="expert" class="tabcontent">
             <button onclick="editFileExternal(projectInfo)" name="LoadValues" id="LoadValues" class="inibutton">Edit Project-Info.txt</button>
             <button onclick="editFileExternal(projectTxt)" name="LoadValues" id="LoadValues" class="inibutton">Edit project.txt</button>
@@ -127,7 +132,6 @@
             <button onclick="call editFileWithProgram('Xrunner.hta',xmleditor)" name="LoadValues" id="LoadValues" class="inibutton">Edit Xrunner.hta</button>
             <button onclick="editFileExternal('scripts\func.cmd')" name="LoadValues" id="LoadValues" class="inibutton">Edit func.cmd expert only!</button>
             <button onclick="editFileExternal('xrunner.cmd')" name="LoadValues" id="LoadValues" class="inibutton">Edit xrunner.cmd expert only!</button>
-            <button onclick="call RunCmd('setup/md2html.cmd', 'C:\ProgramData\xrun\xrunner.md')" class="inibutton">Update Xrunner.html</button>
             <button onclick="call editFileWithProgram('scripts\projectvariables-v2.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="inibutton">Edit projectvariables-v2.xslt</button>
             <button onclick="call editFileWithProgram('scripts\xrun.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="inibutton">View xrun.xslt</button>
             <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="inibutton">Open Project folder</button>

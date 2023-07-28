@@ -100,12 +100,12 @@ goto :eof
 goto :eof
 
 :cct
-:: Description: Privides interface to CCW32.
+:: Description: Privides interface to ccw.
 :: Usage: call :cct script.cct ["infile.txt" ["outfile.txt" [append]]]
 :: Functions called: funcbegin funcendtest inccount infile outfile fatal scriptfind checkdir
 :: External apps: ccw32.exe 
 :: External apps url: https://software.sil.org/cc/
-:: Required variable: ccw32
+:: Required variable: ccw
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' %~5"
   call :inccount
@@ -122,14 +122,14 @@ goto :eof
   if not defined script call :fatal %0 "CCT script not supplied!" & goto :eof
   if not exist "%scripts%\%script%" call :scriptfind "%script%" %0
   if not exist "%scripts%\%script%" call :fatal %0 "Script not found!" & goto :eof
-  if not exist "%ccw32%" call :fatal %0 "missing ccw32.exe file" & goto :eof
+  if not exist "%ccw%" call :fatal %0 "Missing ccw.exe file" & goto :eof
   call :checkdir "%outfile%"
   set cctparam=-q -n
   if defined append (
     set cctparam=-a
 	@if defined info3 echo %green%Info: Output is being appended to output file.%reset%
   )
-  set curcommand="%ccw32%" -u -b %cctparam% -t "%script%" -o "%outfile%" "%infile%"
+  set curcommand="%ccw%" -u -b %cctparam% -t "%script%" -o "%outfile%" "%infile%"
   @if defined info2 echo %cyan%%curcommand%%reset%
   pushd "%scripts%"
   call %curcommand%
@@ -1241,6 +1241,33 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:makemake
+:: Description: Create makefile with relevant variables
+:: Usage: call :makevar fileto add to
+:: Note: the body of the make fiels should be in setup folder and in the form filename-make.txt
+  set file=%~1
+  set filenx=%~nx1
+  set n1=%~2
+  set v1=%~3
+  set n2=%~4
+  set v2=%~5
+  set n3=%~6
+  set v3=%~7
+  set n4=%~8
+  set v4=%~9
+  echo projectpath := %projectpath%> %file%
+  echo projectmpath := %projectpath::=\:%>> %file%
+  echo xrunnerpath := %cd%>> %file%
+  echo xrunnermpath := %cd::=\:%>> %file%
+  echo java := %java%>> %file%
+  echo saxon := %saxon%>> %file%
+  echo ccw := %ccw%>> %file%
+  if defined v1 echo %n1% := %v1%>> %file%
+  if defined v2 echo %n2% := %v2%>> %file%
+  if defined v3 echo %n3% := %v3%>> %file%
+  if defined v4 echo %n4% := %v4%>> %file%
+  copy /y %file%+setup\%filenx:.=-%.txt %file% >nul
+goto :eof 
 
 :mergevar
 :: Description: Merge two numbered variable into one with a space between them
@@ -1385,8 +1412,8 @@ goto :eof
 :: Description: Privides interface to perl scripts
 :: Usage: call :cct script.cct ["infile.txt" ["outfile.txt" ["par1"]]
 :: Functions called: inccount, infile, outfile, funcend
-:: External program: ccw32.exe https://software.sil.org/cc/
-:: Required variable: ccw32
+:: External program: ccw.exe https://software.sil.org/cc/
+:: Required variable: ccw
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :inccount %count%
@@ -2004,8 +2031,10 @@ goto :eof
 :: Required variables: java saxon9
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
-  call :make "%projectpath%" "projxslt.make"
-  if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
+  call :makemake "%projectpath%\projxslt.make" 
+  call :runmake "%projectpath%\projxslt.make"
+  set setupxslt=
+  rem if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
   call :inccount
   set script=%~1
   if defined scripts set script=%scripts%\%~1
@@ -2152,5 +2181,19 @@ goto :eof
   @if defined info2 echo %java% -jar "%saxon%" -o:"%outfile%" "%infile%" "%script%" %params%
   %java% -Xmx1024m --suppressXsltNamespaceCheck:on -jar "%saxon%" -o:"%outfile%" "%infile%" "%script%" %params%  
   @call :funcendtest %0
+goto :eof
+
+:runmake
+:: Description: This runs the makefile script for checking if the project.xslt is up to date
+:: Usage: call :runmake makefile-path-filename
+:: Required variables: make 
+  rem @if defined info2 echo %green%Info: Checking if project.xslt is up to date.%cyan%
+  @call :funcbegin %0 "'%~1'"
+  set makepath=%~dp1
+  set makefile=%~nx1
+  pushd "%makepath%"
+  call %make% -f %makefile%
+  popd
+  @call :funcend %0
 goto :eof
 
