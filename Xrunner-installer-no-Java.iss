@@ -15,7 +15,7 @@
 OutputBaseFilename=Xrunner2-installer
 AppName=Xrunner2
 AppVersion=2.0
-DefaultDirName=C:\programs\xrunner2test
+DefaultDirName=C:\programs\xrunner2
 DisableDirPage=true
 DefaultGroupName=Publishing
 UninstallDisplayIcon={app}\setup\{#icon}
@@ -29,6 +29,7 @@ Source: "setup\*.ico"; DestDir: "{app}\setup"
 Source: "setup\*.css"; DestDir: "{app}\setup"
 Source: "setup\*.vbs"; DestDir: "{app}\setup"
 Source: "setup\*.js"; DestDir: "{app}\setup"
+Source: "setup\*.txt"; DestDir: "{app}\setup"
 Source: "*.xml"; DestDir: "{app}"
 Source: "LICENSE.txt"; DestDir: "{app}"
 ;Source: "*.md"; DestDir: "{app}"

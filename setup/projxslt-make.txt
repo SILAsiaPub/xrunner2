@@ -1,4 +1,4 @@
-files := tmp/proj-var.xml lists.tsv keyvalue.tsv $(xrunnermpath)/scripts/projectvariables-v2.xslt scripts/inc-lookup.xslt scripts/inc-file2uri.xslt scripts/inc-copy-anything.xslt scripts/xrun.xslt
+files := tmp/proj-var.xml $(xrunnermpath)/scripts/projectvariables-v2.xslt scripts/inc-lookup.xslt scripts/inc-file2uri.xslt scripts/inc-copy-anything.xslt scripts/xrun.xslt
 
 green := [32m
 reset := [0m
@@ -11,8 +11,7 @@ createxslt: scripts/project.xslt
 
 scripts/project.xslt: $(files)
 	@echo $(cyan)Rebuilding: project.xslt$(reset)
-	@rem echo java -jar "$(xrunnerpath)\tools\saxon\saxon9he.jar" -o:"project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v2.xslt" projectpath=${CURDIR} USERPROFILE=$(USERPROFILE)
-	@call "$(java)" -jar "$(saxon)" -o:"scripts\project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v2.xslt" projectpath=${CURDIR} USERPROFILE=$(USERPROFILE)
+	@call "$(java)" -jar "$(saxon)" -o:"scripts\project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v2.xslt" projectpath=${projectpath} USERPROFILE=$(USERPROFILE)
 
 tmp/proj-var.xml: project.txt
 	@if not exist "tmp\" md "tmp\"
@@ -34,23 +33,6 @@ scripts/inc-copy-anything.xslt: $(xrunnermpath)/scripts/inc-copy-anything.xslt
 scripts/xrun.xslt: $(xrunnermpath)\scripts\xrun.xslt
 	@echo $(cyan)Adding: xrun.xslt into project$(reset)
 	@copy "$(xrunnerpath)\scripts\xrun.xslt" "${CURDIR}\scripts\" > nul
-
-lists.tsv:
-	@if not exist list.tsv echo # lists.tsv > lists.tsv
-	@if exist lists.tsv FOR /F "usebackq tokens=1-2 delims=;," %%A IN (`$(xrunnerpath)\tools\gnuwin32\bin\file.exe --mime-encoding "lists.tsv"`) DO echo $(cyan)Encoding:    lists.tsv: %%B$(reset)
-
-keyvalue.tsv:
-	@if not exist keyvalue.tsv echo # keyvalue.tsv > keyvalue.tsv
-	@if exist keyvalue.tsv FOR /F "usebackq tokens=1-2 delims=;," %%A IN (`$(xrunnerpath)\tools\gnuwin32\bin\file.exe --mime-encoding "keyvalue.tsv"`) DO echo $call $(cyan)Encoding: keyvalue.tsv: %%B$(reset)
-
-$(xrunnermpath)/scripts/inc-lookup.xslt:
-	@rem nothing to do
-
-$(xrunnermpath)/scripts/inc-file2uri.xslt:
-	@rem nothing to do
-
-$(xrunnermpath)/scripts/inc-copy-anything.xslt:
-	@rem nothing to do
 
 $(xrunnermpath)\scripts\xrun.xslt: $(xrunnermpath)\setup\xrun.ini
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "$(xrunnerpath)\scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"

@@ -1029,6 +1029,22 @@ goto :eof
   if defined last set lastfound=on
 goto :eof
 
+
+:libreconvert
+:: Description: Use Libre office to convert document formats
+:: Usage: call :libreconvert convert_to_type input_file/s output-dir
+:: Note: No trailing backslash on the output directory.
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  set convtype=%~1
+  set infile=%~2
+  set outdir=%~3
+  if not defined liboff call :fatal "Libre Office executable not defined." & goto :oef
+  set curcommand="%liboff%" --headless --convert-to %convtype% --outdir "%outdir%" "%infile%"
+  if defined info2 echo %cyan%call %curcommand%%reset%
+  call %curcommand%
+  @call :funcend %0
+goto :eof
+
 :loopfiles
 :: Description: Used to loop through a subset of files specified by the filespec from a single directory
 :: Usage: call :loopfiles sub_name file_specs [param[3-9]]
@@ -1476,8 +1492,8 @@ goto :eof
   if defined infile7 set infile="%infile%" "%infile7%"
   if defined css set css=-s "%css%"
   set curcommand=call "%prince%" %css% "%infile%" %infile2% %infile3% %infile4% %infile5% %infile6% %infile7% -o "%outfile%"
-  @if defined info2 echo %curcommand%
-  %curcommand%
+  @if defined info2 echo %cyan%call %curcommand%%reset%
+  call %curcommand%
   @call :funcendtest %0
 goto :eof
 
@@ -2031,9 +2047,11 @@ goto :eof
 :: Required variables: java saxon9
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
-  call :makemake "%projectpath%\projxslt.make" 
-  call :runmake "%projectpath%\projxslt.make"
-  set setupxslt=
+  if not defined xsltsetup (
+    call :makemake "%projectpath%\projxslt.make" 
+    call :runmake "%projectpath%\projxslt.make"
+    set xsltsetup=done
+  )
   rem if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
   call :inccount
   set script=%~1

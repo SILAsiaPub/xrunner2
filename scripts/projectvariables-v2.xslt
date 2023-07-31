@@ -38,12 +38,6 @@
             <!-- <xsl:comment select="$projectpath"/>  -->
             <xsl:comment select="concat('  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ','project.txt',' variables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ')"/>
             <xsl:apply-templates select="var"/>
-            <!-- <xsl:for-each select="$variable">
-                 handle each line of the file with = sign in it 
-                <xsl:if test="matches(.,'^[a-z]')">
-                    <xsl:sequence select="f:writeparm(.)"/>
-                </xsl:if>
-            </xsl:for-each> -->
             <xsl:call-template name="listhandling">
                 <xsl:with-param name="listsource" select="'keyvalue.tsv'"/>
             </xsl:call-template>
