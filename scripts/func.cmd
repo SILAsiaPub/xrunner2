@@ -419,9 +419,10 @@ goto :eof
 :elapsed
 :: Description: calculates the elapsed time since the starttime
 :: Required variables: starttime
-call :time2sec cursec
-set /A elapsed=%cursec%-%starttime%
-echo Info: Elapsed seconds: %elapsed%
+  call :time2sec cursec
+  set /A elapsed=%cursec%-%starttime%
+  call :sec2time elapsedt %elapsed%
+  echo Info: Elapsed time %elapsedt% %elapsedt-units%
 goto :eof
 
 :encoding
@@ -451,7 +452,6 @@ goto :eof
       ) else (
         echo Encoding check:  %red%%nameext%%reset% is %redbg%%fencoding%%reset% But expected to be: %redbg% %validateagainst% %reset%
         set /A badencoding=1+%badencoding%
-        
       )
     )
   )
@@ -1728,14 +1728,19 @@ goto :eof
 
 :sec2time
 :: Description: convert seconds to time
-set /A hh=%~2/%sph%
-set /A sh=%hh%*%sph%
-set /A mm=(%~2-%sh%)/%spm%
-set /A sm=%mm%*%spm%
-set /A ss=(%~2 - %sh% - %sm%) 
-if %mm% lss 10 set mm=0%mm%
-if %ss% lss 10 set ss=0%ss%
-set %~1=%hh%:%mm%:%ss%
+:: Usage: call :sec2time varname seconds
+:: Variables set: varname varname-units
+  set sph=3600
+  set spm=60
+  set /A hh=%~2/%sph%
+  set /A sh=%hh%*%sph%
+  set /A mm=(%~2-%sh%)/%spm%
+  set /A sm=%mm%*%spm%
+  set /A ss=(%~2 - %sh% - %sm%) 
+  if %mm% lss 10 set mm=0%mm%
+  if %ss% lss 10 set ss=0%ss%
+  if %hh% == 0 set %~1=%mm%:%ss%& set %~1-units=mm:ss
+  if %hh% gtr 0 set %~1=%hh%:%mm%:%ss%& set %~1-units=h:mm:ss
 goto :eof
 
 :setinfolevel

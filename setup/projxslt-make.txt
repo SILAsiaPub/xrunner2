@@ -1,4 +1,4 @@
-files := tmp/proj-var.xml $(xrunnermpath)/scripts/projectvariables-v2.xslt scripts/inc-lookup.xslt scripts/inc-file2uri.xslt scripts/inc-copy-anything.xslt scripts/xrun.xslt
+files := tmp/proj-var.xml lists.tsv keyvalue.tsv $(xrunnermpath)/scripts/projectvariables-v2.xslt scripts/inc-lookup.xslt scripts/inc-file2uri.xslt scripts/inc-copy-anything.xslt scripts/xrun.xslt
 
 green := [32m
 reset := [0m
@@ -35,5 +35,9 @@ scripts/xrun.xslt: $(xrunnermpath)\scripts\xrun.xslt
 	@copy "$(xrunnerpath)\scripts\xrun.xslt" "${CURDIR}\scripts\" > nul
 
 $(xrunnermpath)\scripts\xrun.xslt: $(xrunnermpath)\setup\xrun.ini
-	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "$(xrunnerpath)\scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"
 	@echo $(cyan)Updated: xrun.xslt$(reset)
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "$(xrunnerpath)\scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"
+
+lists.tsv: ;
+
+keyvalue.tsv: ;

@@ -59,7 +59,8 @@ goto :eof
   @call :funcend :main
   call :time2sec endtime
   set /A sec=%endtime%-%starttime%
-  @echo Completed in %sec% seconds at %time:~0,8%
+  call :sec2time etime %sec%
+  @echo Completed in %yellow%%etime%%reset% %etime-units% at %time:~0,8%
   @call :funcend :xrunner
   rem when a set of tasks completes successfully the xbuild.txt is deleted. If it ixists on the next build, then the project.txt will be rebuilt.
   if exist %projectpath%\xbuild.txt del %projectpath%\xbuild.txt
@@ -359,6 +360,23 @@ goto :eof
   if defined v4 echo %n4% := %v4%>> %file%
   copy /y %file%+setup\%filenx:.=-%.txt %file% >nul
 goto :eof 
+
+:sec2time
+:: Description: convert seconds to time
+:: Usage: call :sec2time varname seconds
+:: Variables set: varname varname-units
+  set sph=3600
+  set spm=60
+  set /A hh=%~2/%sph%
+  set /A sh=%hh%*%sph%
+  set /A mm=(%~2-%sh%)/%spm%
+  set /A sm=%mm%*%spm%
+  set /A ss=(%~2 - %sh% - %sm%) 
+  if %mm% lss 10 set mm=0%mm%
+  if %ss% lss 10 set ss=0%ss%
+  if %hh% == 0 set %~1=%mm%:%ss%& set %~1-units=mm:ss
+  if %hh% gtr 0 set %~1=%hh%:%mm%:%ss%& set %~1-units=h:mm:ss
+goto :eof
 
 :time
 :: Description: Retrieve time in several shorter formats than %time% provides
