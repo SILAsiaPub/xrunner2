@@ -1873,7 +1873,7 @@ for /F "tokens=1-3 delims=:.," %%a in ("%TIME%") do (
 )
 goto :eof
 
-:tsv2xml
+:tsv2xml-njs
 :: Description: Convert TSV to XML via NodeJS 
 :: Usage: call :tsv2xml inputfile outputfile
 :: Created: 2023-05-03
@@ -1888,12 +1888,12 @@ goto :eof
   @call :funcendtest %0
 goto :eof
 
-:tsv2xmlcct
+:tsv2xml
 :: Description: use CCT to create xml from TSV
 :: Usage: call :tsv3xmlcct tsvinfile xmloutfile
+:: Created: 2023-08-13
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  call :cct fix-end-tsv.cct "%~1"
-  call :cct tsv2xml.cct "" "%~2"
+  call :cct tsv2xml-v2.cct "%~1" "%~2"
   @call :funcend %0
 goto :eof
 
@@ -1989,10 +1989,10 @@ goto :eof
   set funcoutfile=%~4
   if exist "%testfile%" (
       move "%testfile%" "%copytofile%"
-      if defined info2 echo Info: Copied %~nx1 to %~nx2
+      @if defined info2 @echo %green%Info: Copied %yellow%%~nx1 %green%to %~nx2%reset%
       call :%func% "%copytofile%" "%funcoutfile%"
     ) else (
-        @if defined info2 echo Info: File %~nx1 not found to move
+        @if defined info2 @echo %green%Info: File %yellow%%~nx1 %green%not found to move%reset%
     )
   @call :funcend %0
 goto :eof
