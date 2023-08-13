@@ -1880,12 +1880,21 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :inccount
   call :infile "%~1"
-  call :outfile "%~2" "%projectpath%\tmp\%group%-%coun%-%0.xml"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%coun%-tsv2xml.xml"
   set cmdline=parsjs -d tab -o xml -s "%outfile%" "%infile%"
   if defined info2 echo %cyan%%cmdline%%reset%
   call %cmdline% > nul
   set outfile=%outfile%.xml
   @call :funcendtest %0
+goto :eof
+
+:tsv2xmlcct
+:: Description: use CCT to create xml from TSV
+:: Usage: call :tsv3xmlcct tsvinfile xmloutfile
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :cct fix-end-tsv.cct "%~1"
+  call :cct tsv2xml.cct "" "%~2"
+  @call :funcend %0
 goto :eof
 
 :tsv2multixml
@@ -1967,6 +1976,25 @@ goto :eof
   if defined info2 echo %uniq% %countuniq% "%projectpath%\tmp\tmp1.txt" "%outfile%"
   call %uniq% %countuniq% "%projectpath%\tmp\tmp1.txt" "%outfile%"
   @call :funcendtest %0
+goto :eof
+goto :eof
+
+:updateif
+:: Description: if a file exists move it and run an update
+:: Usage: call :updateif testfile copytofile funcion funcoutfile
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  set testfile=%~1
+  set copytofile=%~2
+  set func=%~3
+  set funcoutfile=%~4
+  if exist "%testfile%" (
+      move "%testfile%" "%copytofile%"
+      if defined info2 echo Info: Copied %~nx1 to %~nx2
+      call :%func% "%copytofile%" "%funcoutfile%"
+    ) else (
+        @if defined info2 echo Info: File %~nx1 not found to move
+    )
+  @call :funcend %0
 goto :eof
 
 :validate

@@ -1,0 +1,270 @@
+begin    >   '<data>' store(e1) use(h2,ampersand)
+
+group(h2)
+tab >   store(e2) use(h3)
+nl  >   endstore dup back(1) use(row)
+
+group(h3)
+tab >   store(e3) use(h4)
+nl  >   endstore dup back(1) use(row)
+
+group(h4)
+tab >   store(e4) use(h5)
+nl  >   endstore dup back(1) use(row)
+
+group(h5)
+tab >   store(e5) use(h6)
+nl  >   endstore dup back(1) use(row)
+
+group(h6)
+tab >   store(e6) use(h7)
+nl  >   endstore dup back(1) use(row)
+
+group(h7)
+tab >   store(e7) use(h8)
+nl  >   endstore dup back(1) use(row)
+
+group(h8)
+tab >   store(e8) use(h9)
+nl  >   endstore dup back(1) use(row)
+
+group(h9)
+tab >   store(e9) use(h10)
+nl  >   endstore dup back(1) use(row)
+
+group(h10)
+tab >   store(e10) use(h11)
+nl  >   endstore dup back(1) use(row)
+
+group(h11)
+tab >   store(e11) use(h12)
+nl  >   endstore dup back(1) use(row)
+
+group(h12)
+tab >   store(e12) use(h13)
+nl  >   endstore dup back(1) use(row)
+
+group(h13)
+tab >   store(e13) use(h14)
+nl  >   endstore dup back(1) use(row)
+
+group(h14)
+tab >   store(e14) use(h15)
+nl  >   endstore dup back(1) use(row)
+
+group(h15)
+tab >   store(e15) use(h16)
+nl  >   endstore dup back(1) use(row)
+
+group(h16)
+tab >   store(e16) use(h17)
+nl  >   endstore dup back(1) use(row)
+
+group(h17)
+tab >   store(e17) use(h18)
+nl  >   endstore dup back(1) use(row)
+
+group(h18)
+tab >   store(e18) use(h19)
+nl  >   endstore dup back(1) use(row)
+
+group(h19)
+tab >   store(e19) use(h20)
+nl  >   endstore dup back(1) use(row)
+
+group(h20)
+tab >   store(e20) use(h21)
+nl  >   endstore dup back(1) use(row)
+
+group(h21)
+tab >   store(e21) use(h22)
+nl  >   endstore dup back(1) use(row)
+
+group(h22)
+tab >   store(e22) use(h23)
+nl  >   endstore dup back(1) use(row)
+
+group(h23)
+tab >   store(e23) use(h24)
+nl  >   endstore dup back(1) use(row)
+
+group(h24)
+tab >   store(e24) use(h25)
+nl  >   endstore dup back(1) use(row)
+
+group(h25)
+tab >   store(e25) use(h26)
+nl  >   endstore dup back(1) use(row)
+
+group(h26)
+tab >   store(e26) use(h27)
+nl  >   endstore dup back(1) use(row)
+
+group(h27)
+tab >   store(e27) use(h28)
+nl  >   endstore dup back(1) use(row)
+
+group(h28)
+tab >   store(e28) use(h29)
+nl  >   endstore dup back(1) use(row)
+
+group(h29)
+tab >   store(e29) use(h30)
+nl  >   endstore dup back(1) use(row)
+
+group(h30)
+nl  >   endstore dup back(1) use(row)
+
+group(ampersand)
+'& '    >   '&amp; '
+
+group(row)
+nl  >   dup '  <row>' nl '    <' out(e1) '>' use(c2,ampersand)
+nl endfile >   nl '</data>' dup
+nl nl   >   nl back(1)
+
+
+group(c2)
+tab >   '</' out(e1) '>' nl '    <' out(e2) '>' use(c3,ampersand)
+nl  >   '</' out(e1) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e1) '>' nl '  </row>' nl '</data>' dup
+
+group(c3)
+tab >   '</' out(e2) '>' nl '    <' out(e3) '>' use(c4,ampersand)
+nl  >   '</' out(e2) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e2) '>' nl '  </row>' nl '</data>' dup
+
+group(c4)
+tab >   '</' out(e3) '>' nl '    <' out(e4) '>' use(c5,ampersand)
+nl  >   '</' out(e3) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e3) '>' nl '  </row>' nl '</data>' dup
+
+group(c5)
+tab >   '</' out(e4) '>' nl '    <' out(e5) '>' use(c6,ampersand)
+nl  >   '</' out(e4) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e4) '>' nl '  </row>' nl '</data>' dup
+
+group(c6)
+tab >   '</' out(e5) '>' nl '    <' out(e6) '>' use(c7,ampersand)
+nl  >   '</' out(e5) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e5) '>' nl '  </row>' nl '</data>' dup
+
+group(c7)
+tab >   '</' out(e6) '>' nl '    <' out(e7) '>' use(c8,ampersand)
+nl  >   '</' out(e6) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e6) '>' nl '  </row>' nl '</data>' dup
+
+group(c8)
+tab >   '</' out(e7) '>' nl '    <' out(e8) '>' use(c9,ampersand)
+nl  >   '</' out(e7) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e7) '>' nl '  </row>' nl '</data>' dup
+
+group(c9)
+tab >   '</' out(e8) '>' nl '    <' out(e9) '>' use(c10,ampersand)
+nl  >   '</' out(e8) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e8) '>' nl '  </row>' nl '</data>' dup
+
+group(c10)
+tab >   '</' out(e9) '>' nl '    <' out(e10) '>' use(c11,ampersand)
+nl  >   '</' out(e9) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e9) '>' nl '  </row>' nl '</data>' dup
+
+group(c11)
+tab >   '</' out(e10) '>' nl '    <' out(e11) '>' use(c12,ampersand)
+nl  >   '</' out(e10) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e10) '>' nl '  </row>' nl '</data>' dup
+
+group(c12)
+tab >   '</' out(e11) '>' nl '    <' out(e12) '>' use(c13,ampersand)
+nl  >   '</' out(e11) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e11) '>' nl '  </row>' nl '</data>' dup
+
+group(c13)
+tab >   '</' out(e12) '>' nl '    <' out(e13) '>' use(c14,ampersand)
+nl  >   '</' out(e12) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e12) '>' nl '  </row>' nl '</data>' dup
+
+group(c14)
+tab >   '</' out(e13) '>' nl '    <' out(e14) '>' use(c15,ampersand)
+nl  >   '</' out(e13) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e13) '>' nl '  </row>' nl '</data>' dup
+
+group(c15)
+tab >   '</' out(e14) '>' nl '    <' out(e15) '>' use(c16,ampersand)
+nl  >   '</' out(e14) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e14) '>' nl '  </row>' nl '</data>' dup
+
+group(c16)
+tab >   '</' out(e15) '>' nl '    <' out(e16) '>' use(c17,ampersand)
+nl  >   '</' out(e15) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e15) '>' nl '  </row>' nl '</data>' dup
+
+group(c17)
+tab >   '</' out(e16) '>' nl '    <' out(e17) '>' use(c18,ampersand)
+nl  >   '</' out(e16) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e16) '>' nl '  </row>' nl '</data>' dup
+
+group(c18)
+tab >   '</' out(e17) '>' nl '    <' out(e18) '>' use(c19,ampersand)
+nl  >   '</' out(e17) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e17) '>' nl '  </row>' nl '</data>' dup
+
+group(c19)
+tab >   '</' out(e18) '>' nl '    <' out(e19) '>' use(c20,ampersand)
+nl  >   '</' out(e18) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e18) '>' nl '  </row>' nl '</data>' dup
+
+group(c20)
+tab >   '</' out(e19) '>' nl '    <' out(e20) '>' use(c21,ampersand)
+nl  >   '</' out(e19) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e19) '>' nl '  </row>' nl '</data>' dup
+
+group(c21)
+tab >   '</' out(e20) '>' nl '    <' out(e21) '>' use(c22,ampersand)
+nl  >   '</' out(e20) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e20) '>' nl '  </row>' nl '</data>' dup
+
+group(c22)
+tab >   '</' out(e21) '>' nl '    <' out(e22) '>' use(c23,ampersand)
+nl  >   '</' out(e21) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e21) '>' nl '  </row>' nl '</data>' dup
+
+group(c23)
+tab >   '</' out(e22) '>' nl '    <' out(e23) '>' use(c24,ampersand)
+nl  >   '</' out(e22) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e22) '>' nl '  </row>' nl '</data>' dup
+
+group(c24)
+tab >   '</' out(e23) '>' nl '    <' out(e24) '>' use(c25,ampersand)
+nl  >   '</' out(e23) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e23) '>' nl '  </row>' nl '</data>' dup
+
+group(c25)
+tab >   '</' out(e24) '>' nl '    <' out(e25) '>' use(c26,ampersand)
+nl  >   '</' out(e24) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e24) '>' nl '  </row>' nl '</data>' dup
+
+group(c26)
+tab >   '</' out(e25) '>' nl '    <' out(e26) '>' use(c27,ampersand)
+nl  >   '</' out(e25) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e25) '>' nl '  </row>' nl '</data>' dup
+
+group(c27)
+tab >   '</' out(e26) '>' nl '    <' out(e27) '>' use(c28,ampersand)
+nl  >   '</' out(e26) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e26) '>' nl '  </row>' nl '</data>' dup
+
+group(c28)
+tab >   '</' out(e27) '>' nl '    <' out(e28) '>' use(c29,ampersand)
+nl  >   '</' out(e27) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e27) '>' nl '  </row>' nl '</data>' dup
+
+group(c29)
+tab >   '</' out(e28) '>' nl '    <' out(e29) '>' use(c30,ampersand)
+nl  >   '</' out(e28) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e28) '>' nl '  </row>' nl '</data>' dup
+
+group(c30)
+nl  >   '</' out(e29) '>' dup '  </row>' dup back(1) use(row)
+endfile >  '</' out(e29) '>' nl '  </row>' nl '</data>' dup
+
