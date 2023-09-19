@@ -1263,6 +1263,9 @@ goto :eof
 :: Note: the body of the make fiels should be in setup folder and in the form filename-make.txt
   set file=%~1
   set filenx=%~nx1
+  set makesource=%~dp1
+  if \%filenx% == \projxslt.make set makesource=setup
+  if \%filenx% == \projsetup.make set makesource=setup
   set n1=%~2
   set v1=%~3
   set n2=%~4
@@ -1282,7 +1285,7 @@ goto :eof
   if defined v2 echo %n2% := %v2%>> %file%
   if defined v3 echo %n3% := %v3%>> %file%
   if defined v4 echo %n4% := %v4%>> %file%
-  copy /y %file%+setup\%filenx:.=-%.txt %file% >nul
+  copy /y %file%+%makesource%\%filenx:.=-%.txt %file% >nul
 goto :eof 
 
 :mergevar
@@ -1456,9 +1459,9 @@ goto :eof
 :prerender
 :: Description: Prerenders HTML with JS into plain HTML
 :: Usage: call :prerender url outpath
-:: Functions called: inccount, infile, outfile, funcend
-:: External program: chrome.exe 
-:: Required variable: chrome outpath
+:: Functions used: inccount, infile, outfile, funcbegin, funcend
+:: Required program: chrome.exe 
+:: Required variable: chrome
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   set url=%~1
   set filename=%~nx1
@@ -1491,7 +1494,7 @@ goto :eof
   if defined infile6 set infile="%infile%" "%infile6%"
   if defined infile7 set infile="%infile%" "%infile7%"
   if defined css set css=-s "%css%"
-  set curcommand=call "%prince%" %css% "%infile%" %infile2% %infile3% %infile4% %infile5% %infile6% %infile7% -o "%outfile%"
+  set curcommand=call "%prince%" %css% %infile% %infile2% %infile3% %infile4% %infile5% %infile6% %infile7% -o "%outfile%"
   @if defined info2 echo %cyan%call %curcommand%%reset%
   call %curcommand%
   @call :funcendtest %0
@@ -1778,9 +1781,9 @@ goto :eof
   set p1val=0
   set curcommand="%p1%" "%p2%" "%p3%" %p4% %p5% %p6% %p7% %p8%
   if not defined p1 if not exist "%p2%" call :funcend %0 "Error: valid file not found to start!" & goto :eof
-  if defined p1 if defined p2 if not exist "%p2%" call :funcend %0 "Error: valid file2 not found to start!" & goto :eof
-  if exist "%p1%" echo start "" %curcommand% & start "" %curcommand%
-  if not exist "%p1%" echo start %curcommand% & start %curcommand%
+  rem if defined p1 if defined p2 if not exist "%p2%" call :funcend %0 "Error: valid file2 not found to start!" & goto :eof
+  if exist "%p1%" echo %cyan%start "" %curcommand%%reset% & start "" %curcommand%
+  if not exist "%p1%" echo %cyan%start %curcommand%%reset% & start %curcommand%
   rem if "%p1%" neq "%p1: =%" echo start "" %curcommand% & start%curcommand%
   @call :funcend %0
 goto :eof
@@ -1800,7 +1803,7 @@ goto :eof
   rem check availability
   set curcommand=%p1% %p2% %p3% %p4% %p5% %p6% %p7% %p8%
   rem run the command
-  echo start /b %curcommand%
+  echo %cyan%start /b %curcommand%%reset%
   start /b %curcommand%
   @call :funcend %0
 goto :eof
@@ -1856,12 +1859,16 @@ goto :eof
 :: Created: 2016-05-05
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   FOR /F "tokens=1-4 delims=:%timeseparator%." %%A IN ("%time%") DO (
-    set curhhmm=%%A%%B
-    set curhhmmss=%%A%%B%%C
-    set curisohhmmss=%%A-%%B-%%C
-    set curhh_mm=%%A:%%B
-    set curhh_mm_ss=%%A:%%B:%%C
+    set chh=0%%A
+    set cmm=%%B
+    set css=%%C
   )
+  set hh=%chh:~-2%
+  set curhhmm=%hh%%cmm%
+  set curhhmmss=%hh%%cmm%%css%
+  set curisohhmmss=%hh%-%cmm%-%css%
+  set curhh_mm=%hh%:%cmm%
+  set curhh_mm_ss=%hh%:%cmm%:%css%
   @call :funcend %0
 goto :eof
 
@@ -1952,8 +1959,9 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1" %0
   call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-unicodecount.txt"
+  call :drivepath "%outfile%""
   if not exist "%unicodecharcount%" call :fatal "Unicode Character count executable not found or not defined in xrun.ini"
-  call "%unicodecharcount%" -o "%outfile%" "%infile%"
+  call "%unicodecharcount%" -o "%outfile%" "%infile%" 2> "%drivepath%\unicodecount-errors.txt"
   @call :funcendtest %0
 goto :eof
 
