@@ -54,11 +54,11 @@
         <!-- <xsl:param name="comment"/> -->
         <xsl:variable name="list" select="concat($projectpath,'\',$listsource)"/>
         <xsl:variable name="listtext" select="f:file2lines($list)"/>
-        <!-- <xsl:variable name="listuri" select="f:file2uri($list)"/> -->
-        <!-- <xsl:variable name="test" select="unparsed-text-available($listuri)"/> -->
-        <xsl:if test="not(matches($listtext[1],'text not imported'))">
+        <xsl:variable name="notimported" select="matches($listtext[1],'text not imported')"/>
+        <xsl:variable name="importreport" select="if ($notimported) then 'not imported ' else 'imported '"/>
+        <xsl:comment select="concat('  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ',$listsource,' variables ',$importreport,'~~~~~',if ($notimported) then $listtext[1] else '','~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ')"/>
+        <xsl:if test="not($notimported)">
             <!-- get variable values from listsource tsv in the project folder -->
-            <xsl:comment select="concat('  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ',$listsource,' variables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ')"/>
             <xsl:variable name="lists-data">
                 <xsl:for-each select="$listtext">
                     <xsl:variable name="cell" select="tokenize(.,'&#9;')"/>

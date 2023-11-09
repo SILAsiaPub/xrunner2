@@ -246,15 +246,33 @@ goto :eof
   if defined commandpath pushd "%commandpath%"
   if not defined append (
     @if defined info3 echo %green%Info: over writing if file exists.%reset%
-    @if defined info2 echo %blue%%curcommand% ^>  "%outfile%"%reset%
+    @if defined info2 echo %cyan%%curcommand% ^>  "%outfile%"%reset%
     call %curcommand% > "%outfile%"
   ) else (
     @if defined info3 echo %green%Info: Appending output to end of file.%reset%
-    @if defined info2 echo %blue%%curcommand% ^>^>  "%outfile%"%reset%
+    @if defined info2 echo %cyan%%curcommand% ^>^>  "%outfile%"%reset%
     call %curcommand% >> "%outfile%"
   )
   if defined commandpath popd
   @call :funcendtest %0 
+goto :eof
+
+:compare
+:: Description: Compare two files in WinMergeU
+:: Usage: call :copare leftfile rightfile
+:: Functions called: infile, outfile, inccount funcend funcbegin funcendtest
+:: Created 2023-11-08
+  if defined fatal goto :eof
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set leftfile=%~1
+  set midfile=%~2
+  set rightfile=%~2
+  if defined rightfile (
+    call :start "%winmerge%" "%leftfile%" "%midfile%" "%rightfile%"
+  ) else (
+    call :start "%winmerge%" "%leftfile%" "%midfile%"
+  )
+  @call :funcend %0
 goto :eof
 
 :copy
@@ -458,6 +476,15 @@ goto :eof
   set %retname%=%badencoding%
   if defined info3 echo %retname% = %badencoding%
   @call :funcend %0
+goto :eof
+
+:epubcheck
+:: Description: Check Epub file
+:: Usage: call :epubcheck epubfile report_file
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :infile "%~1"
+  %java% -jar "D:\programs\epubcheck\epubcheck.jar" "%1" 2> "%~2"
+  @call :funcend %0  
 goto :eof
 
 :fatal
@@ -1238,6 +1265,21 @@ goto :eof
   rem @echo off
 goto :eof
 
+:makef
+:: Description: This runs the makefile script for checking if the project.xslt is up to date
+:: Usage: call :runmake makefile-path-filename
+:: Required variables: make 
+  rem @if defined info2 echo %green%Info: Checking if project.xslt is up to date.%cyan%
+  @call :funcbegin %0 "'%~1'"
+  set makepath=%~dp1
+  set makefile=%~nx1
+  pushd "%makepath%"
+  call %make% -f %makefile%
+  popd
+  @call :funcend %0
+goto :eof
+
+
 :make
 :: Description: Run a make file
 :: Usage: call make [makepath makefile] 
@@ -1369,11 +1411,13 @@ goto :eof
   if not defined toutfile set outnx=%defaultoutnx%
   if defined check if "%check%" neq "append" set check=nocheck
   if not defined check if not exist "%outpath%" md "%outpath%"
+  if "%outnx%" neq "" (
   if "%check%" neq "append" (
 	  rem remove %outfile%.prev if it exists. Works with wildcards
 	  if exist "%outfile%.prev" del "%outfile%.prev"
 	  rem if outfile exists then rename to file.ext.prev; this works with wild cards too now.
 	  if exist "%outfile%" ren "%outfile%" "%outnx%.prev"
+  )
   )
   @if defined info5 echo.
   @if defined info4 echo %green%Info: outfile = %outfile%%reset%
@@ -2005,6 +2049,16 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:update
+:: Description: if a file exists move it and run an update
+:: Usage: call :updateif testfile copytofile funcion funcoutfile
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  call :infile "%~1"
+  set outfile=%~2
+  xcopy /D /Y "%infile%" "%outfile%"
+  @call :funcend %0
+goto :eof
+
 :validate
 :: Description: Validate an XML file
 :: Usage: call :validate "xmlfile"
@@ -2070,8 +2124,8 @@ goto :eof
   set allparam=%~4
   set script=%projectpath%\scripts\%scriptname%
   if not exist "%script%" call :fatal %0 "Missing xquery script!"
-  set param=%allparam:'="%
-  set curcommand="%java%" net.sf.saxon.Query -o:"%outfile%" -s:"%infile%" "%script%" %param%
+  if defined allparam set param=%allparam:'="%
+  set curcommand="%java%" -jar "%saxon%" net.sf.saxon.Query "%script%" -o:"%outfile%" -s:"%infile%" %param%
   if defined info2 echo %curcommand%
   call %curcommand%
   @call :funcendtest %0
