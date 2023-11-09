@@ -43,6 +43,7 @@ Source: "docs\*.html"; DestDir: "{app}\docs"
 Source: "tools\make\*.*"; DestDir: "{app}\tools\make"    ; Flags: recursesubdirs
 Source: "tools\cct\*.*"; DestDir: "{app}\tools\cct"     ; Flags: recursesubdirs
 Source: "tools\SaxonHE12-3J\*.*"; DestDir: "{app}\tools\saxon"     ; Flags: recursesubdirs
+Source: "tools\java\*.*"; DestDir: "{app}\tools\java"     ; Flags: recursesubdirs
 
 [Icons]
 Name: "{group}\Xrunner2j"; Filename: "{app}\xrunner.hta"; IconFilename: "{app}\setup\{#icon}"
