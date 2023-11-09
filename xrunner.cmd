@@ -54,7 +54,7 @@ goto :eof
   if not defined group set fatal=on
   if defined fatal goto :eof
   call "%projcmd%" %group%
-  @if defined info2 echo Info: xrunner finished!
+  @if defined info2 echo %green%Info: xrunner finished!%reset%
   if defined espeak if defined info2 call "%espeak%" "x runner finished"
   @call :funcend :main
   call :time2sec endtime
@@ -70,7 +70,7 @@ goto :eof
 :checkdir
 :: Description: checks if dir exists if not it is created
 :: Usage: call :checkdir C:\path\name.ext
-:: Purpose: make folder
+:: Purpose: make folder only if not present
 :: Functions used: funcbegin funcend 
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   set checkpath=%~1
@@ -256,7 +256,7 @@ goto :eof
   set whitebg=[107m
 goto :eof
 
-:runmake
+:makef
 :: Description: This runs the makefile script for checking if the project.xslt is up to date
 :: Usage: call :runmake makefile-path-filename
 :: Required variables: make 
@@ -317,49 +317,15 @@ goto :eof
   set xtestf=%xtest% %redbg% FALSE %reset% -
   set projxsltmake=%projectpath%\projxslt.make
   call :detectdateformat
-  call :makemake "%projectpath%\projsetup.make"
-  call :runmake "%projectpath%\projsetup.make" 
-  rem call :checkdir "%projectpath%\scripts\"
-  rem call :checkdir "%projectpath%\tmp"
-  rem call "%ccw%" %cctparam% -t "%setupcct%" -o "%syscmd%" "setup\xrun.ini"
-  call %syscmd%
-  rem call "%ccw%" %cctparam% -t "%setupcct%" -o "%taskscmd%" "%projectpath%\project.txt"
-  rem copy "%taskscmd%"+"%funccmd%"+"%syscmd%" "%projcmd%" > nul
-  call :makemake "%projectpath%\projxslt.make" 
+  rem xcopy /D /Y setup\proj-cmd.txt "%projectpath%\scripts"
+  xcopy /D /Y setup\*.make "%projectpath%"
+  call :makef "%projectpath%\projsetup.make"
   @if defined info1 echo %green%Setup: complete%reset%
   @if defined info1 echo.
   set /A count=0
   @call :funcend %0
   if "%~3" == "5" echo on
 goto :eof
-
-:makemake
-:: Description: Create makefile with relevant variables
-:: Usage: call :makevar fileto add to
-:: Note: the body of the make fiels should be in setup folder and in the form filename-make.txt
-  set file=%~1
-  set filenx=%~nx1
-  set n1=%~2
-  set v1=%~3
-  set n2=%~4
-  set v2=%~5
-  set n3=%~6
-  set v3=%~7
-  set n4=%~8
-  set v4=%~9
-  echo projectpath := %projectpath%> %file%
-  echo projectmpath := %projectpath::=\:%>> %file%
-  echo xrunnerpath := %cd%>> %file%
-  echo xrunnermpath := %cd::=\:%>> %file%
-  echo java := %java%>> %file%
-  echo saxon := %saxon%>> %file%
-  echo ccw := %ccw%>> %file%
-  if defined v1 echo %n1% := %v1%>> %file%
-  if defined v2 echo %n2% := %v2%>> %file%
-  if defined v3 echo %n3% := %v3%>> %file%
-  if defined v4 echo %n4% := %v4%>> %file%
-  copy /y %file%+setup\%filenx:.=-%.txt %file% >nul
-goto :eof 
 
 :sec2time
 :: Description: convert seconds to time
