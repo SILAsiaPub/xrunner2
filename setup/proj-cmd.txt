@@ -1,0 +1,3 @@
+project.txt
+C:\programs\xrunner2\setup\xrun.ini
+C:\programs\xrunner2\scripts\func.cmd

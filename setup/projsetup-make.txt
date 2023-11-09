@@ -2,7 +2,7 @@ green := [32m
 reset := [0m
 cyan := [36m
 
-setup: $(projectmpath)\tmp $(projectmpath)\scripts $(projectmpath)/scripts/sys.cmd $(projectmpath)/scripts/tasks.cmd $(projectmpath)/scripts/proj.cmd $(projectmpath)/scripts/tsv2xml-v2.cct
+setup: $(projectmpath)\tmp $(projectmpath)\scripts $(projectmpath)/scripts/sys.cmd $(projectmpath)/scripts/tasks.cmd $(projectmpath)/scripts/proj.cmd 
 	@echo $(green)Info: proj.cmd is up to date$(reset)
 
 $(projectmpath)\tmp: 
@@ -23,8 +23,4 @@ $(projectmpath)/scripts/sys.cmd: $(xrunnermpath)/setup/xrun.ini
 $(projectpath)/scripts/tasks.cmd: $(projectmpath)\project.txt
 	@echo $(cyan)Updating task.cmd$(reset)
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup2.cct" -o "$(projectpath)\scripts\tasks.cmd" "$(projectpath)\project.txt"
-
-$(projectmpath)/scripts/tsv2xml-v2.cct:
-    @echo $(cyan)Adding: tsv2xml-v2.cct into project$(reset)
-    @copy "$(xrunnerpath)\scripts\tsv2xml-v2.cct" $(projectmpath)/scripts/tsv2xml-v2.cct
 
