@@ -20,6 +20,7 @@
          <a href="#cmd">cmd</a>
          <a href="#command">command</a>
          <a href="#command2file">command2file</a>
+         <a href="#compare">compare</a>
          <a href="#copy">copy</a>
          <a href="#copy2usb">copy2usb</a>
          <a href="#csv2tsv">csv2tsv</a>
@@ -32,6 +33,7 @@
          <a href="#echo">echo</a>
          <a href="#elapsed">elapsed</a>
          <a href="#encoding">encoding</a>
+         <a href="#epubcheck">epubcheck</a>
          <a href="#fatal">fatal</a>
          <a href="#fb">fb</a>
          <a href="#file">file</a>
@@ -61,6 +63,7 @@
          <a href="#javainpathtest">javainpathtest</a>
          <a href="#javanotfound">javanotfound</a>
          <a href="#last">last</a>
+         <a href="#libreconvert">libreconvert</a>
          <a href="#loopfiles">loopfiles</a>
          <a href="#loopfolders">loopfolders</a>
          <a href="#looplist">looplist</a>
@@ -68,6 +71,7 @@
          <a href="#loopnumber">loopnumber</a>
          <a href="#loopstring">loopstring</a>
          <a href="#make">make</a>
+         <a href="#makef">makef</a>
          <a href="#makemake">makemake</a>
          <a href="#mergevar">mergevar</a>
          <a href="#modelcheck">modelcheck</a>
@@ -100,8 +104,11 @@
          <a href="#time2sec">time2sec</a>
          <a href="#tsv2multixml">tsv2multixml</a>
          <a href="#tsv2xml">tsv2xml</a>
+         <a href="#tsv2xml-njs">tsv2xml-njs</a>
          <a href="#unicodecount">unicodecount</a>
          <a href="#uniqcount">uniqcount</a>
+         <a href="#update">update</a>
+         <a href="#updateif">updateif</a>
          <a href="#validate">validate</a>
          <a href="#validaterng">validaterng</a>
          <a href="#var">var</a>
@@ -336,6 +343,27 @@
                   </li>
                </ul>
             </li>
+            <li id="compare">
+               <strong>:compare</strong> <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Compare two files in WinMergeU</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :copare leftfile rightfile</span>
+                  </li>
+                  <li>
+                     <em>Functions called:</em>
+                     <span>infile, outfile, inccount funcend funcbegin funcendtest</span>
+                  </li>
+                  <li>
+                     <em>Created 2023-11-08:</em>
+                     <span/>
+                  </li>
+               </ul>
+            </li>
             <li id="copy">
                <strong>:copy</strong> <a href="#index">Index</a>
                <ul>
@@ -541,6 +569,19 @@
                   <li>
                      <em>Required variables:</em>
                      <span>encodingchecker</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="epubcheck">
+               <strong>:epubcheck</strong> <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Check Epub file</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :epubcheck epubfile report_file</span>
                   </li>
                </ul>
             </li>
@@ -1029,6 +1070,23 @@
                   </li>
                </ul>
             </li>
+            <li id="libreconvert">
+               <strong>:libreconvert</strong> <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>Use Libre office to convert document formats</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :libreconvert convert_to_type input_file/s output-dir</span>
+                  </li>
+                  <li>
+                     <em>Note:</em>
+                     <span>No trailing backslash on the output directory.</span>
+                  </li>
+               </ul>
+            </li>
             <li id="loopfiles">
                <strong>:loopfiles</strong> <a href="#index">Index</a>
                <ul>
@@ -1149,6 +1207,23 @@
                   <li>
                      <em>Usage:</em>
                      <span>call make [makepath makefile] </span>
+                  </li>
+               </ul>
+            </li>
+            <li id="makef">
+               <strong>:makef</strong> <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>This runs the makefile script for checking if the project.xslt is up to date</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :runmake makefile-path-filename</span>
+                  </li>
+                  <li>
+                     <em>Required variables:</em>
+                     <span>make </span>
                   </li>
                </ul>
             </li>
@@ -1319,16 +1394,16 @@
                      <span>call :prerender url outpath</span>
                   </li>
                   <li>
-                     <em>Functions called:</em>
-                     <span>inccount, infile, outfile, funcend</span>
+                     <em>Functions used:</em>
+                     <span>inccount, infile, outfile, funcbegin, funcend</span>
                   </li>
                   <li>
-                     <em>External program:</em>
+                     <em>Required program:</em>
                      <span>chrome.exe </span>
                   </li>
                   <li>
                      <em>Required variable:</em>
-                     <span>chrome outpath</span>
+                     <span>chrome</span>
                   </li>
                </ul>
             </li>
@@ -1505,6 +1580,14 @@
                      <em>Description:</em>
                      <span>convert seconds to time</span>
                   </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :sec2time varname seconds</span>
+                  </li>
+                  <li>
+                     <em>Variables set:</em>
+                     <span>varname varname-units</span>
+                  </li>
                </ul>
             </li>
             <li id="setinfolevel">
@@ -1636,6 +1719,23 @@
                <ul>
                   <li>
                      <em>Description:</em>
+                     <span>use CCT to create xml from TSV</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :tsv3xmlcct tsvinfile xmloutfile</span>
+                  </li>
+                  <li>
+                     <em>Created:</em>
+                     <span>2023-08-13</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="tsv2xml-njs">
+               <strong>:tsv2xml-njs</strong> <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
                      <span>Convert TSV to XML via NodeJS </span>
                   </li>
                   <li>
@@ -1687,6 +1787,32 @@
                   <li>
                      <em>Functions called:</em>
                      <span>funcbegin funcendtest infile outfile</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="update">
+               <strong>:update</strong> <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>if a file exists move it and run an update</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :updateif testfile copytofile funcion funcoutfile</span>
+                  </li>
+               </ul>
+            </li>
+            <li id="updateif">
+               <strong>:updateif</strong> <a href="#index">Index</a>
+               <ul>
+                  <li>
+                     <em>Description:</em>
+                     <span>if a file exists move it and run an update</span>
+                  </li>
+                  <li>
+                     <em>Usage:</em>
+                     <span>call :updateif testfile copytofile funcion funcoutfile</span>
                   </li>
                </ul>
             </li>
