@@ -33,7 +33,7 @@ goto :eof
   echo ==============================================================================
   echo Source: https://github.com/SILAsiaPub/xrunner2
   if exist "%projectfile%" (
-    echo Project: %projectfile%
+    echo Project: %magenta%%projectfile%%reset%
     echo.
     if defined info5 echo on
   ) else (
@@ -47,7 +47,7 @@ goto :eof
     pause
     goto :eof
   )
-  @if defined info1 echo Xrunner Started: %time:~0,8%
+  @if defined info1 echo Xrunner Started: %yellow%%time:~0,8%%reset%
   call :time2sec starttime
   @if defined info3 echo Start Seconds: %starttime%
   call :setup
@@ -258,9 +258,8 @@ goto :eof
 
 :makef
 :: Description: This runs the makefile script for checking if the project.xslt is up to date
-:: Usage: call :runmake makefile-path-filename
+:: Usage: call :makef makefile-path-filename
 :: Required variables: make 
-  rem @if defined info2 echo %green%Info: Checking if project.xslt is up to date.%cyan%
   @call :funcbegin %0 "'%~1'"
   set makepath=%~dp1
   set makefile=%~nx1
@@ -318,7 +317,7 @@ goto :eof
   set projxsltmake=%projectpath%\projxslt.make
   call :detectdateformat
   rem xcopy /D /Y setup\proj-cmd.txt "%projectpath%\scripts"
-  xcopy /D /Y setup\*.make "%projectpath%"
+  xcopy /D /Y setup\*.make "%projectpath%" > nul
   call :makef "%projectpath%\projsetup.make"
   @if defined info1 echo %green%Setup: complete%reset%
   @if defined info1 echo.

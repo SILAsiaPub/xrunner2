@@ -78,7 +78,7 @@ goto :eof
   set parm2=%~3
   if defined fatal goto :eof
   set curcommand="%autoit%" "%script%" "%parm1%" "%parm2%"
-  @if defined info2 echo call %curcommand%
+  @if defined info2 echo call %cyan%%curcommand% %reset%
   pushd "%scripts%"
   call %curcommand%
   popd
@@ -272,6 +272,24 @@ goto :eof
   ) else (
     call :start "%winmerge%" "%leftfile%" "%midfile%"
   )
+  @call :funcend %0
+goto :eof
+
+:condition
+:: Description: if file note exists run function
+:: Usage: call :condition file function param3--param9
+  if defined fatal goto :eof
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  set file=%~1
+  set curfunc=%~2
+  set param3=%~3
+  set param4=%~4
+  set param5=%~5
+  set param6=%~6
+  set param7=%~7
+  set param8=%~8
+  call :multivarlist 3 8
+  if not exist "%file%" call :%curfunc% "%file%" %multivar:'="%
   @call :funcend %0
 goto :eof
 
@@ -483,8 +501,50 @@ goto :eof
 :: Usage: call :epubcheck epubfile report_file
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1"
+  @if defined info2 echo %cyan%%java% -jar "D:\programs\epubcheck\epubcheck.jar" "%1" 2^> "%~2"%reset%
   %java% -jar "D:\programs\epubcheck\epubcheck.jar" "%1" 2> "%~2"
   @call :funcend %0  
+goto :eof
+
+:epubzip
+:: Description: Use 7zip to build zip an epub file.
+:: Usage: call :epubzip epubfilelocation epubname
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  setlocal DISABLEDELAYEDEXPANSION
+  xcopy /D "%cd%\setup\epub-add.list" "%projectpath%\output"
+  xcopy /D "%cd%\setup\!mimetype" "%projectpath%\output"
+  set hostpath=%1
+  set epubname=%2
+  set hostpath=%hostpath:"=%
+  set epubname=%epubname:"=%
+  set errorlevel=
+  call :outfile "%hostpath%\%epubname%.epub"
+  @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%.epub%reset%
+  pushd "%hostpath%\%epubname%"
+  "C:\Program Files\7-Zip\7z.exe" a -t* ..\%epubname%.epub ..\!mimetype 1> ..\7zip-epub-build.txt 2> ..\7zip-epub-build-errors.txt
+  call :errortest 0 "Added !mimtype to zip" "Error adding !mimtype to zip"
+  "C:\Program Files\7-Zip\7z.exe" u -tzip ..\%epubname%.epub @..\epub-add.list 1>> ..\7zip-epub-build.txt 2>> ..\7zip-epub-build-errors.txt
+  call :errortest 0 "Added content to zip" "Error adding content to zip"
+  "C:\Program Files\7-Zip\7z.exe" rn ..\%epubname%.epub !mimetype mimetype 1>> ..\7zip-epub-build.txt 2>> ..\7zip-epub-build-errors.txt
+  call :errortest 0 "Renamed file !mimetype to mimetype in zip" "Error renaming file !mimetype to mimetype in zip"
+  popd
+  set errorlevel=
+  SETLOCAL ENABLEDELAYEDEXPANSION
+  @call :funcendtest %0
+goto :eof
+
+:errortest
+:: Description: Used to report on external tools errorlevel report
+:: Usage: call :errortest expected_message "message 1" "message 2"
+:: Note: The expected_message is nothing "" or 0 for 7zip
+  set wantedresult=%~1
+  set goodmessage=%~2
+  set failmessage=%3
+  if %errorlevel%. equ %wantedresult%. (
+    @if defined info3 echo   %green%%goodmessage% %reset%
+  ) else (
+    echo %redbg%   %failmessage%   %reset%
+  )
 goto :eof
 
 :fatal
@@ -502,6 +562,7 @@ goto :eof
   @call :funcend %func%
   pause
 goto :eof
+
 
 :fb
 :: Description: Used to give common feed back
@@ -1237,18 +1298,18 @@ goto :eof
 :: Usage: call :loopstring grouporfunc "string" [param[3-9]]
 :: Functions called: quotevar, last, taskgroup. Can also use any other function.
 :: Note: action may have multiple parts
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7'"
   if defined fatal goto :eof
   rem echo on
   set grouporfunc=%~1
   set string=%~2
-  set par3=%~3
-  set par4=%~4
-  set par5=%~5
-  set par6=%~6
-  set par7=%~7
-  set par8=%~8
-  set par9=%~9
+  set param3=%~3
+  set param4=%~4
+  set param5=%~5
+  set param6=%~6
+  set param7=%~7
+  set param8=%~8
+  set param9=%~9
   if not defined grouporfunc echo Missing action parameter
   if not defined grouporfunc echo %funcendtext% %0 
   if not defined grouporfunc goto :eof
@@ -1269,10 +1330,10 @@ goto :eof
 :: Description: This runs the makefile script for checking if the project.xslt is up to date
 :: Usage: call :runmake makefile-path-filename
 :: Required variables: make 
-  rem @if defined info2 echo %green%Info: Checking if project.xslt is up to date.%cyan%
   @call :funcbegin %0 "'%~1'"
   set makepath=%~dp1
   set makefile=%~nx1
+  @if defined info2 echo %green%Running makefile: %makefile%%reset%
   pushd "%makepath%"
   call %make% -f %makefile%
   popd
@@ -1353,7 +1414,7 @@ goto :eof
 :multivarlist
 :: Descriptions: if varaible string contains a space put double quotes around it.
 :: Usage: call quotevar var_name start_numb end_numb
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
   set startnumb=%~1
   set endnumb=%~2
   for /L %%v in (%startnumb%,1,%endnumb%) Do if defined param%%v if "!param%%v!" neq "!param%%v: =!" set param%%v='!param%%v!'
@@ -2022,10 +2083,10 @@ goto :eof
   set countuniq=-c
   if defined nocount set countuniq=
   if defined info2 echo.
-  if defined info2 echo C:\Windows\System32\sort.exe "%infile%" /O "%projectpath%\tmp\tmp1.txt"
+  if defined info2 echo %cyan%C:\Windows\System32\sort.exe "%infile%" /O "%projectpath%\tmp\tmp1.txt"%reset%
   call C:\Windows\System32\sort.exe "%infile%" /O "%projectpath%\tmp\tmp1.txt"
   if defined info2 echo.
-  if defined info2 echo %uniq% %countuniq% "%projectpath%\tmp\tmp1.txt" "%outfile%"
+  if defined info2 echo %cyan%%uniq% %countuniq% "%projectpath%\tmp\tmp1.txt" "%outfile%"%reset%
   call %uniq% %countuniq% "%projectpath%\tmp\tmp1.txt" "%outfile%"
   @call :funcendtest %0
 goto :eof
@@ -2241,7 +2302,7 @@ goto :eof
 goto :eof
 
 :xsltms
-:: Description: Runs Java with xmlScarlet to process XSLT1 transformations.
+:: Description: Runs MSxml to process XSLT1 transformations.
 :: Usage: call :xslt script.xslt [input.xml [output.xml [parameters]]]
 :: Depends on: inccount, infile, outfile, fatal, funcend
 :: External program: java.exe https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
@@ -2308,5 +2369,46 @@ goto :eof
   call %make% -f %makefile%
   popd
   @call :funcend %0
+goto :eof
+
+:zzz
+:: Description: Use 7zip to build zip an epub file.
+:: Usage: call :epubzip epubfilelocation epubname
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  setlocal DISABLEDELAYEDEXPANSION
+  xcopy /D "%cd%\setup\epubzip.make" "%projectpath%"
+  call :makef "%projectpath%\epubzip.make"
+  set hostpath=%1
+  set epubname=%2
+  set hostpath=%hostpath:"=%
+  set epubname=%epubname:"=%
+  set errorlevel=
+  call :outfile "%hostpath%\%epubname%.epub"
+  @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%.epub%reset%
+  pushd "%hostpath%\%epubname%"
+  "C:\Program Files\7-Zip\7z.exe" a -t* ..\%epubname%.epub ..\!mimetype 1> nul 2> 7zip-errors.txt
+  call :errortest 0 "Added !mimtype to zip" "Error adding !mimtype to zip"
+  rem if %errorlevel%. neq 0. echo %redbg%  %reset%
+  "C:\Program Files\7-Zip\7z.exe" u -tzip ..\%epubname%.epub @..\ziplist.txt 1> nul 2> 7zip-errors.txt
+  call :errortest 0 "Added content to zip" "Error adding content to zip"
+  rem if %errorlevel%. neq 0. echo %redbg% Error adding content to zip %reset%
+  "C:\Program Files\7-Zip\7z.exe" rn ..\%epubname%.epub !mimetype mimetype 1> nul 2> 7zip-errors.txt
+  call :errortest 0 "Renamed file !mimetype to mimetype in zip" "Error renaming file !mimetype to mimetype in zip"
+  rem if %errorlevel%. neq 0. echo %redbg%Error renaming file !mimetype to mimetype %reset%
+  popd
+  set errorlevel=
+  SETLOCAL ENABLEDELAYEDEXPANSION
+  @call :funcendtest %0
+goto :eof
+
+:errortest
+  set wantedresult=%~1
+  set goodmessage=%~2
+  set failmessage=%3
+  if %errorlevel%. neq %wantedresult%. (
+      echo %redbg%%failmessage% %reset%
+  ) else (
+      @if defined info3 echo %green%%goodmessage% %reset%
+  )
 goto :eof
 

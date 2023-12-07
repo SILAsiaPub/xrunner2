@@ -155,7 +155,7 @@
             <xsl:variable name="separator" select="f:keyvalue($list-separator-kv,$list[2])"/>
             <xsl:sequence select="f:toklist($varname,$separator)"/>
             <xsl:if test="matches($vardata,'=')">
-                <xsl:sequence select="f:var-key($list[1],$separator)"/>
+                <xsl:sequence select="f:var-key($varname,$separator)"/>
             </xsl:if>
         </xsl:if>
         <xsl:if test="matches($varname,'_file-list$')">
