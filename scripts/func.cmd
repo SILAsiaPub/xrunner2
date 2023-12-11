@@ -217,8 +217,9 @@ goto :eof
   @if defined info2 echo %cyan%%curcommand%%reset%
   call %curcommand%
   if defined commandpath popd
-  @if defined outfile (call :funcendtest %0) else (call :funcend %0)
-goto :eof
+  @if defined outfile call :funcendtest %0 
+  @if not defined outfile call :funcend %0
+  goto :eof
 
 :command2file
 :: Description: Used with commands that only give stdout, so they can be captued in a file.
@@ -603,7 +604,7 @@ goto :eof
   @rem the following line removes the func colon at the begining. Not removing it causes a crash.
   @set funcname=%func:~1%
   @set fparams=%~2
-  @if defined button echo %magenta%   ----  %button%   ----%reset%& set button=
+  @if defined button echo %magenta%   ---- %funcname% %button%   ----%reset%& set button=
   @if defined info4 echo %magenta%%funcstarttext%%reset%
   @if defined info3 echo %magentabg%%func%%reset%  %fparams%
   @if defined echofunc FOR %%s IN (%echofunc%) DO if "%%s" == "%funcname%" echo  ============== %func% echo is ON =============== & echo on
@@ -1391,6 +1392,22 @@ goto :eof
   copy /y %file%+%makesource%\%filenx:.=-%.txt %file% >nul
 goto :eof 
 
+:md2pdf
+:: Description: Create PDF from Markdown file
+:: Usage: call :md2pdf markdown_file
+:: External program: md2pdf https://github.com/jmaupetit/md2pdf
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  call :infile "%~1"
+  set nameext=%~nx1
+  set name=%~n1
+  set dpath=%~dp1
+  call :outfile "%~2" "%dpath%%name%.pdf"
+  @if defined info2 echo %green%Converting: %nameext% to PDF
+  @if defined info2 echo %cyan%call mdpdf "%infile%" "%outfile%"%reset%
+  call mdpdf "%infile%" "%outfile%" > nul
+  @call :funcendtest %0
+goto :eof 
+
 :mergevar
 :: Description: Merge two numbered variable into one with a space between them
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
@@ -1410,7 +1427,13 @@ goto :eof
   set outname=%~1
   if not exist "%projectpath%\scripts\%outname%" copy "%infile%" "%projectpath%\scripts\" >> log.txt
 goto :eof
-   
+
+:move
+:: Description: Moves a file or files, if a file then can rename
+:: Usage: call :move infile outfile_or_outpath
+  move /Y "%~1" "%~2"
+goto :eof
+
 :multivarlist
 :: Descriptions: if varaible string contains a space put double quotes around it.
 :: Usage: call quotevar var_name start_numb end_numb
@@ -1509,6 +1532,18 @@ goto :eof
   if "%var2%" == "validate" call :validate "%outfile%"
   if "%var3%" == "validate" call :validate "%outfile%"
   @call :funcendtest %0 Renamed:
+goto :eof
+
+:outpath
+:: Description: returns the last path
+:: Usage: call :outpath "C:\path\"
+:: Functions called: funcbegin funcend
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set newpath=%~dp1
+  if defined newpath set outpath=%newpath%
+  if not defined newpath set outpath=%prevpath%
+  if defined newpath if not defined nameext set prevpath=%outpath%
+  @call :funcend %0
 goto :eof
 
 :paratextio
@@ -1729,7 +1764,7 @@ goto :eof
   if defined outpath call :outfile "%outpath%\%bknumb%%book%.usx"
   if not defined outpath call :outfile "" "%projectpath%\usx\%bknumb%%book%.usx"
   set curcommand="%rdwrtp8%" %ptio% %proj% %book% 0 "%outfile%" %usx%
-  if defined info2 echo %curcommand%
+  if defined info2 echo %cyan%%curcommand% %reset%
   call %curcommand%
   @call :funcendtest %0
 goto :eof
@@ -1911,6 +1946,13 @@ goto :eof
   echo %cyan%start /b %curcommand%%reset%
   start /b %curcommand%
   @call :funcend %0
+goto :eof
+
+:sub
+:: Description: used to output name of sub to be run
+:: Usage: call :sub :group
+set sub=on
+call %~1
 goto :eof
 
 :taskcall
@@ -2111,12 +2153,17 @@ goto :eof
 goto :eof
 
 :update
-:: Description: if a file exists move it and run an update
-:: Usage: call :updateif testfile copytofile funcion funcoutfile
+:: Description: if a target file does not exists copy it from source, if it exists it and is older than the source, update it.
+:: Usage: call :update testfile copytopath
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
   call :infile "%~1"
-  set outfile=%~2
-  xcopy /D /Y "%infile%" "%outfile%"
+  set nameext=%~nx1
+  call :outpath  "%~2"
+  if defined info2 echo %green%Checking: %nameext% %reset%
+  if defined info3 echo %green%Source: %~1 %reset%
+  if defined info3 echo %green%Target: %outpath% %reset%
+  xcopy /D/Q/Y "%infile%" "%outpath%"
+  set prevpath=%outpath%
   @call :funcend %0
 goto :eof
 
@@ -2401,14 +2448,15 @@ goto :eof
   @call :funcendtest %0
 goto :eof
 
-:errortest
-  set wantedresult=%~1
-  set goodmessage=%~2
-  set failmessage=%3
-  if %errorlevel%. neq %wantedresult%. (
-      echo %redbg%%failmessage% %reset%
-  ) else (
-      @if defined info3 echo %green%%goodmessage% %reset%
-  )
+:test
+:: Description: if a target file does not exists copy it from source, if it exists it and is older than the source, update it.
+:: Usage: call :update testfile copytopath
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  call :infile "%~1"
+  set nameext=%~nx1
+  set outpath=%~2
+  xcopy /D/Q/Y "%infile%" "%outpath%"
+  @call :funcend %0
 goto :eof
+
 

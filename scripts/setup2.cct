@@ -14,6 +14,7 @@ endfile         >   nl out(fend) nl dup
 nl nl           >   nl back(1)
 c ']'           >   nl back(1) use(funcstart)
 nl 't='         >   nl 'call '
+nl 's='         >   nl '@if defined info2 echo sub: %0 '
 
 group(section)
 '[variables'    >  use(variables)
@@ -83,4 +84,7 @@ group(endrem)
 nl          >   dup back(1) dup use(funcstart)
 
 group(endlabel)
+nl          >    dup dup back(1) use(funcstart)
+
+group(endsub)
 nl          >    dup dup back(1) use(funcstart)
