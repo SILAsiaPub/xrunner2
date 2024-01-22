@@ -112,6 +112,7 @@ goto :eof
   set script=%~1
   set infile=%~2
   set append=%~4
+  set cctlist=%~5
   if defined infile if "%infile%" neq "%infile:,=%" set commainput=true
   if not defined infile set infile=%ouptfile%
   if defined commainput if defined info2 echo %green%Info: Comma separated input files supplied. Existent not checked.%reset%
@@ -125,11 +126,12 @@ goto :eof
   if not exist "%ccw%" call :fatal %0 "Missing ccw.exe file" & goto :eof
   call :checkdir "%outfile%"
   set cctparam=-q -n
+  if defined cctlist set inputlist=-i
   if defined append (
     set cctparam=-a
 	@if defined info3 echo %green%Info: Output is being appended to output file.%reset%
   )
-  set curcommand="%ccw%" -u -b %cctparam% -t "%script%" -o "%outfile%" "%infile%"
+  set curcommand="%ccw%" -u -b %cctparam% -t "%script%" -o "%outfile%" %inputlist% "%infile%"
   @if defined info2 echo %cyan%%curcommand%%reset%
   pushd "%scripts%"
   call %curcommand%
@@ -512,8 +514,8 @@ goto :eof
 :: Usage: call :epubzip epubfilelocation epubname
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   setlocal DISABLEDELAYEDEXPANSION
-  xcopy /D "%cd%\setup\epub-add.list" "%projectpath%\output"
-  xcopy /D "%cd%\setup\!mimetype" "%projectpath%\output"
+  xcopy /D/Y "%cd%\setup\epub-add.list" "%projectpath%\output"
+  xcopy /D/Y "%cd%\setup\!mimetype" "%projectpath%\output"
   set hostpath=%1
   set epubname=%2
   set hostpath=%hostpath:"=%
@@ -604,7 +606,7 @@ goto :eof
   @rem the following line removes the func colon at the begining. Not removing it causes a crash.
   @set funcname=%func:~1%
   @set fparams=%~2
-  @if defined button echo %magenta%   ---- %funcname% %button%   ----%reset%& set button=
+  @if defined button echo %magenta%   ---- %funcname% %button%   ----%reset%&set button=
   @if defined info4 echo %magenta%%funcstarttext%%reset%
   @if defined info3 echo %magentabg%%func%%reset%  %fparams%
   @if defined echofunc FOR %%s IN (%echofunc%) DO if "%%s" == "%funcname%" echo  ============== %func% echo is ON =============== & echo on
@@ -785,7 +787,7 @@ goto :eof
   set firstact=%action:~0,1%
   if "%t1%" == "%t2%" (
     @if defined info3 echo %xtestt% "%t1%" ==  "%t2%" are equal
-    %multivar:'="%
+    call %multivar:'="%
   ) else (
     @if defined info3 echo %xtestf% "%t1%" ==  "%t2%" are NOT equal
   )
@@ -839,7 +841,7 @@ goto :eof
   call :multivarlist 3 9
   set firstact=%action:~0,1%
   if not defined %varname% (
-    @if defined info2 echo %xtestt% variable %~1 is not defined
+    @if defined info2 echo %xtestt% %green%variable %~1 is not defined%reset%
     if ~%firstact% neq ~: (
       @if defined info3 echo call :%action% %multivar:'="%
       call :%action% %multivar:'="%
@@ -910,6 +912,104 @@ goto :eof
   )
   @call :funcend %0
 
+goto :eof
+
+:ifxml
+:: Description: Test validity of xml, if valid calls valid action if invalid calls invalid action
+:: Usage: call :ifxml xmlfile validxmlaction invalidxmlaction
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :infile "%~1"
+  set validxmlaction=%~2
+  set invalidxmlaction=%~3
+    set errorlevel=
+  "%xml%" val "%infile%" 1> nul
+  if '%errorlevel%' == '0' (
+    if defined validxmlaction (
+      if defined info2 echo %cyan%%validxmlaction:'="%%reset%
+      call %validxmlaction:'="%
+    )
+    if defined info2 echo %green%Valid: %infile%%reset%
+  ) else (
+    if defined invalidxmlaction (
+      if defined info2 echo %cyan%%invalidxmlaction:'="%%reset%
+      call %invalidxmlaction:'="%
+    )
+    if defined info2 echo %red%Invalid: %infile%%reset%  
+    )
+  @call :funcend %0
+goto :eof
+
+:ifxmlinvalid
+:: Description: if valid do function with file
+:: Usage: call :ifxmlinvalid :dofunc "file_to_validate" [param3-9]
+:: Usage: call :ifxmlinvalid :dofunc "file_to_validate" [source ref_file [param5-9]]
+  @call :funcbegin %0 "'%~1' '%~2'"
+  call :infile "%~2"
+  set vfunc=%~1
+  set param3=%~3
+  set param4=%~4
+  set param5=%~5
+  set param6=%~6
+  set param7=%~7
+  set param8=%~8
+  set param9=%~9
+  set errorlevel=
+  "%xml%" val "%infile%" 1> nul 2>> %projectpath%\error.log
+  if '%errorlevel%' == '1' (
+     if '%param3%' == 'source' (
+       call :multivarlist 5 9
+       call %vfunc% "%infile%" %multivar:'="%
+    ) else (
+       call :multivarlist 3 9
+       call %vfunc% "%infile%" %multivar:'="%
+    )
+    if defined info2 echo %red%%0 Invalid file: %infile%%reset%
+  ) else (
+    if defined info3 if '%param3%' == 'source' (
+      echo %0 Source: %param4% >> %projectpath%\error.log
+    ) else (
+      echo %0 Valid: %infile% >> %projectpath%\error.log
+    )
+    if defined info2 echo %green%%0 Valid file: %infile%%reset%
+    if defined info2 echo.
+  )
+  @call :funcend %0
+goto :eof
+
+:ifxmlvalid
+:: Description: if valid do function with file
+:: Usage: call :ifxmlvalid :dofunc "file_to_validate" [ref_file [param*]]
+  @call :funcbegin %0 "'%~1' '%~2'"
+  call :infile "%~2"
+  set vfunc=%~1
+  set param3=%~3
+  set param4=%~4
+  set param5=%~5
+  set param6=%~6
+  set param7=%~7
+  set param8=%~8
+  set param9=%~9
+  set errorlevel=
+  "%xml%" val "%infile%" 1> nul 2>> nul
+  if '%errorlevel%' == '0' (
+     if '%param3%' == 'source' (
+       call :multivarlist 5 9
+       call %vfunc% "%infile%" %multivar:'="%
+    ) else (
+       call :multivarlist 3 9
+       call %vfunc% "%infile%" %multivar:'="%
+    )
+    if defined info2 echo %green%%0 Valid file: %infile%%reset%
+  ) else (
+    if '%param3%' == 'source' (
+      if defined info3 echo %0 Source: %param4% >> %projectpath%\error.log
+    ) else (
+      if defined info3 echo %0 Valid: %infile% >> %projectpath%\error.log
+    )
+    if defined info2 echo %red%%0 Invalid file: %infile%%reset%
+    if defined info2 echo.
+  )
+  @call :funcend %0
 goto :eof
 
 :inc
@@ -1045,6 +1145,7 @@ goto :eof
 :: usage: call :inputfile "drive:\path\file.ext"
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   set outfile=%~1
+  set infilename=%~n1
   if not defined outfile echo Missing param1  & set skip=on
   @call :funcend %0
 goto :eof
@@ -1490,18 +1591,22 @@ goto :eof
   @if defined info3 echo %green%Info: outnx = %outnx%%reset%
   @if defined info3 echo %green%Info: defaultoutfile = %defaultoutfile%%reset%
   rem now if toutfile is not defined then use default value
-  if defined toutfile (set outfile=%toutfile%) else (set outfile=%defaultoutfile%)
+  if defined toutfile (
+    set outfile=%toutfile:)=%
+  ) else (
+    set outfile=%defaultoutfile%
+  )
   if not defined toutfile set outpath=%defaultoutdp%
   if not defined toutfile set outnx=%defaultoutnx%
   if defined check if "%check%" neq "append" set check=nocheck
-  if not defined check if not exist "%outpath%" md "%outpath%"
-  if "%outnx%" neq "" (
-  if "%check%" neq "append" (
-	  rem remove %outfile%.prev if it exists. Works with wildcards
-	  if exist "%outfile%.prev" del "%outfile%.prev"
-	  rem if outfile exists then rename to file.ext.prev; this works with wild cards too now.
-	  if exist "%outfile%" ren "%outfile%" "%outnx%.prev"
-  )
+  if not defined check (
+    if not exist "%outpath%" md "%outpath%"
+    if "%outnx%" neq "" (
+    	  rem remove %outfile%.prev if it exists. Works with wildcards
+    	  if exist "%outfile%.prev" del "%outfile%.prev"
+    	  rem if outfile exists then rename to file.ext.prev; this works with wild cards too now.
+    	  if exist "%outfile%" ren "%outfile%" "%outnx%.prev"
+    )
   )
   @if defined info5 echo.
   @if defined info4 echo %green%Info: outfile = %outfile%%reset%
@@ -2106,9 +2211,11 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1" %0
   call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-unicodecount.txt"
-  call :drivepath "%outfile%""
+  call :drivepath "%outfile%"
+  set start=%~3
   if not exist "%unicodecharcount%" call :fatal "Unicode Character count executable not found or not defined in xrun.ini"
   call "%unicodecharcount%" -o "%outfile%" "%infile%" 2> "%drivepath%\unicodecount-errors.txt"
+  if defined start call :start "%outfile%"
   @call :funcendtest %0
 goto :eof
 
@@ -2216,6 +2323,23 @@ goto :eof
   timeout /t %~1 /nobreak
 goto :eof
 
+:wrapindataxml
+:: Description: Uses CCT to wrap anything in <data> xml tags
+:: Usage: call :wrapdataxml infile outfile [infileislist]
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  set script=wrapindataxml.cct
+  call :infile "%~1" %0
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-%script%.xml"
+  set infileislist=%~3
+  if defined infileislist set list=-i 
+  set curcommand=  "%ccw%" -u -b -q -n -t "%script%" -o "%outfile%" %list%"%infile%"
+  @if defined info2 echo %cyan%%curcommand%%reset%
+  pushd "%scripts%"
+  call %curcommand%
+  popd
+  @call :funcendtest %0
+goto :eof
+
 :xquery
 :: Description: Provides interface to xquery by saxon9he.jar
 :: Usage: call :xquery scriptname ["infile"] ["outfile"] [allparam]
@@ -2251,8 +2375,8 @@ goto :eof
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
   if not defined xsltsetup (
-    call :makemake "%projectpath%\projxslt.make" 
-    call :runmake "%projectpath%\projxslt.make"
+    rem call :makemake "%projectpath%\projxslt.make" 
+    call :makef "%projectpath%\projxslt.make"
     set xsltsetup=done
   )
   rem if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
@@ -2261,7 +2385,8 @@ goto :eof
   if defined scripts set script=%scripts%\%~1
   if not defined scripts set script=scripts\%~1
   call :infile "%~2" %0
-  call :outfile "%~3" "%projectpath%\tmp\%group%-%count%-%~n1.xml" nocheck
+  set nocheck=%~5
+  call :outfile "%~3" "%projectpath%\tmp\%group%-%count%-%~n1.xml" %nocheck%
   rem echo on
   set params=%~4
   if defined suppressXsltNamespace set suppressXsltNamespaceCheck=--suppressXsltNamespaceCheck on
