@@ -6,23 +6,51 @@ green := [32m
 reset := [0m
 cyan := [36m
 
+files := tmp/proj-var.xml tmp/lists.xml tmp/keyvalue.xml $(xrunnerpath)/scripts/projectvariables-v3.xslt scripts/inc-lookup.xslt scripts/inc-file2uri.xslt scripts/inc-copy-anything.xslt scripts/xrun.xslt
 
-setup: $(CURDIR)/tmp $(CURDIR)/scripts $(CURDIR)/scripts/proj.cmd
-	@echo $(green)Info: proj.cmd is up to date$(reset)
+createxslt: scripts/project.xslt
+	@echo $(green)Info: project.xslt is up to date$(reset)
+	@echo.
 
+scripts/project.xslt: $(files)
+	@echo $(cyan)Rebuilding: project.xslt$(reset)
+	@call "$(java)" -jar "$(saxon)" -o:"scripts\project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v3.xslt" projectpath=${CURDIR} USERPROFILE="$(USERPROFILE)"
 
-$(CURDIR)/tmp: 
-	mkdir tmp
+tmp/proj-var.xml: project.txt
+	@if not exist "tmp\" md "tmp\"
+	@echo $(cyan)Rebuilding: proj-var.xml$(reset)
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\proj-var.cct" -o "tmp\proj-var.xml" "project.txt"
 
-$(CURDIR)/scripts :
-	mkdir scripts
+scripts/inc-lookup.xslt: $(xrunnerpath)/scripts/inc-lookup.xslt
+	@echo $(cyan)Adding: inc-lookup.xslt into project$(reset)
+	@copy "$(xrunnerpath)\scripts\inc-lookup.xslt" "${CURDIR}\scripts\" > nul
 
-$(CURDIR)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunnerpath)/scripts/func.cmd $(xrunnerpath)/scripts/setup2.cct
-	@echo $(cyan)Updating proj.cmd$(reset)
-	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup2.cct" -o "scripts\proj.cmd" -i $(xrunnerpath)\setup\proj-cmd.txt
+scripts/inc-file2uri.xslt: $(xrunnerpath)/scripts/inc-file2uri.xslt
+	@echo $(cyan)Adding: inc-file2uri.xslt into project$(reset)
+	@copy "$(xrunnerpath)\scripts\inc-file2uri.xslt" "${CURDIR}\scripts\" > nul
 
-project.txt: ;
+scripts/inc-copy-anything.xslt: $(xrunnerpath)/scripts/inc-copy-anything.xslt
+	@echo $(cyan)Adding: inc-copy-anything.xslt into project$(reset)
+	@copy "$(xrunnerpath)\scripts\inc-copy-anything.xslt" "${CURDIR}\scripts\" > nul
 
-$(xrunnerpath)/setup/xrun.ini: ;
+scripts/xrun.xslt: $(xrunnerpath)\scripts\xrun.xslt
+	@echo $(cyan)Adding: xrun.xslt into project$(reset)
+	@copy "$(xrunnerpath)\scripts\xrun.xslt" "${CURDIR}\scripts\" > nul
 
-$(xrunnerpath)/scripts/func.cmd: ;
+$(xrunnerpath)\scripts\xrun.xslt: $(xrunnerpath)\setup\xrun.ini
+	@echo $(cyan)Updated: xrun.xslt$(reset)
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "$(xrunnerpath)\scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"
+
+tmp/lists.xml: lists.tsv
+	@echo $(cyan)Updated: list.xml$(reset)
+	@if not exist lists.tsv type nul > lists.tsv
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\lists2xml.cct" -o "tmp\lists.xml" "lists.tsv"
+
+tmp/keyvalue.xml: keyvalue.tsv
+	@echo $(cyan)Updated: list.xml$(reset)
+	@if not exist keyvalue.tsv type nul > keyvalue.tsv
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\keyvalue2xml.cct" -o "tmp\keyvalue.xml" "keyvalue.tsv"
+
+lists.tsv: ;
+
+keyvalue.tsv: ;
