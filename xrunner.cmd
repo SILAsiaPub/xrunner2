@@ -54,13 +54,12 @@ goto :eof
   if not defined group set fatal=on
   if defined fatal goto :eof
   call "%projcmd%" %group%
-  @if defined info2 echo %green%Info: xrunner finished!%reset%
   if defined espeak if defined info2 call "%espeak%" "x runner finished"
   @call :funcend :main
   call :time2sec endtime
   set /A sec=%endtime%-%starttime%
   call :sec2time etime %sec%
-  @echo Completed in %yellow%%etime%%reset% %etime-units% at %time:~0,8%
+  @if defined info2 echo %green%Xrunner finished in %reset%%yellow%%etime%%reset% %etime-units% at %time:~0,8%
   @call :funcend :xrunner
   rem when a set of tasks completes successfully the xbuild.txt is deleted. If it ixists on the next build, then the project.txt will be rebuilt.
   if exist %projectpath%\xbuild.txt del %projectpath%\xbuild.txt
