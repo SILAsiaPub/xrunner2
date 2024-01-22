@@ -34,7 +34,6 @@ Xrunner2 differes from Xrunner in that it is much faster to start. The original 
 Xrunner2 is all scripts. It can be modified at many points. The GUI HTA file is basically a HTML file with CSS, some Javascript and mostly VBScript. The **xrunner.cmd** file is just a small collection of batch file functions that does the setup, command and control and then runs **func.cmd**. The majority of the content is in the **func.cmd** file that is a library of functions. More functions can be added to that if you need them. Just follow the pattern in ones like **:cct**.
 
 
-
 When you click a button on Xrunner2 GUI it runs **xrunner.cmd** with a number of parameters. 
 1. The location of the project.txt file.
 2. The button that was pressed. One of a-z.
@@ -51,7 +50,6 @@ sourcexml=%projectpath%\source\data.xml
 ```
 
 One key variable does not need to be created and that is `%projectpath%`. It is created for you. You do not need double quotes on the variable values. Do not have spaces before or after the = sign unless intended.
-
 
 
 ## Examples
