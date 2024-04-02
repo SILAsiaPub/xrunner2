@@ -7,17 +7,17 @@ reset := [0m
 cyan := [36m
 
 
-setup: tmp scripts $(CURDIR)\scripts $(CURDIR)/scripts/proj.cmd
+setup: $(CURDIR)/tmp $(CURDIR)/scripts $(CURDIR)/scripts/proj.cmd
 	@echo $(green)Info: proj.cmd is up to date$(reset)
 
 
-tmp: 
-	mkdir %cd%\tmp
+$(CURDIR)/tmp: 
+	mkdir tmp
 
-scripts :
-	mkdir %cd%\scripts
+$(CURDIR)/scripts :
+	mkdir scripts
 
-$(CURDIR)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunnerpath)/scripts/func.cmd $(xrunnerpath)\scripts\setup2.cct
+$(CURDIR)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunnerpath)/scripts/func.cmd $(xrunnerpath)/scripts/setup2.cct
 	@echo $(cyan)Updating proj.cmd$(reset)
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup2.cct" -o "scripts\proj.cmd" -i $(xrunnerpath)\setup\proj-cmd.txt
 

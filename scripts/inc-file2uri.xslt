@@ -61,6 +61,22 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="f:file2lines-re">
+        <xsl:param name="pathfile"/>
+        <xsl:param name="linebreak-re"/>
+        <xsl:variable name="pathfileuri" select="f:file2uri($pathfile)"/>
+        <xsl:choose>
+            <xsl:when test="unparsed-text-available($pathfileuri)">
+                <xsl:variable name="text" select="unparsed-text($pathfileuri)"/>
+                <xsl:variable name="lines" select="tokenize($text,$linebreak-re)"/>
+                <xsl:sequence select="$lines"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="lines" select="tokenize(concat('File_missing&#9;File does not exist: ',$pathfileuri),'\t')"/>
+                <xsl:sequence select="$lines"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
     <xsl:function name="f:file2uriabsolutepath">
         <xsl:param name="pathfile"/>
         <xsl:value-of select="concat('file:///',encode-for-uri(replace($pathfile,'\\','/')))"/>

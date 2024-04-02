@@ -68,7 +68,7 @@ nl endfile      >   nl '@goto :eof' nl dup
 group(funcstart)
 ']'         >   nl
 nl 'b='     >   next
-nl 'button='     >   'set button=' use(endb)
+nl 'button='     >   store(button) use(endb)
 nl 't='     >   out(fbegin) dup back(4) use(main)
 nl 'label='     >   ':: Button group: ' use(endlabel)
 nl 'g='     >   ':: Button group: '
@@ -78,7 +78,10 @@ nl '#'     >   'rem ' use(endrem)
 nl '[' >   dup back(2) use(main)
 
 group(endb)
-nl          >   dup out(fbegin) nl nl back(2) use(main)
+nl          >   endstore 
+                'set button=' out(button) dup 
+                'set fundendtitle=' out(button) dup 
+                out(fbegin) nl nl back(2) use(main)
 
 group(endrem)
 nl          >   dup back(1) dup use(funcstart)

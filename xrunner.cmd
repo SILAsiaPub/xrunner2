@@ -61,8 +61,6 @@ goto :eof
   call :sec2time etime %sec%
   @if defined info2 echo %green%Xrunner finished in %reset%%yellow%%etime%%reset% %etime-units% at %time:~0,8%
   @call :funcend :xrunner
-  rem when a set of tasks completes successfully the xbuild.txt is deleted. If it ixists on the next build, then the project.txt will be rebuilt.
-  if exist %projectpath%\xbuild.txt del %projectpath%\xbuild.txt
   if defined pauseatend (pause ) else (timeout 30)
 goto :eof
 

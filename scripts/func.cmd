@@ -39,9 +39,29 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   if not exist "%~2" copy nul "%~2"
   if not exist "%~1" call :funcend %0 "Warning: File to append does not exist. File: %~1" & pause & goto :eof
-  if exist "%~1" type "%~1" >> "%~2"
+  if exist "%~1" (
+    @if defined info2 echo %green%Appending file '%~nx1`' to '%~nx2'%reset%
+    type "%~1" >> "%~2"
+    )
   @call :funcend %0
 goto :eof
+
+:appendfilelist
+:: Description: Uses CCT to join file
+:: Usage: call :appendfiles listfile outfile
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  set script=append-files.cct
+  call :infile "%~1" %0
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-%script%.xml"
+  if not exist "%scripts%\%script%" call :scriptfind "%script%" %0
+  set curcommand=  "%ccw%" -u -b -q -n -t "%script%" -o "%outfile%" -i "%infile%"
+  @if defined info2 echo %cyan%%curcommand%%reset%
+  pushd "%scripts%"
+  call %curcommand%
+  popd
+  @call :funcendtest %0
+goto :eof
+
 
 :appendtofile
 :: Description: Appends text to the end of a file.
@@ -366,6 +386,7 @@ goto :eof
 rem got this from: http://www.robvanderwoude.com/datetiment.php#IDate
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   if not defined dateseparator call :detectdateformat
+  call :time
   FOR /F "tokens=1-4 delims=%dateseparator% " %%A IN ("%date%") DO (
       IF "%dateformat%"=="0" (
           SET fdd=%%C
@@ -430,6 +451,35 @@ goto :eof
   if defined info3 echo %green%Info: dateformat = %dateformat%%reset%
   if defined info3 echo %green%Info: dateseparator = %dateseparator%%reset%
   if defined info3 echo %green%Info: timeseparator = %timeseparator%%reset%
+  @call :funcend %0
+goto :eof
+
+:ifnewerdofunc
+:: Description: Compares two file modified date-time and runs a function if true
+:: Usage: call :dofuncifgreater file1 file2 :ifnewfunc [funcparam1 funcparam2 funcparam3 funcparam4 funcparam5 funcparam6]
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  set f1=%~1
+  set f2=%~2
+  set ifnewfunc=%~3
+  set param4=%~4
+  set param5=%~5
+  set param6=%~6
+  set param7=%~7
+  set param8=%~8
+  set param8=%~9
+  call :multivarlist 4 9
+  if not exist "%f1%" call :funcend %0 "%0 func 1st file %~nx1 was not found, so comparison is aborted." & goto :eof
+  if not exist "%f2%" call :funcend %0 "%0 func 2nd file %~nx2 was not found, so comparison is aborted." & goto :eof
+  if not defined ifnewfunc call :funcend %0 "%0 Function name not supplied, so result can't happen" & goto :eof
+  call :getfiledatetime "%f1%" file1
+  call :getfiledatetime "%f2%" file2
+  if %file1%. gtr %file2%. (
+    call %ifnewfunc%  %multivar:'="%
+    @if defined info4 echo %green%Info: %~nx1 %file1% newer than %~nx2 %file2%. Running %funcname%%reset% 
+  ) else (
+    @if defined info4 echo %green%Info: %~nx1 %file1%  is older than %~nx2 %file2%%reset%
+  )
+  @if defined info3 echo %green%Info: %gtvarname% = !%gtvarname%!%reset%
   @call :funcend %0
 goto :eof
 
@@ -505,7 +555,7 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1"
   @if defined info2 echo %cyan%%java% -jar "D:\programs\epubcheck\epubcheck.jar" "%1" 2^> "%~2"%reset%
-  %java% -jar "D:\programs\epubcheck\epubcheck.jar" "%1" 2> "%~2"
+  %java% -jar "D:\programs\epubcheck\epubcheck.jar" %1 2> "%~2"
   @call :funcend %0  
 goto :eof
 
@@ -1337,7 +1387,7 @@ goto :eof
     if "%grouporfunc:~0,1%" == ":" (
         FOR /F " delims=" %%s IN (%listfile%) DO  call %grouporfunc% "%%s" %multivar:'="%
       ) else (
-        FOR /F " delims= " %%s IN (%listfile%) DO  call :%grouporfunc% "%%s" %multivar:'="%
+        FOR /F " delims=" %%s IN (%listfile%) DO  call :%grouporfunc% "%%s" %multivar:'="%
   )  
     )  
   )  
@@ -1503,9 +1553,11 @@ goto :eof
   set name=%~n1
   set dpath=%~dp1
   call :outfile "%~2" "%dpath%%name%.pdf"
+  set cssfile=%~3
+  if defined cssfile set addcss=-css "%cssfile%"
   @if defined info2 echo %green%Converting: %nameext% to PDF
   @if defined info2 echo %cyan%call mdpdf "%infile%" "%outfile%"%reset%
-  call mdpdf "%infile%" "%outfile%" > nul
+  call mdpdf %addcss% "%infile%" "%outfile%" > nul
   @call :funcendtest %0
 goto :eof 
 
@@ -1665,6 +1717,23 @@ goto :eof
   if defined info2 echo Info: Starting reading (or writing) from Paratext project %proj% 
   FOR %%s IN (%string%) DO call :ptbook %proj% %%s "%outpath%" "%write%" "%usfm%"
   @call :funcend %0
+goto :eof
+
+:patch
+:: Description: Run patch.exe to apply a patch to a source file and create a third file
+:: Usage: call :patch patchfile infile outfile
+:: Functions called: 
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set patchfile=%scripts%\%~1
+  call :infile "%~2"
+  call :outfile "%~3" "%projectpath%\tmp\%group%-%count%-%~n1.xml"
+  if not exist "%patchfile%" call :fatal %0 "Missing patch file!
+  if not exist "%infile%" call :fatal %0 "Missing source file!
+  rem copy su-host.ps patch.ps1
+  echo "%patch%" -i "%patchfile%" -o "%outfile%" "%infile%" > cur-patch.cmd
+  call schtasks /run /TN "\suApps\RunPatchAdmin"
+  timeout /t 1
+  @call :funcendtest %0
 goto :eof
 
 :pause
@@ -1880,6 +1949,29 @@ goto :eof
   set url=%~1
   set qrnumb=000%~2
   call qrcode -o "%projectpath%\output\qr\qr-%qrnumb:~-3%.png" -t png -w 400 "%url%"
+  @call :funcendtest %0
+goto :eof
+
+
+:python
+:: Description: Run a Python3 script
+:: Usage: call :python script infile outfile
+:: Functions called: inccount, infile, outfile, funcbegin, funcend
+:: External program: rxrepl.exe  https://sites.google.com/site/regexreplace/
+  if defined fatal goto :eof
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' %~5"
+  call :inccount
+  set script=%~1
+  call :infile "%~2"
+  call :outfile "%~3" "%projectpath%\tmp\%group%-%count%-%scriptout%.txt" %append%
+  if not defined script call :fatal %0 "CCT script not supplied!" & goto :eof
+  if not exist "%scripts%\%script%" call :scriptfind "%script%" %0
+  if not exist "%scripts%\%script%" call :fatal %0 "Script not found!" & goto :eof
+  if not exist "%infile%" call :fatal %0 "Input file %infile% not found!" & goto :eof
+  if not exist "%python3%" call :fatal %0 "Missing python.exe" & goto :eof
+  set commandln="%python3%" "%scripts%\%script%" "%infile%" "%outfile%"
+  if defined info2 echo %cyan%%commandln% %reset%
+  call %commandln%
   @call :funcendtest %0
 goto :eof
 
@@ -2327,10 +2419,14 @@ goto :eof
 :: Description: Uses CCT to wrap anything in <data> xml tags
 :: Usage: call :wrapdataxml infile outfile [infileislist]
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
-  set script=wrapindataxml.cct
   call :infile "%~1" %0
   call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-%script%.xml"
+  if not exist "%scripts%\%script%" call :scriptfind "%script%" %0
   set infileislist=%~3
+  set namespace=%~4
+    set script=wrapxmlindataxml.cct
+  if '%namespace%' == 'epub' set script=wrapxmlindataxml-nsepub.cct
+  if '%namespace%' == 'xhtmlepub' set script=wrapxmlindataxml-xhtmlnsepub.cct
   if defined infileislist set list=-i 
   set curcommand=  "%ccw%" -u -b -q -n -t "%script%" -o "%outfile%" %list%"%infile%"
   @if defined info2 echo %cyan%%curcommand%%reset%
@@ -2377,7 +2473,7 @@ goto :eof
   if not defined xsltsetup (
     rem call :makemake "%projectpath%\projxslt.make" 
     call :makef "%projectpath%\projxslt.make"
-    set xsltsetup=done
+    if not exist "%projectpath%\list-import-error.xml" (set xsltsetup=done) else (espeak "Error making project.xslt" &start "%projectpath%\scripts\project.xslt"& echo %bgred% One or more list variables was not imported into project.xslt%reset% & pause & del /Q "%projectpath%\list-import-error.xml")
   )
   rem if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
   call :inccount

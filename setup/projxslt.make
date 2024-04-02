@@ -6,7 +6,7 @@ green := [32m
 reset := [0m
 cyan := [36m
 
-files := tmp/proj-var.xml lists.tsv keyvalue.tsv $(xrunnerpath)/scripts/projectvariables-v2.xslt scripts/inc-lookup.xslt scripts/inc-file2uri.xslt scripts/inc-copy-anything.xslt scripts/xrun.xslt
+files := tmp/proj-var.xml tmp/lists.xml tmp/keyvalue.xml $(xrunnerpath)/scripts/projectvariables-v3.xslt scripts/inc-lookup.xslt scripts/inc-file2uri.xslt scripts/inc-copy-anything.xslt scripts/xrun.xslt
 
 createxslt: scripts/project.xslt
 	@echo $(green)Info: project.xslt is up to date$(reset)
@@ -14,7 +14,7 @@ createxslt: scripts/project.xslt
 
 scripts/project.xslt: $(files)
 	@echo $(cyan)Rebuilding: project.xslt$(reset)
-	@call "$(java)" -jar "$(saxon)" -o:"scripts\project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v2.xslt" projectpath=${CURDIR} USERPROFILE="$(USERPROFILE)"
+	@call "$(java)" -jar "$(saxon)" -o:"scripts\project.xslt" "tmp\proj-var.xml" "$(xrunnerpath)\scripts\projectvariables-v3.xslt" projectpath=${CURDIR} USERPROFILE="$(USERPROFILE)"
 
 tmp/proj-var.xml: project.txt
 	@if not exist "tmp\" md "tmp\"
@@ -40,6 +40,16 @@ scripts/xrun.xslt: $(xrunnerpath)\scripts\xrun.xslt
 $(xrunnerpath)\scripts\xrun.xslt: $(xrunnerpath)\setup\xrun.ini
 	@echo $(cyan)Updated: xrun.xslt$(reset)
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "$(xrunnerpath)\scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"
+
+tmp/lists.xml: lists.tsv
+	@echo $(cyan)Updated: list.xml$(reset)
+	@if not exist lists.tsv type nul > lists.tsv
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\lists2xml.cct" -o "tmp\lists.xml" "lists.tsv"
+
+tmp/keyvalue.xml: keyvalue.tsv
+	@echo $(cyan)Updated: list.xml$(reset)
+	@if not exist keyvalue.tsv type nul > keyvalue.tsv
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\keyvalue2xml.cct" -o "tmp\keyvalue.xml" "keyvalue.tsv"
 
 lists.tsv: ;
 
