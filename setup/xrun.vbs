@@ -12,11 +12,18 @@ Dim xrunini, zero, level, boxlist, tasklen
 ' Programs 
 Dim texteditor, program, xmleditor, xrunxslt, npp 
 Dim WshShell, strCurDir, WScript 
+Dim maintab, subgroup, docstab, lblgrp, doctab, subgrp, subarray, grpindex, grouplabel
 ' Unused: xrundata, info1, info2, info3, info4, info5, strPath, labelIni, bConsoleSw, 
 Set WshShell = CreateObject("WScript.Shell")
 strCurDir    = WshShell.CurrentDirectory
 tskgrp =  Array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
 boxlist = Array("Checkbox1","Checkbox2","Checkbox3","Checkbox4","Checkbox5")
+maintab = Array("project","subrunner1","subrunner2","projectinfo","docs","expert")
+doctab = Array("Xrunner_info","Xrunner_func","Xrun_func")
+lblgrp = Array("0","10","20","30","40","50","60","70","80","90","100","110","120","130","140","150","160","170","180","190")
+subgrp = Array("s1","s2","s3","s4","s5","s6","s7","s8","s9","s10","s11","s12","s13","s14","s15","s16","s17","s18","s19","s20")
+grouplabel = Array("g1","g2","g3","g4","g5","g6","g7","g8","g9","g10","g11","g12","g13","g14","g15","g16","g17","g18","g19","s20")
+
 zero = 0
 zero = CInt(zero)
 ' xrundata = "setup\"
@@ -223,6 +230,7 @@ Function SelectFolder( myStartFolder )
     If coFSO.FileExists(projectTxt) Then
       projectInfo = SelectFolder & "\project-info.txt"
       buttonShow(projectTxt)
+      subButtons(projectTxt)
       Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
       call editArea1(projectTxt)
       call editArea2(projectInfo)
@@ -284,6 +292,87 @@ Function buttonShow(file)
   Next
 End Function
 
+'Function buttonSubs(file)
+'  dim x, group, textlen, prefix, text, key, curid
+'  group = "subbutton"
+'  prefix = "sub"
+'  For x = 0 To 199
+'    key = CStr(x)
+'    curid = prefix & key
+'    text = ReadIni(file,group,key)
+'    textlen = len(text)
+'    If textlen > zero Then
+'        document.getElementById(curid).style.display = "block"
+'        document.getElementById(curid).InnerText = text
+'    Else
+'        document.getElementById(curid).style.display = "none"
+'    End If
+'  Next
+''  call groupLabel(file)
+'End Function
+
+Function subButtons(file)
+  dim section, textlen, prefix, text, key, curid, keynumb, part, subarray, testa, x, curtext, namelen, group
+  section = "subbutton"
+  prefix = "s"
+  For each key in subgrp
+    text = ReadIni(file,section,key)
+    textlen = len(text)
+    keynumb = Mid(key, 2)
+    if textlen > 0 then
+      subarray = split(text)
+      if Ubound(subarray) < 10 Then
+        For x = 0 to Ubound(subarray)
+          curtext = Cstr(subarray(x))
+          namelen = len(curtext)
+          curid = prefix & keynumb & "-" & x
+          If textlen > 0 then
+            document.getElementById(curid).style.display = "block"
+            document.getElementById(curid).InnerText = curtext
+          else
+            document.getElementById(curid).style.display = "none"
+          End If
+        Next
+      else
+        curid = prefix & keynumb & "-" & "1"
+        document.getElementById(curid).style.display = "block"
+        document.getElementById(curid).InnerText = "Too many items in list. Maximum 10."
+      end if
+    End If
+  Next
+  prefix = "subgroup"
+  For each group in grouplabel
+    text = ReadIni(file,section,group)
+    textlen = len(text)
+    keynumb = Mid(group, 2)
+    curid = prefix & keynumb
+    If textlen > 0 then
+      document.getElementById(curid).style.display = "block"
+      document.getElementById(curid).InnerText = text
+'    else
+'      document.getElementById(curid).style.display = "none"
+    End If
+  Next
+End Function
+
+'' the following not used.
+'Function groupLabel(file)
+'  dim x, group, prefix, textlen, curid, label, text
+'  group = "subbutton"
+'  prefix = "sub"
+'  prefix = "sublabel"
+'  For x = 0 To Ubound(lblgrp)
+'    label = lblgrp(x)
+'    curid = prefix & label
+'    text = ReadIni(file,group,curid)
+'    textlen = len(text)
+'    If textlen > zero Then
+'        document.getElementById(curid).style.display = "block"
+'        document.getElementById(curid).InnerText = ltext
+'    End If
+'  Next
+'End Function
+
 Function buttonHide()
   dim x, group
   For x = 0 To Ubound(tskgrp)
@@ -309,6 +398,27 @@ Sub xrun(group)
     '   unittest = "unittest"
     'End If
    call RunScript("xrunner",projectTxt,group,level,pauseatend,"")
+End Sub
+
+Sub subrunx(key,numb)
+    Dim x, pauseatend, group, sections, sectionarray, cursect
+    group = "subbutton"
+    pauseatend = ""
+    sections = ReadIni(projectTxt,group,key)
+    sectionarray = split(sections)
+    cursect = sectionarray(numb)
+    For x = 0 To 5
+      if document.getElementById("infoid" & x).checked Then
+        level = document.getElementById("infoid" & x).value
+      End If
+    Next
+    If document.getElementById("pauseatend").checked  Then
+       pauseatend = "pause"
+    End If   
+    'If document.getElementById("unittest").checked  Then
+    '   unittest = "unittest"
+    'End If
+   call RunScript("xrunner",projectTxt,cursect,level,pauseatend,cursect)
 End Sub
 
 Sub copy()
@@ -344,9 +454,9 @@ Sub editFileWithProgram(file,program)
     objShell.run(cmdline)
 End Sub
 
-Function OpenTab(tabid)
+Function OpenTab(tabgrp,tabid)
     Dim tab, x, Elem, Elemon, Elemtab , Elemtc, ifrm, tabname, tabactive
-    tab = Array("project","projectinfo","Xrunner_info", "Xrunner_func", "Xrun_func","expert")
+    tab = tabgrp
     tabactive = tabid & "tab"
     For x = 0 To Ubound(tab)
       tabname = tab(x) & "tab"
@@ -368,6 +478,7 @@ End Function
 Function reloadProject(file)
   call reloadText(file)
   call buttonShow(file)
+  call buttonSubs(file)
   Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
 End Function
 
@@ -443,4 +554,14 @@ Sub presets()
   'call SetRadioFromIni(xrunini, "feedback","infolevel","infoid",5)
   'call SetCboxByIdFromIni(xrunini, "feedback","pauseatend","pauseatend")
   'call SetCboxByIdFromIni(xrunini, "setup","unittest","unittest")
+End Sub
+
+Sub arraypos(thisarray,text)
+  Dim x, curvalue
+  For x = 0 To Ubound(thisarray)
+    curvalue = thisarray(x)
+    if curvalue = text then
+        grpindex = x
+    end if
+  Next
 End Sub

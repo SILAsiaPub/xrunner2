@@ -26,7 +26,7 @@
     if "%thh%" == "12" set nfhh=12
   ) 
   set fhh=%nfhh%
-  @if defined info3 echo %green%Info: fhh = %fhh%%reset%
+  @call :fb 3 green "Info: fhh = %fhh%"
   @call :funcend %0
 goto :eof
 
@@ -355,6 +355,19 @@ goto :eof
   @call :funcendtest %0
 goto :eof
 
+:copyif
+:: Description: If source exists then copies file
+:: Usage: call :copy infile outfile
+:: Functions called: infile, outfile, inccount funcbegin funcendtest
+:: Created: 2024-04-06
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' %~4"
+  call :infile "%~1" %0
+  call :inccount
+  call :outfile "%~2" "%projectpath%\output\copyif-%count%.txt"  
+  if exist "%infile%" copy /Y "%infile%" "%%outfile%"
+  @call :funcendtest %0
+goto :eof
+
 :copy2usb
 :: Description: Set up to cop files to USB drive and optionally format.
 :: Usage: call :copy2usb source_path target_drive target_folder [format_first]
@@ -376,6 +389,17 @@ goto :eof
   EjectMedia %targetdrive%:
   if "%errorlevel%" neq "0" pause
   @call :funcend %0
+goto :eof
+
+:curl
+:: Description: run a curl command
+:: Usage: call :curl url outfile
+  @call :funcbegin %0 "'URL' '%~2' '%~3' %~4"
+  set outfile=%~2
+  @if defined info2 echo.
+  @if defined info2 echo %cyan%call curl --ssl-no-revoke -o "%~2" -L "URL"%reset%
+  call curl -o "%~2" -L "%~1"  --ssl-no-revoke
+  @call :funcendtest %0  
 goto :eof
 
 :date
@@ -405,6 +429,7 @@ rem got this from: http://www.robvanderwoude.com/datetiment.php#IDate
       )
   )
   set curdate=%fyyyy%-%fmm%-%fdd%
+  set curisodatetime=%fyyyy%-%fmm%-%fdd%T%curisohhmmss%
   set curisodate=%fyyyy%-%fmm%-%fdd%
   set yyyy-mm-dd=%fyyyy%-%fmm%-%fdd%
   set curyyyy-mm=%fyyyy%-%fmm%
@@ -554,8 +579,9 @@ goto :eof
 :: Usage: call :epubcheck epubfile report_file
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1"
-  @if defined info2 echo %cyan%%java% -jar "D:\programs\epubcheck\epubcheck.jar" "%1" 2^> "%~2"%reset%
-  %java% -jar "D:\programs\epubcheck\epubcheck.jar" %1 2> "%~2"
+  call :outfile "%~2" "%projectpath%\tmp\epubcheck.txt"
+  @if defined info2 echo %cyan%%java% -jar "D:\programs\epubcheck\epubcheck.jar" "%infile%" 2^> "%outfile%"%reset%
+  %java% -jar "D:\programs\epubcheck\epubcheck.jar" %infile% 2> "%outfile%"
   @call :funcend %0  
 goto :eof
 
@@ -574,11 +600,14 @@ goto :eof
   call :outfile "%hostpath%\%epubname%.epub"
   @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%.epub%reset%
   pushd "%hostpath%\%epubname%"
-  "C:\Program Files\7-Zip\7z.exe" a -t* ..\%epubname%.epub ..\!mimetype 1> ..\7zip-epub-build.txt 2> ..\7zip-epub-build-errors.txt
+  call :date
+  echo %curisodatetime% >> ..\7zip-epub-build.log
+  echo %curisodatetime% >> ..\7zip-epub-build-errors.log
+  "C:\Program Files\7-Zip\7z.exe" a -t* ..\%epubname%.epub ..\!mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Added !mimtype to zip" "Error adding !mimtype to zip"
-  "C:\Program Files\7-Zip\7z.exe" u -tzip ..\%epubname%.epub @..\epub-add.list 1>> ..\7zip-epub-build.txt 2>> ..\7zip-epub-build-errors.txt
+  "C:\Program Files\7-Zip\7z.exe" u -tzip ..\%epubname%.epub @..\epub-add.list 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Added content to zip" "Error adding content to zip"
-  "C:\Program Files\7-Zip\7z.exe" rn ..\%epubname%.epub !mimetype mimetype 1>> ..\7zip-epub-build.txt 2>> ..\7zip-epub-build-errors.txt
+  "C:\Program Files\7-Zip\7z.exe" rn ..\%epubname%.epub !mimetype mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Renamed file !mimetype to mimetype in zip" "Error renaming file !mimetype to mimetype in zip"
   popd
   set errorlevel=
@@ -594,7 +623,7 @@ goto :eof
   set goodmessage=%~2
   set failmessage=%3
   if %errorlevel%. equ %wantedresult%. (
-    @if defined info3 echo   %green%%goodmessage% %reset%
+    @if defined info2 echo   %green%%goodmessage% %reset%
   ) else (
     echo %redbg%   %failmessage%   %reset%
   )
@@ -617,13 +646,22 @@ goto :eof
 goto :eof
 
 
-:fb
+:fb-old
 :: Description: Used to give common feed back
 :: Usage: call :fb info_or_error_or_output message
   echo %~1: %~2 >> log\log.txt
   if "%~1" == "info" Echo Info: %~2
   if "%~1" == "error" Echo Error: %~2
   if "%~1" == "output" Echo Output: %~2
+goto :eof
+
+:fb
+:: Description: Used to give common feed back
+:: Usage: call :fb info-level color text
+  set level=%~1
+  set color=%~2
+  set text=%~3
+  @if defined info%level% echo !%color%!%text%%reset%
 goto :eof
 
 :file
@@ -1200,6 +1238,19 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:ipaddress
+:: Description: Get current IP address
+:: Usage: call :ipaddress varname
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set varname=%~1
+  for /F "tokens=14" %%A in ('"ipconfig | findstr IPv4"') do (
+    set %varname%=%%A
+    echo %%A
+  )
+  @if defined info2 echo %varname% = !%varname%!
+  @call :funcend %0
+goto :eof
+
 :jade
 :: Description: Create html/xml from jade file (now pug) Still uses jade extension
 :: Usage: call :jade "infile" "outfile" start
@@ -1388,7 +1439,6 @@ goto :eof
         FOR /F " delims=" %%s IN (%listfile%) DO  call %grouporfunc% "%%s" %multivar:'="%
       ) else (
         FOR /F " delims=" %%s IN (%listfile%) DO  call :%grouporfunc% "%%s" %multivar:'="%
-  )  
     )  
   )  
   @call :funcend %0
@@ -1478,21 +1528,6 @@ goto :eof
   rem @echo off
 goto :eof
 
-:makef
-:: Description: This runs the makefile script for checking if the project.xslt is up to date
-:: Usage: call :runmake makefile-path-filename
-:: Required variables: make 
-  @call :funcbegin %0 "'%~1'"
-  set makepath=%~dp1
-  set makefile=%~nx1
-  @if defined info2 echo %green%Running makefile: %makefile%%reset%
-  pushd "%makepath%"
-  call %make% -f %makefile%
-  popd
-  @call :funcend %0
-goto :eof
-
-
 :make
 :: Description: Run a make file
 :: Usage: call make [makepath makefile] 
@@ -1509,6 +1544,30 @@ goto :eof
   )
   echo %green%------- End check: %reset%
   popd
+  @call :funcend %0
+goto :eof
+
+:makef
+:: Description: This runs the makefile script for checking if the project.xslt is up to date
+:: Usage: call :runmake makefile-path-filename
+:: Required variables: make 
+  @call :funcbegin %0 "'%~1'"
+  set makepath=%~dp1
+  set makefile=%~nx1
+  @if defined info2 echo %green%Running makefile: %makefile%%reset%
+  pushd "%makepath%"
+  call %make% -f %makefile%
+  popd
+  @call :funcend %0
+goto :eof
+
+:makeif
+:: Description: If variable set by make then run function of same name
+:: Usage: call :makeif var
+:: Required variables: 
+  @call :funcbegin %0 "'%~1'"  
+  set curfunc=%~1
+  if defined %~1 call :%~1
   @call :funcend %0
 goto :eof
 
@@ -1541,6 +1600,25 @@ goto :eof
   if defined v3 echo %n3% := %v3%>> %file%
   if defined v4 echo %n4% := %v4%>> %file%
   copy /y %file%+%makesource%\%filenx:.=-%.txt %file% >nul
+goto :eof 
+
+:makex
+:: Description: Run make then run updates needed
+:: Usage: call :makex path\makefile.make func2run
+:: Required variables: 
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  set makef=%~1
+  set func2run=%~2
+  set varcmd=%projectpath%\makerunvar.cmd
+  set info2=
+  if exist "%varcmd%" del "%varcmd%"
+  call :makef "%projectpath%\projxslt.make"
+  set xsltsetup=done
+  call :makef "%makef%"
+  call "%varcmd%"
+  call :%func2run%
+  set info2=on
+  @call :funcend %0  
 goto :eof 
 
 :md2pdf
@@ -2207,7 +2285,8 @@ goto :eof
     set cmm=%%B
     set css=%%C
   )
-  set hh=%chh:~-2%
+  set hh2=%chh: =%
+  set hh=%hh2:~-2%
   set curhhmm=%hh%%cmm%
   set curhhmmss=%hh%%cmm%%css%
   set curisohhmmss=%hh%-%cmm%-%css%
@@ -2359,8 +2438,8 @@ goto :eof
   set nameext=%~nx1
   call :outpath  "%~2"
   if defined info2 echo %green%Checking: %nameext% %reset%
-  if defined info3 echo %green%Source: %~1 %reset%
-  if defined info3 echo %green%Target: %outpath% %reset%
+  if defined info2 echo %green%Source: %~1 %reset%
+  if defined info2 echo %green%Target: %outpath% %reset%
   xcopy /D/Q/Y "%infile%" "%outpath%"
   set prevpath=%outpath%
   @call :funcend %0
@@ -2391,7 +2470,7 @@ goto :eof
   if not exist "%jing%" call :fatal %0 "Missing xml file to validate!"
   if not exist "%checkspath%\" md "%checkspath%"
   set commandline=java -jar "%jing%" "%schema%" "%infile%"
-  @if defined info2 echo %commandline%
+  @if defined info2 echo %cyan%%commandline% %reset%
   call %commandline% > "%checkspath%\rng-schema-rpt.txt"
   more "%checkspath%\rng-schema-rpt.txt"
   pause
@@ -2421,10 +2500,9 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
   call :infile "%~1" %0
   call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-%script%.xml"
-  if not exist "%scripts%\%script%" call :scriptfind "%script%" %0
   set infileislist=%~3
   set namespace=%~4
-    set script=wrapxmlindataxml.cct
+  set script=wrapxmlindataxml.cct
   if '%namespace%' == 'epub' set script=wrapxmlindataxml-nsepub.cct
   if '%namespace%' == 'xhtmlepub' set script=wrapxmlindataxml-xhtmlnsepub.cct
   if defined infileislist set list=-i 
@@ -2454,7 +2532,7 @@ goto :eof
   if not exist "%script%" call :fatal %0 "Missing xquery script!"
   if defined allparam set param=%allparam:'="%
   set curcommand="%java%" -jar "%saxon%" net.sf.saxon.Query "%script%" -o:"%outfile%" -s:"%infile%" %param%
-  if defined info2 echo %curcommand%
+  @if defined info2 echo %cyan%%curcommand%%reset%
   call %curcommand%
   @call :funcendtest %0
 goto :eof
@@ -2564,7 +2642,7 @@ goto :eof
     )
   if defined fatal goto :eof
   @if defined info2 echo.
-  @if defined info2 echo xslt3 -xsl:"%script%" -s:"%infile%" -o:"%outfile%" %params%
+  @if defined info2 echo %cyan%xslt3 -xsl:"%script%" -s:"%infile%" -o:"%outfile%" %params% %reset%
   call xslt3 -o:"%outfile%" -s:"%infile%" -xsl:"%script%" %params%  
   @call :funcendtest %0
 goto :eof
