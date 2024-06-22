@@ -1,3 +1,7 @@
-META-INF\*.*
-OEBPS\*.*
-OEBPS\*\*.*
+META-INF\container.xml
+OEBPS\content.opf
+OEBPS\toc.ncx
+OEBPS\Fonts\*.woff
+OEBPS\Images\*.*
+OEBPS\Styles\*.css
+OEBPS\Text\*.xhtml
