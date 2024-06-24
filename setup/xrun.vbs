@@ -313,7 +313,7 @@ End Function
 
 Function subButtons(file)
   dim section, textlen, prefix, text, key, curid, keynumb, part, subarray, testa, x, curtext, namelen, group
-  section = "subbutton"
+  section = "sub"
   prefix = "s"
   For each key in subgrp
     text = ReadIni(file,section,key)
