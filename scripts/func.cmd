@@ -37,11 +37,13 @@ goto :eof
 :: Functions called: funcbegin funcend 
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  if not exist "%~2" copy nul "%~2"
-  if not exist "%~1" call :funcend %0 "Warning: File to append does not exist. File: %~1" & pause & goto :eof
-  if exist "%~1" (
+  call :infile "%~1" %0
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-appendfile.xml" nocheck
+  rem if not exist "%outfile%" copy nul "%outfile%"
+  rem if not exist "%infile%" call :funcend %0 "Warning: File to append does not exist. File: %~1" & pause & goto :eof
+  if exist "%infile%" (
     @if defined info2 echo %green%Appending file '%~nx1`' to '%~nx2'%reset%
-    type "%~1" >> "%~2"
+    type "%infile%" >> "%outfile%"
     )
   @call :funcend %0
 goto :eof
@@ -577,23 +579,39 @@ goto :eof
 :epubcheck
 :: Description: Check Epub file
 :: Usage: call :epubcheck epubfile report_file
+:: Note: The epub-report is cumulative with the latest at the top, after the ISO date-time
+:: Updated: 2024-06-25
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1"
-  call :outfile "%~2" "%projectpath%\tmp\epubcheck.txt"
-  @if defined info2 echo %cyan%%java% -jar "D:\programs\epubcheck\epubcheck.jar" "%infile%" 2^> "%outfile%"%reset%
-  %java% -jar "D:\programs\epubcheck\epubcheck.jar" %infile% 2> "%outfile%"
-  @call :funcend %0  
+  call :outfile "%~2" "%projectpath%\check\epub-report.txt" nocheck
+  set tempout=%projectpath%\tmp\epubrpt.txt
+  set oldout=%projectpath%\tmp\epub-old-report.txt
+  set dateout=%projectpath%\tmp\dateout.txt
+  copy /y "%outfile%" "%oldout%"
+  call :date
+  echo %curisodatetime%> "%outfile%"
+  echo. >> "%outfile%"
+  @if defined info2 echo %cyan%%java% -jar "D:\programs\epubcheck\epubcheck.jar" "%infile%" 2^> "%tempout%"%reset%
+  %java% -jar "D:\programs\epubcheck\epubcheck.jar" %infile% 2> "%tempout%"
+  @if defined info3 echo %cyan%type "%tempout%" ^>^> "%outfile%"%reset%
+  type "%tempout%" >> "%outfile%"
+  @if defined info3 echo.
+  @if defined info3 echo %cyan%type "%oldout%" ^>^> "%outfile%"%reset%
+  type "%oldout%" >> "%outfile%"
+  @call :funcend %0
 goto :eof
 
 :epubzip
 :: Description: Use 7zip to build zip an epub file.
-:: Usage: call :epubzip epubfilelocation epubname
+:: Usage: call :epubzip epubfilelocation epubname [epubinclude]
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   setlocal DISABLEDELAYEDEXPANSION
-  xcopy /D/Y "%cd%\setup\epub-add.list" "%projectpath%\output"
   xcopy /D/Y "%cd%\setup\!mimetype" "%projectpath%\output"
   set hostpath=%1
   set epubname=%2
+  set epubinclude=%3
+  if not defined epubinclude (set epubinclude=..\epub-add.list & xcopy /D/Y "%cd%\setup\epub-add.list" "%projectpath%\output")
+  rem if not exist "%epubinclude%" call :fatal %0 "Epub include file not found!" & goto :eof
   set hostpath=%hostpath:"=%
   set epubname=%epubname:"=%
   set errorlevel=
@@ -605,7 +623,7 @@ goto :eof
   echo %curisodatetime% >> ..\7zip-epub-build-errors.log
   "C:\Program Files\7-Zip\7z.exe" a -t* ..\%epubname%.epub ..\!mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Added !mimtype to zip" "Error adding !mimtype to zip"
-  "C:\Program Files\7-Zip\7z.exe" u -tzip ..\%epubname%.epub @..\epub-add.list 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
+  "C:\Program Files\7-Zip\7z.exe" u -tzip ..\%epubname%.epub @%epubinclude% 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Added content to zip" "Error adding content to zip"
   "C:\Program Files\7-Zip\7z.exe" rn ..\%epubname%.epub !mimetype mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Renamed file !mimetype to mimetype in zip" "Error renaming file !mimetype to mimetype in zip"
@@ -1662,6 +1680,7 @@ goto :eof
 :move
 :: Description: Moves a file or files, if a file then can rename
 :: Usage: call :move infile outfile_or_outpath
+  if defined info2 echo %green%Moved to: '%~2'%reset%
   move /Y "%~1" "%~2"
 goto :eof
 

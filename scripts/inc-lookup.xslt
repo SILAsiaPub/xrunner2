@@ -118,6 +118,36 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="f:keyvalue0">
+        <!-- keyvalue lookup that returns nothing if no key-->
+        <xsl:param name="array"/>
+        <xsl:param name="string"/>
+        <xsl:variable name="field-separator" select="'='"/>
+        <xsl:variable name="find-column" select="1"/>
+        <xsl:variable name="return-column" select="2"/>
+        <xsl:variable name="searchvalues_list">
+            <xsl:for-each select="$array">
+                <xsl:variable name="subarray" select="tokenize(.,$field-separator)"/>
+                <xsl:value-of select="concat($subarray[$find-column],$field-separator)"/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="searchvalues" select="tokenize($searchvalues_list,$field-separator)"/>
+        <xsl:choose>
+            <!-- make sure the item is in the set of data being searched, if not then return error message in output with string of un matched item -->
+            <xsl:when test="$searchvalues = string($string)">
+                <xsl:for-each select="$array">
+                    <!-- loop through the known data to find a match -->
+                    <xsl:variable name="subarray" select="tokenize(.,$field-separator)"/>
+                    <xsl:if test="string($subarray[number($find-column)]) = string($string)">
+                        <xsl:value-of select="$subarray[number($return-column)]"/>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                 <!-- <xsl:value-of select="$string"/> -->
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
     <xsl:function name="f:lookupalt">
         <!-- generic lookup function 7 parameters
 				uses existing array as input not a string-->
@@ -301,8 +331,10 @@
     </xsl:function>
     <xsl:function name="f:xsv2xml">
         <!-- Handes one or more tsv or csv files and combines into one XML node-->
-        <xsl:param name="input"/><!-- $input must be an array -->
-        <xsl:param name="basepath"/><!-- $basepath must have trailing \ -->
+        <xsl:param name="input"/>
+        <!-- $input must be an array -->
+        <xsl:param name="basepath"/>
+        <!-- $basepath must have trailing \ -->
         <xsl:for-each select="$input">
             <xsl:variable name="dataname" select="tokenize(.,'\.')"/>
             <xsl:variable name="fileuri" select="concat($basepath,.)"/>
