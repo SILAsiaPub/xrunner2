@@ -23,8 +23,8 @@
             <button class="tablinks" onclick="call OpenTab(maintab,'subrunner1')" id="subrunner1tab">Subs 1</button>
             <button class="tablinks" onclick="call OpenTab(maintab,'subrunner2')" id="subrunner2tab">Subs 2</button>
             <button class="tablinks" onclick="call OpenTab(maintab,'projectinfo')" id="projectinfotab">Proj Info</button>
-            <button class="tablinks" onclick="call OpenTab(maintab,'docs')" id="docstab">Documentation</button>
-            <button class="tablinks" onclick="call OpenTab(maintab,'expert')" id="experttab">Expert Links</button>
+            <button class="tablinks" onclick="call OpenTab(maintab,'docs')" id="docstab">Docs</button>
+            <button class="tablinks" onclick="call OpenTab(maintab,'expert')" id="experttab">Expert</button>
         </div>
         <!-- ============================================= Tab content ================================================== -->
         <div id="project" class="tabcontent active">
@@ -107,7 +107,7 @@
         <div id="subrunner1" class="tabcontent">
             <input type="BUTTON" value="Refresh page" onclick="subButtons(projectTxt)" class="halfbutton"/>
             <div class="fleft">
-                <div id="subgroup1"></div>
+                <div id="subgroup1" class="subbutton"></div>
                 <button onclick="call subrunx('s1',0)" class="subbutton" id="s1-0">Run sub 0</button>
                 <button onclick="call subrunx('s1',1)" class="subbutton" id="s1-1">Run sub 1</button>
                 <button onclick="call subrunx('s1',2)" class="subbutton" id="s1-2">Run sub 2</button>
@@ -120,7 +120,7 @@
                 <button onclick="call subrunx('s1',9)" class="subbutton" id="s1-9">Run sub 9</button>
             </div>
             <div class="fleft" style="padding-top:1em">
-                <div id="subgroup2"></div>
+                <div id="subgroup2" class="subbutton"></div>
                 <button onclick="call subrunx('s2',0)" class="subbutton" id="s2-0">Run sub 10</button>
                 <button onclick="call subrunx('s2',1)" class="subbutton" id="s2-1">Run sub 11</button>
                 <button onclick="call subrunx('s2',2)" class="subbutton" id="s2-2">Run sub 12</button>
@@ -133,7 +133,7 @@
                 <button onclick="call subrunx('s2',9)" class="subbutton" id="s2-9">Run sub 19</button>
             </div>
             <div class="fleft" style="padding-top:1em">
-                <div id="subgroup3"></div>
+                <div id="subgroup3" class="subbutton"></div>
                 <button onclick="call subrunx('s3',0)" class="subbutton" id="s3-0">Run sub 20</button>
                 <button onclick="call subrunx('s3',1)" class="subbutton" id="s3-1">Run sub 21</button>
                 <button onclick="call subrunx('s3',2)" class="subbutton" id="s3-2">Run sub 22</button>
@@ -146,7 +146,7 @@
                 <button onclick="call subrunx('s3',9)" class="subbutton" id="s3-9">Run sub 29</button>
             </div>
             <div class="fleft" style="padding-top:1em">
-                <div id="subgroup4"></div>
+                <div id="subgroup4" class="subbutton"></div>
                 <button onclick="call subrunx('s4',0)" class="subbutton" id="s4-0">Run sub 30</button>
                 <button onclick="call subrunx('s4',1)" class="subbutton" id="s4-1">Run sub 31</button>
                 <button onclick="call subrunx('s4',2)" class="subbutton" id="s4-2">Run sub 32</button>
@@ -159,7 +159,7 @@
                 <button onclick="call subrunx('s4',9)" class="subbutton" id="s4-9">Run sub 39</button>
             </div>
             <div class="fleft" style="padding-top:1em">
-                <div id="subgroup5"></div>
+                <div id="subgroup5" class="subbutton"></div>
                 <button onclick="call subrunx('s5',0)" class="subbutton" id="s5-0">Run sub 40</button>
                 <button onclick="call subrunx('s5',1)" class="subbutton" id="s5-1">Run sub 41</button>
                 <button onclick="call subrunx('s5',2)" class="subbutton" id="s5-2">Run sub 42</button>
@@ -172,7 +172,7 @@
                 <button onclick="call subrunx('s5',9)" class="subbutton" id="s5-9">Run sub 49</button>
             </div>
             <div class="floatright">
-                <div id="subgroup6"></div>
+                <div id="subgroup6" class="subbutton"></div>
                 <button onclick="call subrunx('s6',0)" class="subbutton" id="s6-0">Run sub 50</button>
                 <button onclick="call subrunx('s6',1)" class="subbutton" id="s6-1">Run sub 51</button>
                 <button onclick="call subrunx('s6',2)" class="subbutton" id="s6-2">Run sub 52</button>
@@ -185,7 +185,7 @@
                 <button onclick="call subrunx('s6',9)" class="subbutton" id="s6-9">Run sub 59</button>
             </div>
             <div class="floatright" style="padding-top:1em">
-                <div id="subgroup7"></div>
+                <div id="subgroup7" class="subbutton"></div>
                 <button onclick="call subrunx('s7',0)" class="subbutton" id="s7-0">Run sub 60</button>
                 <button onclick="call subrunx('s7',1)" class="subbutton" id="s7-1">Run sub 61</button>
                 <button onclick="call subrunx('s7',2)" class="subbutton" id="s7-2">Run sub 62</button>
@@ -198,7 +198,7 @@
                 <button onclick="call subrunx('s7',9)" class="subbutton" id="s7-9">Run sub 69</button>
             </div>
             <div class="floatright" style="padding-top:1em">
-                <div id="subgroup8"></div>
+                <div id="subgroup8" class="subbutton"></div>
                 <button onclick="call subrunx('s8',0)" class="subbutton" id="s8-0">Run sub 70</button>
                 <button onclick="call subrunx('s8',1)" class="subbutton" id="s8-1">Run sub 71</button>
                 <button onclick="call subrunx('s8',2)" class="subbutton" id="s8-2">Run sub 72</button>
@@ -211,7 +211,7 @@
                 <button onclick="call subrunx('s8',9)" class="subbutton" id="s8-9">Run sub 79</button>
             </div>
             <div class="floatright" style="padding-top:1em">
-                <div id="subgroup9"></div>
+                <div id="subgroup9" class="subbutton"></div>
                 <button onclick="call subrunx('s9',0)" class="subbutton" id="s9-0">Run sub 80</button>
                 <button onclick="call subrunx('s9',1)" class="subbutton" id="s9-1">Run sub 81</button>
                 <button onclick="call subrunx('s9',2)" class="subbutton" id="s9-2">Run sub 82</button>
@@ -224,7 +224,7 @@
                 <button onclick="call subrunx('s9',9)" class="subbutton" id="s9-9">Run sub 89</button>
             </div>
             <div class="floatright" style="padding-top:1em">
-                <div id="subgroup10"></div>
+                <div id="subgroup10" class="subbutton"></div>
                 <button onclick="call subrunx('s10',0)" class="subbutton" id="s10-0">Run sub 90</button>
                 <button onclick="call subrunx('s10',1)" class="subbutton" id="s10-1">Run sub 91</button>
                 <button onclick="call subrunx('s10',2)" class="subbutton" id="s10-2">Run sub 92</button>
@@ -241,7 +241,7 @@
         <div id="subrunner2" class="tabcontent">
             <input type="BUTTON" value="Refresh page" onclick="subButtons(projectTxt)" class="halfbutton"/>
             <div class="fleft">
-                <div id="subgroup11"></div>
+                <div id="subgroup11" class="subbutton"></div>
                 <button onclick="call subrunx('s11',0)" class="subbutton" id="s11-0">Run sub 0</button>
                 <button onclick="call subrunx('s11',1)" class="subbutton" id="s11-1">Run sub 1</button>
                 <button onclick="call subrunx('s11',2)" class="subbutton" id="s11-2">Run sub 2</button>
@@ -254,7 +254,7 @@
                 <button onclick="call subrunx('s11',9)" class="subbutton" id="s11-9">Run sub 9</button>
             </div>
             <div class="fleft" style="padding-top:1em">
-                <div id="subgroup12"></div>
+                <div id="subgroup12" class="subbutton"></div>
                 <button onclick="call subrunx('s12',0)" class="subbutton" id="s12-0">Run sub 10</button>
                 <button onclick="call subrunx('s12',1)" class="subbutton" id="s12-1">Run sub 11</button>
                 <button onclick="call subrunx('s12',2)" class="subbutton" id="s12-2">Run sub 12</button>
@@ -267,7 +267,7 @@
                 <button onclick="call subrunx('s12',9)" class="subbutton" id="s12-9">Run sub 19</button>
             </div>
             <div class="fleft" style="padding-top:1em">
-                <div id="subgroup13"></div>
+                <div id="subgroup13" class="subbutton"></div>
                 <button onclick="call subrunx('s13',0)" class="subbutton" id="s13-0">Run sub 20</button>
                 <button onclick="call subrunx('s13',1)" class="subbutton" id="s13-1">Run sub 21</button>
                 <button onclick="call subrunx('s13',2)" class="subbutton" id="s13-2">Run sub 22</button>
@@ -280,7 +280,7 @@
                 <button onclick="call subrunx('s13',9)" class="subbutton" id="s13-9">Run sub 29</button>
             </div>
             <div class="fleft" style="padding-top:1em">
-                <div id="subgroup14"></div>
+                <div id="subgroup14" class="subbutton"></div>
                 <button onclick="call subrunx('s14',0)" class="subbutton" id="s14-0">Run sub 30</button>
                 <button onclick="call subrunx('s14',1)" class="subbutton" id="s14-1">Run sub 31</button>
                 <button onclick="call subrunx('s14',2)" class="subbutton" id="s14-2">Run sub 32</button>
@@ -293,7 +293,7 @@
                 <button onclick="call subrunx('s14',9)" class="subbutton" id="s14-9">Run sub 39</button>
             </div>
             <div class="fleft" style="padding-top:1em">
-                <div id="subgroup15"></div>
+                <div id="subgroup15" class="subbutton"></div>
                 <button onclick="call subrunx('s15',0)" class="subbutton" id="s15-0">Run sub 40</button>
                 <button onclick="call subrunx('s15',1)" class="subbutton" id="s15-1">Run sub 41</button>
                 <button onclick="call subrunx('s15',2)" class="subbutton" id="s15-2">Run sub 42</button>
@@ -306,7 +306,7 @@
                 <button onclick="call subrunx('s15',9)" class="subbutton" id="s15-9">Run sub 49</button>
             </div>
             <div class="floatright">
-                <div id="subgroup16"></div>
+                <div id="subgroup16" class="subbutton"></div>
                 <button onclick="call subrunx('s16',0)" class="subbutton" id="s16-0">Run sub 50</button>
                 <button onclick="call subrunx('s16',1)" class="subbutton" id="s16-1">Run sub 51</button>
                 <button onclick="call subrunx('s16',2)" class="subbutton" id="s16-2">Run sub 52</button>
@@ -319,7 +319,7 @@
                 <button onclick="call subrunx('s16',9)" class="subbutton" id="s16-9">Run sub 59</button>
             </div>
             <div class="floatright" style="padding-top:1em">
-                <div id="subgroup17"></div>
+                <div id="subgroup17" class="subbutton"></div>
                 <button onclick="call subrunx('s17',0)" class="subbutton" id="s17-0">Run sub 60</button>
                 <button onclick="call subrunx('s17',1)" class="subbutton" id="s17-1">Run sub 61</button>
                 <button onclick="call subrunx('s17',2)" class="subbutton" id="s17-2">Run sub 62</button>
@@ -332,7 +332,7 @@
                 <button onclick="call subrunx('s17',9)" class="subbutton" id="s17-9">Run sub 69</button>
             </div>
             <div class="floatright" style="padding-top:1em">
-                <div id="subgroup18"></div>
+                <div id="subgroup18" class="subbutton"></div>
                 <button onclick="call subrunx('s18',0)" class="subbutton" id="s18-0">Run sub 70</button>
                 <button onclick="call subrunx('s18',1)" class="subbutton" id="s18-1">Run sub 71</button>
                 <button onclick="call subrunx('s18',2)" class="subbutton" id="s18-2">Run sub 72</button>
@@ -345,7 +345,7 @@
                 <button onclick="call subrunx('s18',9)" class="subbutton" id="s18-9">Run sub 79</button>
             </div>
             <div class="floatright" style="padding-top:1em">
-                <div id="subgroup19"></div>
+                <div id="subgroup19" class="subbutton"></div>
                 <button onclick="call subrunx('s19',0)" class="subbutton" id="s19-0">Run sub 80</button>
                 <button onclick="call subrunx('s19',1)" class="subbutton" id="s19-1">Run sub 81</button>
                 <button onclick="call subrunx('s19',2)" class="subbutton" id="s19-2">Run sub 82</button>
@@ -358,7 +358,7 @@
                 <button onclick="call subrunx('s19',9)" class="subbutton" id="s19-9">Run sub 89</button>
             </div>
             <div class="floatright" style="padding-top:1em">
-                <div id="subgroup20"></div>
+                <div id="subgroup20" class="subbutton"></div>
                 <button onclick="call subrunx('s20',0)" class="subbutton" id="s20-0">Run sub 90</button>
                 <button onclick="call subrunx('s20',1)" class="subbutton" id="s20-1">Run sub 91</button>
                 <button onclick="call subrunx('s20',2)" class="subbutton" id="s20-2">Run sub 92</button>
