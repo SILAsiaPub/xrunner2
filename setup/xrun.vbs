@@ -12,7 +12,7 @@ Dim xrunini, zero, level, boxlist, tasklen
 ' Programs 
 Dim texteditor, program, xmleditor, xrunxslt, npp 
 Dim WshShell, strCurDir, WScript 
-Dim maintab, subgroup, docstab, lblgrp, doctab, subgrp, subarray, grpindex, grouplabel
+Dim maintab, subgroup, docstab, doctab, subgrp, subarray, grpindex, grouplabel, sublabel
 ' Unused: xrundata, info1, info2, info3, info4, info5, strPath, labelIni, bConsoleSw, 
 Set WshShell = CreateObject("WScript.Shell")
 strCurDir    = WshShell.CurrentDirectory
@@ -20,7 +20,7 @@ tskgrp =  Array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p",
 boxlist = Array("Checkbox1","Checkbox2","Checkbox3","Checkbox4","Checkbox5")
 maintab = Array("project","subrunner1","subrunner2","projectinfo","docs","expert")
 doctab = Array("Xrunner_info","Xrunner_func","Xrun_func")
-lblgrp = Array("0","10","20","30","40","50","60","70","80","90","100","110","120","130","140","150","160","170","180","190")
+sublabel = "sub"
 subgrp = Array("s1","s2","s3","s4","s5","s6","s7","s8","s9","s10","s11","s12","s13","s14","s15","s16","s17","s18","s19","s20")
 grouplabel = Array("g1","g2","g3","g4","g5","g6","g7","g8","g9","g10","g11","g12","g13","g14","g15","g16","g17","g18","g19","s20")
 
@@ -278,7 +278,7 @@ Function buttonShow(file)
     If tasklen > zero Then
       document.getElementById("button" & group).style.display = "block"
       If len(ReadIni(file,group,"b")) > zero Then
-          document.getElementById("button" & group).InnerText = ReadIni(file,group,"b")
+          document.getElementById("button" & group).InnerText = ReadIni(file,group,"b") & " - " & group
       Else 
         If len(ReadIni(file,group,"button")) > zero Then
             document.getElementById("button" & group).InnerText = ReadIni(file,group,"button")
@@ -313,7 +313,7 @@ End Function
 
 Function subButtons(file)
   dim section, textlen, prefix, text, key, curid, keynumb, part, subarray, testa, x, curtext, namelen, group
-  section = "sub"
+  section = sublabel
   prefix = "s"
   For each key in subgrp
     text = ReadIni(file,section,key)
@@ -402,7 +402,8 @@ End Sub
 
 Sub subrunx(key,numb)
     Dim x, pauseatend, group, sections, sectionarray, cursect
-    group = "subbutton"
+    dim infopar(5)
+    group = sublabel
     pauseatend = ""
     sections = ReadIni(projectTxt,group,key)
     sectionarray = split(sections)
@@ -418,7 +419,13 @@ Sub subrunx(key,numb)
     'If document.getElementById("unittest").checked  Then
     '   unittest = "unittest"
     'End If
-   call RunScript("xrunner",projectTxt,cursect,level,pauseatend,cursect)
+    infopar(0) = chr(34) & "xrunner" & chr(34)
+    infopar(1) = " " & projectTxt
+    infopar(2) = " " & cursect
+    infopar(3) = " " & level
+    infopar(4) = " " & pauseatend
+    cmdline = infopar(0) & infopar(1) & infopar(2) & infopar(3) & infopar(4)
+    objShell.run(cmdline)
 End Sub
 
 Sub copy()
@@ -478,7 +485,7 @@ End Function
 Function reloadProject(file)
   call reloadText(file)
   call buttonShow(file)
-  call buttonSubs(file)
+  call subButtons(file)
   Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
 End Function
 
