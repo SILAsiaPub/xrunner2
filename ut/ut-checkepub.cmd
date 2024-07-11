@@ -6,7 +6,6 @@ cls
 call :colorvar
 call :setinfolevel 2
 set cctparam=-u -b -q -n
-set timeseparator=:
 set dateformat=1
 set dateseparator=/
 set java=D:\programs\javafx\bin\java.exe
@@ -32,7 +31,9 @@ goto :eof
   set dateout=%projectpath%\tmp\dateout.txt
   call :checkdir "%tempout%"
   rem call :date
-  echo %date:~10,4%-%date:~7,2%-%date:~4,2% %time%> "%outfile%"
+  if %dateformat%. == 0. echo %date:~10,4%-%date:~4,2%-%date:~7,2% %time:~0,5%> "%outfile%"
+  if %dateformat%. == 1. echo %date:~10,4%-%date:~7,2%-%date:~4,2% %time:~0,5%> "%outfile%"
+  if %dateformat%. == 2. echo %date:~4,4%-%date:~9,2%-%date:~12,2% %time:~0,5%> "%outfile%"
   echo. >> "%outfile%"
   @if defined info2 echo %cyan%%java% -jar "%epubcheckjar%" "%infile%" 2^> "%tempout%"%reset%
   %java% -jar "%epubcheckjar%" %infile% 2> "%tempout%"
@@ -46,7 +47,7 @@ goto :eof
   @if defined info3 echo.
   @if defined info3 echo %cyan%type "%outfile%.prev" ^>^> "%outfile%"%reset%
   type "%outfile%.prev" >> "%outfile%"
-  @call :funcend %0
+  @call :funcendtest %0
 goto :eof
 
 :funcbegin
@@ -62,6 +63,21 @@ goto :eof
   @if defined info4 echo %magenta%%funcstarttext%%reset%
   @if defined info3 echo %magentabg%%func%%reset% %fparams%
   @if defined info4 @if defined %funcname%echo echo  ============== %funcname%echo is ON =============== & echo on
+@goto :eof
+
+:funcendtest
+:: Description: Used with func that output files. Like XSLT, cct, command2file
+:: Usage: call :funcendtest %0 [alt_text]
+:: Functions called: funcbegin funcend
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  @set functest=%~1
+  @set alttext=%~2
+  @if not defined alttext set alttext=Output:
+  @if defined info1 if exist "%outfile%" echo %green%%alttext% %outfile% %reset%
+  @if defined outfile if not exist "%outfile%" Echo %redbg%Task failed: Output file not created! %reset%
+  @if defined outfile if not exist "%outfile%" set skiptasks=on  & if not defined unittest pause
+  @if defined info2 if exist "%outfile%" echo.
+  @call :funcend  %0
 @goto :eof
 
 :funcend
