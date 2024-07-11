@@ -313,8 +313,11 @@ goto :eof
   set param6=%~6
   set param7=%~7
   set param8=%~8
+  call :name "%file%"
   call :multivarlist 3 8
   if not exist "%file%" call :%curfunc% "%file%" %multivar:'="%
+  if not exist "%file%" if defined info2 echo %green%Condition: Missing%reset% %~nx1 %cyan%call :%curfunc%%reset%
+  if exist "%file%" if defined info2 echo %green%Condition: Found%reset% %~nx1 %green%No action needed.%reset%
   @call :funcend %0
 goto :eof
 
@@ -578,27 +581,35 @@ goto :eof
 
 :epubcheck
 :: Description: Check Epub file
-:: Usage: call :epubcheck epubfile report_file
+:: Usage: call :epubcheck epubfile [report_file]
 :: Note: The epub-report is cumulative with the latest at the top, after the ISO date-time
 :: Updated: 2024-06-25
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  call :infile "%~1"
-  call :outfile "%~2" "%projectpath%\check\epub-report.txt" nocheck
+  call :infile "%~1" %0
+  call :outfile "%~2" "%projectpath%\checks\epub-report.txt" 
   set tempout=%projectpath%\tmp\epubrpt.txt
-  set oldout=%projectpath%\tmp\epub-old-report.txt
+  rem set oldout=%projectpath%\tmp\epub-old-report.txt
   set dateout=%projectpath%\tmp\dateout.txt
-  copy /y "%outfile%" "%oldout%"
-  call :date
-  echo %curisodatetime%> "%outfile%"
+  call :checkdir "%tempout%"
+  rem call :date
   echo. >> "%outfile%"
-  @if defined info2 echo %cyan%%java% -jar "D:\programs\epubcheck\epubcheck.jar" "%infile%" 2^> "%tempout%"%reset%
-  %java% -jar "D:\programs\epubcheck\epubcheck.jar" %infile% 2> "%tempout%"
-  @if defined info3 echo %cyan%type "%tempout%" ^>^> "%outfile%"%reset%
-  type "%tempout%" >> "%outfile%"
+  if %dateformat%. == 0. echo %date:~10,4%-%date:~4,2%-%date:~7,2% %time:~0,5%> "%outfile%"
+  if %dateformat%. == 1. echo %date:~10,4%-%date:~7,2%-%date:~4,2% %time:~0,5%> "%outfile%"
+  if %dateformat%. == 2. echo %date:~4,4%-%date:~9,2%-%date:~12,2% %time:~0,5%> "%outfile%"
+  echo. >> "%outfile%"
+  @if defined info2 echo %cyan%%java% -jar "%epubcheckjar%" "%infile%" 2^> "%tempout%"%reset%
+  %java% -jar "%epubcheckjar%" %infile% 2> "%tempout%"
+  set cctcommand="%ccw%" -u -b %cctparam% -t "epub-shorten-report.cct" -o "%tempout%2" "%tempout%"
+  @if defined info2 echo %cyan%%cctcommand%%reset%
+  pushd "%scripts%"
+  call %cctcommand%
+  popd
+  @if defined info3 echo %cyan%type "%tempout%2" ^>^> "%outfile%"%reset%
+  type "%tempout%2" >> "%outfile%"
   @if defined info3 echo.
-  @if defined info3 echo %cyan%type "%oldout%" ^>^> "%outfile%"%reset%
-  type "%oldout%" >> "%outfile%"
-  @call :funcend %0
+  @if defined info3 echo %cyan%type "%outfile%.prev" ^>^> "%outfile%"%reset%
+  type "%outfile%.prev" >> "%outfile%"
+  @call :funcendtest %0
 goto :eof
 
 :epubzip
@@ -746,7 +757,6 @@ goto :eof
   @if defined outfile if not exist "%outfile%" set skiptasks=on  & if not defined unittest pause
   @if defined info2 if exist "%outfile%" echo.
   @call :funcend  %0
-  @call :funcend  %functest%
 @goto :eof
 
 :getfiledatetime
@@ -2404,6 +2414,7 @@ goto :eof
   call :drivepath "%outfile%"
   set start=%~3
   if not exist "%unicodecharcount%" call :fatal "Unicode Character count executable not found or not defined in xrun.ini"
+  if defined info2 echo %cyan%call "%unicodecharcount%" -o "%outfile%" "%infile%" 2^> "%drivepath%\unicodecount-errors.txt"%reset%
   call "%unicodecharcount%" -o "%outfile%" "%infile%" 2> "%drivepath%\unicodecount-errors.txt"
   if defined start call :start "%outfile%"
   @call :funcendtest %0
