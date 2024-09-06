@@ -1,0 +1,19 @@
+begin               >   '<data>' nl back(1) set(first) use(main)
+
+group(main)
+tab                 >   '" key="' use(key)
+nl '#'              >   nl '<!-- ' use(header)
+nl                  >   if(first) clear(first) else '"/>' endif dup '<var name="' use(main)
+
+group(key)
+tab                 >   '" value="' use(value)
+
+group(value)
+nl                  >   if(first) clear(first) else '"/>' endif dup '<var name="' use(main)
+nl nl nl endfile    >   '"/>' nl '</data>' dup
+nl nl endfile       >   '"/>' nl '</data>' dup
+nl endfile          >   '"/>' nl '</data>' dup
+endfile             >   '"/>' nl '</data>' dup
+
+group(header)
+nl                  >   ' -->' dup back(1) use(main)

@@ -42,7 +42,8 @@ goto :eof
   rem if not exist "%outfile%" copy nul "%outfile%"
   rem if not exist "%infile%" call :funcend %0 "Warning: File to append does not exist. File: %~1" & pause & goto :eof
   if exist "%infile%" (
-    @if defined info2 echo %green%Appending file '%~nx1`' to '%~nx2'%reset%
+    @if defined info3 echo %green%Appending file '%~nx1`' to '%~nx2'%reset%
+    @if defined info2 echo %cyan%type "%infile%" ^>^> "%outfile%"%reset%
     type "%infile%" >> "%outfile%"
     )
   @call :funcend %0
@@ -356,7 +357,7 @@ goto :eof
 	)
   )
   if defined info3 echo %blue%%curcommand%%reset%
-  %curcommand% > nul
+  %curcommand% 
   @call :funcendtest %0
 goto :eof
 
@@ -414,38 +415,44 @@ goto :eof
 :: Created: 2016-05-04
 rem got this from: http://www.robvanderwoude.com/datetiment.php#IDate
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  if not defined dateseparator call :detectdateformat
-  call :time
-  FOR /F "tokens=1-4 delims=%dateseparator% " %%A IN ("%date%") DO (
-      IF "%dateformat%"=="0" (
-          SET fdd=%%C
-          SET fmm=%%B
-          SET fyyyy=%%D
-      )
-      IF "%dateformat%"=="1" (
-          SET fdd=%%B
-          SET fmm=%%C
-          SET fyyyy=%%D
-      )
-      IF "%dateformat%"=="2" (
-          SET fdd=%%D
-          SET fmm=%%C
-          SET fyyyy=%%B
-      )
+  rem if not defined dateseparator call :detectdateformat
+
+  FOR /F "skip=1 tokens=1-6" %%G IN ('WMIC Path Win32_LocalTime Get Day^,Hour^,Minute^,Month^,Second^,Year /Format:table') DO (
+    IF "%%~L"=="" goto s_done
+    set _yyyy=%%L
+    set _mm=00%%J
+    set _dd=00%%G
+    set _hour=00%%H
+    set _minute=00%%I
+    set _second=00%%K
   )
-  set curdate=%fyyyy%-%fmm%-%fdd%
-  set curisodatetime=%fyyyy%-%fmm%-%fdd%T%curisohhmmss%
-  set curisodate=%fyyyy%-%fmm%-%fdd%
-  set yyyy-mm-dd=%fyyyy%-%fmm%-%fdd%
-  set curyyyy-mm=%fyyyy%-%fmm%
-  set curyyyymmdd=%fyyyy%%fmm%%fdd%
-  set curyymmdd=%fyyyy:~2%%fmm%%fdd%
-  set curUSdate=%fmm%/%fdd%/%fyyyy%
-  set curAUdate=%fdd%/%fmm%/%fyyyy%
-  set curyyyy=%fyyyy%
-  set curyy=%fyyyy:~2%
-  set curmm=%fmm%
-  set curdd=%fdd%
+  :s_done
+  Set _mm=%_mm:~-2%
+  Set _dd=%_dd:~-2%
+  Set _hour=%_hour:~-2%
+  Set _minute=%_minute:~-2%
+  Set _second=%_second:~-2%
+  
+  set curhhmm=%_hour%%_minute%
+  set curhhmmss=%_hour%%_minute%%_second%
+  set curisohhmmss=%_hour%-%_minute%-%_second%
+  set curhh_mm=%_hour%:%_minute%
+  set curhh_mm_ss=%_hour%:%_minute%:%_second%
+  
+  set curdate=%_yyyy%-%_mm%-%_dd%
+  set curisodatetime=%_yyyy%-%_mm%-%_dd%T%curisohhmmss%
+  set curisodate=%_yyyy%-%_mm%-%_dd%
+  set yyyy-mm-dd=%_yyyy%-%_mm%-%_dd%
+  set curyyyy-mm=%_yyyy%-%_mm%
+  set curyyyymmdd=%_yyyy%%_mm%%_dd%
+  set curyymmdd=%_yyyy:~2%%_mm%%_dd%
+  set curUSdate=%_mm%/%_dd%/%_yyyy%
+  set curAUdate=%_dd%/%_mm%/%_yyyy%
+  set curyyyy=%_yyyy%
+  set curyy=%_yyyy:~2%
+  set curmm=%_mm%
+  set curdd=%_dd%
+
   @call :funcend %0
 goto :eof
 
@@ -630,14 +637,20 @@ goto :eof
   @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%.epub%reset%
   pushd "%hostpath%\%epubname%"
   call :date
-  echo %curisodatetime% >> ..\7zip-epub-build.log
-  echo %curisodatetime% >> ..\7zip-epub-build-errors.log
+  if exist ..\7zip-epub-build-prev.log del ..\7zip-epub-build-prev.log
+  if exist ..\7zip-epub-build-errors-prev.log del ..\7zip-epub-build-errors-prev.log
+  ren ..\7zip-epub-build.log 7zip-epub-build-prev.log
+  ren ..\7zip-epub-build-errors.log 7zip-epub-build-errors-prev.log
+  echo ========== %curisodatetime% ========== > ..\7zip-epub-build.log
+  echo ========== %curisodatetime% ========== > ..\7zip-epub-build-errors.log
   "C:\Program Files\7-Zip\7z.exe" a -t* ..\%epubname%.epub ..\!mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
-  call :errortest 0 "Added !mimtype to zip" "Error adding !mimtype to zip"
+  call :errortest 0 "Added !mimetype to zip" "Error adding !mimetype to zip"
   "C:\Program Files\7-Zip\7z.exe" u -tzip ..\%epubname%.epub @%epubinclude% 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Added content to zip" "Error adding content to zip"
   "C:\Program Files\7-Zip\7z.exe" rn ..\%epubname%.epub !mimetype mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Renamed file !mimetype to mimetype in zip" "Error renaming file !mimetype to mimetype in zip"
+  type ..\7zip-epub-build-prev.log >> ..\7zip-epub-build.log
+  type ..\7zip-epub-build-errors-prev.log >> ..\7zip-epub-build-errors.log
   popd
   set errorlevel=
   SETLOCAL ENABLEDELAYEDEXPANSION
@@ -714,6 +727,16 @@ goto :eof
   %curcommand%
   rem echo off
   @call :funcendtest %0
+goto :eof
+
+:filedate
+:: Description: Get the file date and time in usable string
+:: Usage: call :filedate infile varname
+  call :infile "%~1"
+  set s=%~t1
+  set numb=%s:~8,2%%s:~3,2%%s:~0,2%%s:~11,2%%s:~14,2%
+  set %~2=%numb%
+  @if defined info2 echo %green%DateTime: %yellow%%numb% %green%%infile:~40%%reset%
 goto :eof
 
 :funcbegin
@@ -1403,9 +1426,48 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:loopsubfiles
+:: Description: Used to loop through a subset of files specified by the filespec from a single directory
+:: Usage: call :loopfiles sub_name file_specs [param[3-9]]
+:: Functions called: appendnumbparam, last, taskgroup. Can also use any other function.
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  if defined fatal goto :eof
+  set grouporfunc=%~1
+  set filespec=%~2
+  set param3=%~3
+  set param4=%~4
+  set param5=%~5
+  set param6=%~6
+  set param7=%~7
+  set param8=%~8
+  set param9=%~9
+  rem set numbparam=
+  rem set appendparam=
+  if not defined grouporfunc echo %redbg% Missing func parameter[2]%reset%
+  if not defined grouporfunc if defined info4 echo %funcendtext% %0 
+  if not defined grouporfunc goto :eof
+  if not defined filespec echo %redbg% Missing filespec parameter[1]%reset%
+  if not defined filespec if defined info4 echo %funcendtext% %0 
+  if not defined filespec goto :eof
+  rem if not exist "%filespec%" echo %redbg% Missing source files %reset%
+  rem if not exist "%filespec%" if defined info4 echo %funcendtext% %0 
+  rem if not exist "%filespec%" goto :eof
+  @if defined loopfilesecho echo off
+  call :multivarlist 3 9
+  rem for /L %%v in (3,1,9) Do call :appendnumbparam numbparam par %%v
+  rem for /L %%v in (3,1,9) Do call :last par %%v
+  if defined info3 if defined numbparam set %multivar%
+  if "%grouporfunc:~0,1%" == ":" (
+      FOR /F " delims=" %%s IN ('dir /b /s "%filespec%"') DO  call %grouporfunc% "%%s" %multivar:'="%
+    ) else (
+      FOR /F " delims=" %%s IN ('dir /b /s "%filespec%"') DO  call :%grouporfunc% "%%s" %multivar:'="%
+  )  
+  @call :funcend %0
+goto :eof
+
 :loopfolders
 :: Description: Loops through all subfolders in a folder
-:: Usage: call :loopdir grouporfunc basedir [param[3-9]]
+:: Usage: call :loopfolders grouporfunc basedir [param[3-9]]
 :: Functions called: * - May be any function or project Taskgroup
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
   @if defined loopdirecho echo on
@@ -1418,7 +1480,7 @@ goto :eof
   set param7=%~7
   set param8=%~8
   set param9=%~9
-  call :qoutevar 3 9
+  call :multivarlist 3 9
   rem set appendparam=
   rem set numbparam=
   if not defined grouporfunc call :funcend %0 "Missing function or task-group parameter" & goto :eof
@@ -1730,6 +1792,23 @@ goto :eof
   @if defined info3 echo %green%Info: nameext = %nameext%%reset%
   @if defined info3 echo %green%Info: name = %name%%reset%
   @if defined info3 echo %green%Info: ext = %ext%%reset%
+  @call :funcend %0
+goto :eof
+
+:regenerateif
+:: Description: Compares two file dates and runs function if source is newer than the output
+:: Usage: call :regenerateif "source-file.ext" "output-file.ext" func
+:: Functions called: funcbegin funcend
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  SET source=%~1
+  SET target=%~2
+  set func=:%~3
+  FOR %%i IN (%FILE1%) DO SET DATE1=%%~ti
+  FOR %%i IN (%source%) DO SET DATE2=%%~ti
+  IF "%DATE1%"=="%DATE2%" ECHO %green% Info: Files have same age && GOTO :eof
+  FOR /F %%i IN ('DIR /B /O:-D "%source%" "%source%"') DO SET NEWEST=%%i
+  if defined info2 if "%source%" == "%NEWEST%" ECHO %green%Source is newer. Running:%reset% %func%
+  if "%source%" == "%NEWEST%" call %func%
   @call :funcend %0
 goto :eof
 
@@ -2475,6 +2554,30 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:sync
+:: Description: Syncronizes two files to the latest version
+:: Usage: call :synce file1 file2
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  set f1=%~1
+  set f1p=%~dp1
+  set f1n=%~nx1
+  set f2=%~2
+  set f2p=%~dp2
+  if not exist "%f1p%" md "%f1p%" & echo %green%Created: %f1p% folder%reset%
+  if not exist "%f2p%" md "%f2p%" & echo %green%Created: %f2p% folder%reset%
+  if not exist "%f1%" echo %cyan%Copied: 2 ^> 1%reset% &copy /Y "%f2%" "%f1p%" & echo Copied: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
+  if not exist "%f2%" echo %cyan%Copied: 1 ^> 2%reset% &copy /Y "%f1%" "%f2p%" & echo Copied: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
+  call :filedate "%~1" d1
+  call :filedate "%~2" d2
+  if %d1%. gtr %d2%. echo %cyan%Updated: 1 ^> 2%reset% &xcopy /D/Q/Y "%f1%" "%f2%" & echo Updated: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
+  if %d2%. gtr %d1%. echo %cyan%Updated: 2 ^> 1%reset% &xcopy /D/Q/Y "%f2%" "%f1%" & echo Updated: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
+  set prevpath=%outpath%
+  @call :funcend %0
+goto :eof
+
+
+
+
 :validate
 :: Description: Validate an XML file
 :: Usage: call :validate "xmlfile"
@@ -2513,7 +2616,6 @@ goto :eof
   set vname=%~1
   set value=%~2
   if not defined vname call :funcend %0 "Name value missing. Var not set."& goto :eof
-  rem no longer needed call :v2 retval "%value%"
   set %vname%=%value%
   @call :funcend %0
 goto :eof
@@ -2788,4 +2890,13 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:testnewest
+for /f %%x in ('dir "%~1" "%~2" /B /O:-D') do set f1=%%x 
+
+Echo %f1%
+for /f %%x in ('dir "%~1" "%~2" /B /O:D') do set f2=%%x 
+
+Echo %f2%
+
+goto :eof
 
