@@ -40,9 +40,9 @@ Source: "docs\*.png"; DestDir: "{app}\docs"
 Source: "docs\*.html"; DestDir: "{app}\docs"
 
 ; tools
-Source: "tools\make\*.*"; DestDir: "{app}\tools\make"    ; Flags: recursesubdirs
+Source: "tools\bin\make.exe"; DestDir: "{app}\bin"    ; Flags: recursesubdirs
 Source: "tools\cct\*.*"; DestDir: "{app}\tools\cct"     ; Flags: recursesubdirs
-Source: "tools\SaxonHE12-3J\*.*"; DestDir: "{app}\tools\saxon"     ; Flags: recursesubdirs
+Source: "tools\Saxon\*.*"; DestDir: "{app}\tools\saxon"     ; Flags: recursesubdirs
 
 [Icons]
 Name: "{group}\Xrunner2"; Filename: "{app}\xrunner.hta"; IconFilename: "{app}\setup\{#icon}"
@@ -57,7 +57,7 @@ Name: "{app}\_Xrunner_Projects\Modify-LIFT"
 Name: "{app}\docs"
 Name: "{app}\scripts"
 Name: "{app}\tools"
-Name: "{app}\tools\make"
+Name: "{app}\tools\bin"
 Name: "{app}\tools\saxon"
 Name: "{app}\tools\cct"
 
@@ -68,7 +68,7 @@ Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "ccw32"; String: "{app}
 Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "saxon"; String: "{app}\tools\saxon\{#saxonjar}"; Flags: createkeyifdoesntexist
 Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "java"; String: "java"; Flags: createkeyifdoesntexist
 Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "editor"; String: "C:\Windows\System32\notepad.exe"; Flags: createkeyifdoesntexist
-Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "make"; String: "{app}\tools\make\bin\make.exe"; Flags: createkeyifdoesntexist
+Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "make"; String: "{app}\tools\bin\make.exe"; Flags: createkeyifdoesntexist
 
 
 
