@@ -8,6 +8,7 @@ nl nl           >   nl back(1)
 nl              >   dup '<var name="'
 '='             >   '">' use(value)
 nl '['             >   store(nul) use(waste)
+nl ' '          >   nl back(1)
 
 group(value)
 nl              >   '</var>' dup back(1) use(main)

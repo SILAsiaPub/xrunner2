@@ -187,7 +187,7 @@
     </xsl:template>
     <xsl:function name="f:writeparm">
         <xsl:param name="line"/>
-        <xsl:variable name="varname" select="tokenize($line,'=')[1]"/>
+        <xsl:variable name="varname" select="tokenize(normalize-space($line),'=')[1]"/>
         <xsl:variable name="vardata" select="substring-after($line,'=')"/>
         <xsl:variable name="isnottext" select="if (matches($vardata,'%[\w\d\-_]*%')) then 1 else 0"/>
         <xsl:element name="xsl:param">

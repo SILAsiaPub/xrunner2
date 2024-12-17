@@ -9,7 +9,7 @@ group(main)
 ':taskgroup '   >   ':'
 nl '#'          >   nl 'rem ' 
 c nl 'label='     >   nl ':: Section: ' 
-':ampmhour'     >   dup use(copy)
+nl ':ampmhour'     >   dup use(copy)
 endfile         >   nl out(fend) nl dup
 nl nl           >   nl back(1)
 c ']'           >   nl back(1) use(funcstart)
@@ -55,7 +55,7 @@ group(copy)
 
 group(var)
 c nl fol(alpha)      >   dup 'set '
-
+nl ' '          >   nl back(1)
 nl              >   dup 'set '
 '['             >   dup back(1) use(main)
 nl nl           >   nl back(1)

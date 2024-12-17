@@ -1,6 +1,6 @@
 :ampmhour
 :: Description: Converts AM/PM time to 24hour format. 
-:: Usage: call :ampmhour ampm hours
+:: Usage: call :ampmhour hours ampm
 :: Purpose: modify variable
 :: Functions called: funcbegin funcend
 :: Variable created: fhh
@@ -10,6 +10,7 @@
   set thh=%~1
   set ampm=%~2
   set zerostart=
+  set single=
   if "%ampm%" == "AM" (
     if "%thh:~1,1%" == "" set single=true
     set nfhh=%thh%
@@ -182,6 +183,37 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:cmd
+:: Description: A way of passing any commnand from a tasklist. It does not use infile and outfile.
+:: Usage: call :usercommand "copy /y 'c:\patha\file.txt' 'c:\pathb\file.txt'" [ "output file to test for" ["path to run  command in"]]
+:: Functions called: inccount, checkdir, funcend or any function
+:: External program: May use any external program
+:: Note: Single quotes get converted to double quotes before the command is used.
+  if defined fatal goto :eof
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :inccount
+  set curcommand=%~1
+  set outfile=%~2
+  set commandpath=%~3
+  if defined outfile call :checkdir "%outfile%"
+  set basepath=%cd%
+  if exist "%outfile%" move /y "%outfile%" "%outfile%.prev"
+  if not defined curcommand (
+    echo missing curcommand 
+    call :funcend %0
+    goto :eof
+    )
+  set curcommand=%curcommand:'="%
+  if defined commandpath call :checkdir "%commandpath%"
+  if defined commandpath pushd "%commandpath%"
+  @if defined info2 echo %green%Info: current path: %cd%%reset%
+  @if defined info2 echo %cyan%%curcommand%%reset%
+  call %curcommand%
+  if defined commandpath popd
+  @if defined outfile call :funcendtest %0 
+  @if not defined outfile call :funcend %0
+  goto :eof
+
 :command
 :: Description: A way of passing any commnand from a tasklist. It does not use infile and outfile.
 :: Usage: call :usercommand "copy /y 'c:\patha\file.txt' 'c:\pathb\file.txt'" ["path to run  command in"   "output file to test for"]
@@ -215,38 +247,8 @@ goto :eof
     @if defined outfile (call :funcendtest %0) else (call :funcend %0)
 goto :eof
 
-:cmd
-:: Description: A way of passing any commnand from a tasklist. It does not use infile and outfile.
-:: Usage: call :usercommand "copy /y 'c:\patha\file.txt' 'c:\pathb\file.txt'" [ "output file to test for" ["path to run  command in"]]
-:: Functions called: inccount, checkdir, funcend or any function
-:: External program: May use any external program
-:: Note: Single quotes get converted to double quotes before the command is used.
-  if defined fatal goto :eof
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  call :inccount
-  set curcommand=%~1
-  set outfile=%~2
-  set commandpath=%~3
-  if defined outfile call :checkdir "%outfile%"
-  set basepath=%cd%
-  if exist "%outfile%" move /y "%outfile%" "%outfile%.prev"
-  if not defined curcommand (
-    echo missing curcommand 
-    call :funcend %0
-    goto :eof
-    )
-  set curcommand=%curcommand:'="%
-  if defined commandpath call :checkdir "%commandpath%"
-  if defined commandpath pushd "%commandpath%"
-  @if defined info3 echo %green%Info: current path: %cd%%reset%
-  @if defined info2 echo %cyan%%curcommand%%reset%
-  call %curcommand%
-  if defined commandpath popd
-  @if defined outfile call :funcendtest %0 
-  @if not defined outfile call :funcend %0
-  goto :eof
-
 :command2file
+:cmd2file
 :: Description: Used with commands that only give stdout, so they can be captued in a file.
 :: Usage: call :command2file "command" "outfile" ["commandpath" [append]]
 :: Functions called: inccount, checkdir, funcend funcbegin
@@ -314,11 +316,12 @@ goto :eof
   set param6=%~6
   set param7=%~7
   set param8=%~8
+  set param9=%~9
   call :name "%file%"
   call :multivarlist 3 8
-  if not exist "%file%" call :%curfunc% "%file%" %multivar:'="%
-  if not exist "%file%" if defined info2 echo %green%Condition: Missing%reset% %~nx1 %cyan%call :%curfunc%%reset%
+  if not exist "%file%" if defined info1 echo %green%Condition: %yellowbg%Missing%reset% %~nx1 %cyan%call :%curfunc%%reset%
   if exist "%file%" if defined info2 echo %green%Condition: Found%reset% %~nx1 %green%No action needed.%reset%
+  if not exist "%file%" call :%curfunc::=% "%file%" %multivar:'="%
   @call :funcend %0
 goto :eof
 
@@ -408,17 +411,14 @@ goto :eof
   @call :funcendtest %0  
 goto :eof
 
-:date
-:: Description: Returns multiple variables with date in three formats, the year in wo formats, month and day date.
-:: Functions called: detectdateformat  funcend funcbegin
-:: Required variables: dateseparator
+:getdatetime
+:: Description: Returns multiple variables with 6 individual date and time vraiable prefixed by 00.
+:: Used by: :date
 :: Created: 2016-05-04
-rem got this from: http://www.robvanderwoude.com/datetiment.php#IDate
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  rem if not defined dateseparator call :detectdateformat
-
+:: Modified: 2024-09-11
+:: Source: got this from: http://www.robvanderwoude.com/datetiment.php#IDate but modified into two func
   FOR /F "skip=1 tokens=1-6" %%G IN ('WMIC Path Win32_LocalTime Get Day^,Hour^,Minute^,Month^,Second^,Year /Format:table') DO (
-    IF "%%~L"=="" goto s_done
+    IF "%%~L"=="" goto :eof
     set _yyyy=%%L
     set _mm=00%%J
     set _dd=00%%G
@@ -426,19 +426,25 @@ rem got this from: http://www.robvanderwoude.com/datetiment.php#IDate
     set _minute=00%%I
     set _second=00%%K
   )
-  :s_done
+goto :eof
+
+:date
+:: Description: Returns multiple variables with date in three formats, the year in two formats, month, day date and time.
+:: Functions called: funcend funcbegin
+:: Created: 2016-05-04
+:: Modified: 2024-09-11
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :getdatetime
   Set _mm=%_mm:~-2%
   Set _dd=%_dd:~-2%
   Set _hour=%_hour:~-2%
   Set _minute=%_minute:~-2%
   Set _second=%_second:~-2%
-  
   set curhhmm=%_hour%%_minute%
   set curhhmmss=%_hour%%_minute%%_second%
   set curisohhmmss=%_hour%-%_minute%-%_second%
   set curhh_mm=%_hour%:%_minute%
   set curhh_mm_ss=%_hour%:%_minute%:%_second%
-  
   set curdate=%_yyyy%-%_mm%-%_dd%
   set curisodatetime=%_yyyy%-%_mm%-%_dd%T%curisohhmmss%
   set curisodate=%_yyyy%-%_mm%-%_dd%
@@ -452,7 +458,6 @@ rem got this from: http://www.robvanderwoude.com/datetiment.php#IDate
   set curyy=%_yyyy:~2%
   set curmm=%_mm%
   set curdd=%_dd%
-
   @call :funcend %0
 goto :eof
 
@@ -736,7 +741,8 @@ goto :eof
   set s=%~t1
   set numb=%s:~8,2%%s:~3,2%%s:~0,2%%s:~11,2%%s:~14,2%
   set %~2=%numb%
-  @if defined info2 echo %green%DateTime: %yellow%%numb% %green%%infile:~40%%reset%
+  set i%~2=%green%DateTime: %yellow%%numb%%reset%
+  @if defined info3 echo %green%DateTime: %yellow%%numb% %green%%infile:~40%%reset%
 goto :eof
 
 :funcbegin
@@ -871,6 +877,21 @@ goto :eof
   if not exist "%infile%" if defined info4 echo %funcendtext% %0 
   if not exist "%infile%" goto :eof
   set command=%iconv% -f %par4% -t UTF-8 "%infile%"
+  @if defined info2 echo.
+  @if defined info2 echo call %command% ^> "%outfile%"
+  call %command% > "%outfile%"
+  @call :funcendtest %0
+goto :eof
+
+:iconv8-16
+:: Description: Converts files from CP1252 to UTF-8
+:: Usage: call :iconv infile outfile OR call :iconv file_nx inpath outpath
+:: Functions called: infile, outfile, funcend
+:: External program: iconv.exe http://gnuwin32.sourceforge.net/
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :infile "%~1"
+  call :outfile "%~2" "%projectpath%\tmp\file-utf-16.xml"
+  set command=%iconv% -f UTF-8 -t UTF-16 "%infile%"
   @if defined info2 echo.
   @if defined info2 echo call %command% ^> "%outfile%"
   call %command% > "%outfile%"
@@ -1027,7 +1048,7 @@ goto :eof
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6'"
   set testfile=%~1
-  set param2=%~2
+  set action=%~2
   set param3=%~3
   set param4=%~4
   set param5=%~5
@@ -1037,17 +1058,16 @@ goto :eof
   set param9=%~9
   set filename=%~nx1
   call :inccount
-  call :multivarlist 2 9
   if not defined testfile call :funcend %0 "missing testfile parameter" & goto :eof
-  if not defined param2 call :funcend %0 "missing action param2 parameter" & goto :eof
-  call :multivarlist 2 6
-  set firstact=%param2:~0,1%
+  if not defined action call :funcend %0 "missing action parameter" & goto :eof
+  call :multivarlist 3 9
+  rem set firstact=%action:~0,1%
   if not exist "%testfile%" (
     if defined info3 echo %xtestt% %testfile% does not exist. 
-      if defined info4 echo %multivar:'="%
-      %multivar:'="%
+      if defined info4 echo %multivar:'="%      %multivar:'="%
+      call %action% %multivar:'="%
   ) else (
-    if defined info3 echo %xtestf% %filename% does exist. No action %param2% taken.
+    if defined info3 echo %orange%%xtestf% %filename% does exist. No action %action% taken.%reset%
   )
   @call :funcend %0
 
@@ -1995,7 +2015,7 @@ goto :eof
   if defined infile7 set infile="%infile%" "%infile7%"
   if defined css set css=-s "%css%"
   set curcommand=call "%prince%" %css% %infile% %infile2% %infile3% %infile4% %infile5% %infile6% %infile7% -o "%outfile%"
-  @if defined info2 echo %cyan%call %curcommand%%reset%
+  @if defined info2 echo %cyan%%curcommand%%reset%
   call %curcommand%
   @call :funcendtest %0
 goto :eof
@@ -2228,6 +2248,14 @@ goto :eof
   @call :funcendtest %0
 goto :eof
 
+:rtf2sfm
+call :infile "%~1"
+call :outfile "%~2" "%projectpath%\tmp\Comanchy.sfm"
+set controlfile=%~3
+echo "%rtf2sfm%" -c "%controlfile%" -o "%outFile%" "%inFile%"
+"%rtf2sfm%" -c %controlfile% -o %outFile% %inFile%
+goto :eof
+
 :scriptfind
 :: Description: Find script if it does not exist in the scritps folder
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
@@ -2286,6 +2314,20 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:sort
+:: Description: Create a sorted list.
+:: Usage: t=:sort infile outfile
+:: Purpose: process file
+:: Programs used: sort.exe from C:\Windows\System32\
+:: Functions called: funcbegin funcendtest infile outfile
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :infile "%~1" %0
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-sorted-list.txt"
+  if defined info2 echo.
+  if defined info2 echo %cyan%C:\Windows\System32\sort.exe "%infile%" /O "%outfile%"%reset%
+  call C:\Windows\System32\sort.exe "%infile%" /O "%outfile%"
+  @call :funcendtest %0
+goto :eof
 
 :start
 :: Description: Start a program but don't wait for it.
@@ -2426,6 +2468,27 @@ goto :eof
   @call :funcendtest %0
 goto :eof
 
+:trigger
+:: Description: If a file exists then trigger an function
+:: Usage: call :trigger trigger_file func_to_do [params]
+:: Created: 2024-10-11
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set triggerfile=%~1
+  set functodo=%~2
+  set param3=%~3
+  set param4=%~4
+  set param5=%~5
+  set param6=%~6
+  set param7=%~7
+  set param8=%~8
+  set param9=%~9
+  call :multivarlist 3 9
+  @if defined info2 if exist "%triggerfile%" echo %green%Trigger: %reset%%~nx1 %green%found. Action: %cyan%call :%functodo% %multivar:'="%%reset%
+  @if defined info2 if not exist "%triggerfile%" echo %green%Trigger: %yellow%%~nx1 NOT found. %green%No action triggered.%reset%
+  if exist "%triggerfile%" call :%functodo% %multivar:'="%
+  @call :funcend %0
+goto :eof
+
 :tsv2xml
 :: Description: use CCT to create xml from TSV
 :: Usage: call :tsv2xml tsvinfile xmloutfile
@@ -2519,7 +2582,7 @@ goto :eof
   call %uniq% %countuniq% "%projectpath%\tmp\tmp1.txt" "%outfile%"
   @call :funcendtest %0
 goto :eof
-goto :eof
+
 
 :updateif
 :: Description: if a file exists move it and run an update
@@ -2563,20 +2626,28 @@ goto :eof
   set f1n=%~nx1
   set f2=%~2
   set f2p=%~dp2
+  set s1=1
+  set s2=2
+  if not exist "%f1%" set s1=-1
+  if not exist "%f2%" set s2=-2
+    if %s1%%s2%. == -1-2. (
+      echo %redbg%%f1n% was not found in either path!%reset%
+      echo %yellow%Path 1: %f1p%%reset%
+      echo %yellow%Path 2: %f2p%%reset%
+      echo %yellow%Skipping this sync operation.%reset%
+      goto :eof
+    )
   if not exist "%f1p%" md "%f1p%" & echo %green%Created: %f1p% folder%reset%
   if not exist "%f2p%" md "%f2p%" & echo %green%Created: %f2p% folder%reset%
-  if not exist "%f1%" echo %cyan%Copied: 2 ^> 1%reset% &copy /Y "%f2%" "%f1p%" & echo Copied: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
-  if not exist "%f2%" echo %cyan%Copied: 1 ^> 2%reset% &copy /Y "%f1%" "%f2p%" & echo Copied: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
+  if %s1%%s2%. == -12. echo %cyan%Copied: %f2n%    2 ^> 1%reset% &copy /Y "%f2%" "%f1p%" & echo Copied: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
+  if %s1%%s2%. == 1-2. echo %cyan%Copied: %f1n%    1 ^> 2%reset% &copy /Y "%f1%" "%f2p%" & echo Copied: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
   call :filedate "%~1" d1
   call :filedate "%~2" d2
-  if %d1%. gtr %d2%. echo %cyan%Updated: 1 ^> 2%reset% &xcopy /D/Q/Y "%f1%" "%f2%" & echo Updated: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
-  if %d2%. gtr %d1%. echo %cyan%Updated: 2 ^> 1%reset% &xcopy /D/Q/Y "%f2%" "%f1%" & echo Updated: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
+  if %d1%. gtr %d2%. echo %cyan%Updated: %f1n%    1 ^> 2%reset% &xcopy /D/Q/Y "%f1%" "%f2%" & echo Updated: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
+  if %d2%. gtr %d1%. echo %cyan%Updated: %f1n%    2 ^> 1%reset% &xcopy /D/Q/Y "%f2%" "%f1%" & echo Updated: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
   set prevpath=%outpath%
   @call :funcend %0
 goto :eof
-
-
-
 
 :validate
 :: Description: Validate an XML file
@@ -2644,6 +2715,21 @@ goto :eof
   call %curcommand%
   popd
   @call :funcendtest %0
+goto :eof
+
+:xmledit
+:: Description: edit an attribute or text() field
+  @call :funcbegin %0 "'%~1' '%~2'"
+  call :inccount
+  call :infile "%~1"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-xmledit.xml" "nocheck"
+  set xpath=%~3
+  set value=%~4
+  if not defined infile call :funcend %0 "xml file parameter missing" & goto :eof
+  if not exist "%infile%" call :funcend %0 "XML file not found" & goto :eof
+  @if defined info2 echo %cyan%call "%xml%" ed -u "%xpath%" -v "%value%" "%infile%" ^> "%outfile%"%reset%
+  call "%xml%" ed -u "%xpath%" -v "%value%" "%infile%" > "%outfile%"
+  @call :funcend %0
 goto :eof
 
 :xquery
