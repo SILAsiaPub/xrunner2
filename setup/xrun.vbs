@@ -292,29 +292,11 @@ Function buttonShow(file)
   Next
 End Function
 
-'Function buttonSubs(file)
-'  dim x, group, textlen, prefix, text, key, curid
-'  group = "subbutton"
-'  prefix = "sub"
-'  For x = 0 To 199
-'    key = CStr(x)
-'    curid = prefix & key
-'    text = ReadIni(file,group,key)
-'    textlen = len(text)
-'    If textlen > zero Then
-'        document.getElementById(curid).style.display = "block"
-'        document.getElementById(curid).InnerText = text
-'    Else
-'        document.getElementById(curid).style.display = "none"
-'    End If
-'  Next
-''  call groupLabel(file)
-'End Function
-
 Function subButtons(file)
   dim section, textlen, prefix, text, key, curid, keynumb, part, subarray, testa, x, curtext, namelen, group
   section = sublabel
   prefix = "s"
+  call subbuttonHide()
   For each key in subgrp
     text = ReadIni(file,section,key)
     textlen = len(text)
@@ -355,30 +337,22 @@ Function subButtons(file)
   Next
 End Function
 
-'' the following not used.
-'Function groupLabel(file)
-'  dim x, group, prefix, textlen, curid, label, text
-'  group = "subbutton"
-'  prefix = "sub"
-'  prefix = "sublabel"
-'  For x = 0 To Ubound(lblgrp)
-'    label = lblgrp(x)
-'    curid = prefix & label
-'    text = ReadIni(file,group,curid)
-'    textlen = len(text)
-'    If textlen > zero Then
-'        document.getElementById(curid).style.display = "block"
-'        document.getElementById(curid).InnerText = ltext
-'    End If
-'  Next
-'End Function
-
 Function buttonHide()
   dim x, group
   For x = 0 To Ubound(tskgrp)
     group = tskgrp(x)
     document.getElementById("grouplabel" & group).style.display = "none"
     document.getElementById("button" & group).style.display = "none"
+  Next
+End Function
+
+Function subbuttonHide()
+  dim x, y
+  For x = 1 To 20
+    document.getElementById("subgroup" & x).style.display = "none"
+    For y = 0 To 9
+      document.getElementById("s" & x & "-" & y).style.display = "none"
+    Next
   Next
 End Function
 
@@ -572,3 +546,42 @@ Sub arraypos(thisarray,text)
     end if
   Next
 End Sub
+
+'' the following not used.
+'Function groupLabel(file)
+'  dim x, group, prefix, textlen, curid, label, text
+'  group = "subbutton"
+'  prefix = "sub"
+'  prefix = "sublabel"
+'  For x = 0 To Ubound(lblgrp)
+'    label = lblgrp(x)
+'    curid = prefix & label
+'    text = ReadIni(file,group,curid)
+'    textlen = len(text)
+'    If textlen > zero Then
+'        document.getElementById(curid).style.display = "block"
+'        document.getElementById(curid).InnerText = ltext
+'    End If
+'  Next
+'End Function
+
+'Function buttonSubs(file)
+'  dim x, group, textlen, prefix, text, key, curid
+'  group = "subbutton"
+'  prefix = "sub"
+'  For x = 0 To 199
+'    key = CStr(x)
+'    curid = prefix & key
+'    text = ReadIni(file,group,key)
+'    textlen = len(text)
+'    If textlen > zero Then
+'        document.getElementById(curid).style.display = "block"
+'        document.getElementById(curid).InnerText = text
+'    Else
+'        document.getElementById(curid).style.display = "none"
+'    End If
+'  Next
+''  call groupLabel(file)
+'End Function
+
+
