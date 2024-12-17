@@ -1,0 +1,64 @@
+/* CSS Document */
+BODY {
+  background:rgb(127,240,32);
+  border: thin white solid;
+  margin: 10px 10px 10px 10px;
+  font: 11px Verdana;  
+}
+h2 {margin: 6pt 0 6pt 0;}
+iframe {margin: 6pt 0 0 0;}
+.widebutton {width:350px}
+.inibutton, .expertbutton {width:300px;clear:left;display:block}
+.subbutton, .subbutton2 {width:280px;clear:left;display:block}
+.halfbutton {width:210px;display:block;margin-bottom:4pt;}
+.label {padding-top:10pt}
+.sample {width:154px;height:123px;}
+.floatright {float:right;clear:both}
+.fleft {float:left;clear:both}
+
+.inibutton, .subbutton, subbutton2 {display:none;}
+
+table caption {text-align:center;}
+.feedback td {text-align:center;padding-right:1em;}
+.settings {float:right;clear:right;minimum-height:3cm}
+/* Style the tab */
+.tab {
+    clear:both;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 11px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+    min-height:3cm;
+    clear:both;
+}
+div.active {
+    display: block;
+}
