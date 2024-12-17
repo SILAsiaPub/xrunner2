@@ -1,1 +1,4 @@
+begin    >   use(main)
+
+group(main)
 'dummy'     >   dup
