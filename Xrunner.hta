@@ -4,19 +4,19 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <!--   Create GUI for bat file.      -->
         <title>Xrunner2</title>
-        <HTA:application applicationName="xrunner2 app" singleinstance="yes" Icon="setup/x2.ico"></HTA:application>
+        <HTA:application applicationName="xrunner2 app" Icon="setup/x2.ico" ID="oHTA"/>
         <link rel="stylesheet" href="setup/xrun.css"/>
         <script type="text/vbscript" src="setup/xrun.vbs"></script>
-        <script type="text/javascript" src="setup/xrun.js"></script>
+         <!-- <script type="text/javascript" src="setup/xrun.js"></script> -->
         <!-- <script language="JavaScript"></script> -->
     </head>
-    <body onload="call presets()">
+    <body><!--  onload="call presets()" -->
         <div class="floatright">
             <button onclick="SelectFolder(projPath)" name="ChoosePath" class="widebutton">1. Click here to select your project folder</button>
             <br/>
             <input type="text" name="ShowSelectedFolder" size="60" maxLength="255"/>
         </div>
-        <h2 id="title">Open project here &gt;</h2>
+        <h3 id="title">Open project here &gt;</h2>
         <!-- Tab links -->
         <div id="tab" class="tab">
             <button class="tablinks active" onclick="call OpenTab(maintab,'project')" id="projecttab">Project</button>
@@ -29,7 +29,7 @@
         <!-- ============================================= Tab content ================================================== -->
         <div id="project" class="tabcontent active">
             <form>
-                <textarea name="DataArea" rows="18" cols="80" readonly=""></textarea>
+                <textarea name="DataArea" rows="18" cols="68" readonly=""></textarea>
             </form>
             <div class="settings">
                <input type="BUTTON" value="Refresh from source" onclick="reloadProject(projectTxt)" class="halfbutton"/>
@@ -373,9 +373,9 @@
         </div>
         <div id="projectinfo" class="tabcontent">
             <form>
-                <textarea name="InfoArea" rows="18" readonly="" cols="88"></textarea>
+                <textarea id="InfoArea" rows="18" readonly="" cols="88"></textarea>
                 <div class="floatright">
-                    <input type="BUTTON" value="Refresh from source" onclick="call reloadText(projectInfo)" class="halfbutton"/>
+                    <input type="BUTTON" value="Refresh from source" onclick="reloadTextInfo(projectInfo)" class="halfbutton"/>
                     <input type="BUTTON" value="Edit project-info.txt" onclick="call editFileExternal(projectInfo)" class="halfbutton"/>
                 </div>
             </form>
