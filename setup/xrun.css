@@ -25,7 +25,7 @@ table caption {text-align:center;}
 .tab {
     clear:both;
     overflow: hidden;
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
     background-color: #f1f1f1;
 }
 
@@ -53,8 +53,8 @@ table caption {text-align:center;}
 /* Style the tab content */
 .tabcontent {
     display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
+    padding: 0 2px 0 6px;
+    /* border: 1px solid #ccc; */
     border-top: none;
     min-height:3cm;
     clear:both;

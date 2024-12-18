@@ -5,7 +5,7 @@ Dim coFSO, objShell
 Set objShell = CreateObject("Wscript.Shell")
 Set coFSO = CreateObject("Scripting.FileSystemObject")
 ' Project files
-Dim projIni, projPath, projectTxt, projectInfo, projectxslt 
+Dim projIni, projPath, projectTxt, projectInfo, projectxslt, htacmdline, cmdlineproj, report
 ' Setup files
 Dim dquote, shell, cmdline, strUserProfile, setupvarxslt, title, xrundata, tskgrp 
 Dim xrunini, zero, level, boxlist, tasklen
@@ -232,8 +232,8 @@ Function SelectFolder( myStartFolder )
       buttonShow(projectTxt)
       subButtons(projectTxt)
       Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
-      call editArea1(projectTxt)
-      call editArea2(projectInfo)
+      reloadText(projectTxt)
+      reloadTextInfo(projectInfo)
     End If
 
     'document.getElementById("projecttxt").src = projectTxt
@@ -456,14 +456,23 @@ Function reloadText(file)
   End If
 End Function
 
+Function reloadTextInfo(file)
+  If coFSO.FileExists(file) Then
+     'Document.getElementsByTagName(namearea)(0).value = coFSO.OpenTextFile(file).ReadAll()
+     document.all.InfoArea.value = coFSO.OpenTextFile(file).ReadAll()
+  End If
+End Function
+
 Function reloadProject(file)
   call reloadText(file)
+  call reloadTextInfo(file)
   call buttonShow(file)
   call subButtons(file)
   Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
 End Function
 
 Sub editArea1(file)
+
   If coFSO.FileExists(file) Then
      'Document.getElementsByTagName(namearea)(0).value = coFSO.OpenTextFile(file).ReadAll()
      document.all.DataArea.value = coFSO.OpenTextFile(file).ReadAll()
@@ -474,12 +483,13 @@ Sub editArea1(file)
 End Sub
 
 Sub editArea2(file)
+  MsgBox file
   If coFSO.FileExists(file) Then
      'Document.getElementsByTagName(namearea)(0).value = coFSO.OpenTextFile(file).ReadAll()
-     document.all.InfoArea.value = coFSO.OpenTextFile(file).ReadAll()
+     document.textarea.InfoArea.value = coFSO.OpenTextFile(file,true).ReadAll()
   Else
      coFSO.CreateTextFile(file)
-     document.all.InfoArea.value = "# Notes"
+     document.textarea.InfoArea.value = "# Notes"
   End If
 End Sub
 
@@ -545,6 +555,28 @@ Sub arraypos(thisarray,text)
         grpindex = x
     end if
   Next
+End Sub
+
+Sub Window_onLoad
+    Self.Resizeto 635, 850
+    htacmdline = Split(oHTA.CommandLine, Chr(32))
+    if UBound(htacmdline) > 1 then
+      cmdlineproj = htacmdline(2)
+      if len(cmdlineproj) > 0 then
+          projectTxt = cmdlineproj & "\project.txt"
+          projectInfo = cmdlineproj & "\project-info.txt"
+          If coFSO.FileExists(projectTxt) Then
+            buttonShow(projectTxt)
+            subButtons(projectTxt)
+            Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
+            Document.getElementById("ShowSelectedFolder").InnerText = cmdlineproj
+            reloadText(projectTxt)
+            reloadTextInfo(projectInfo)
+          End If
+      End If
+    else
+      SelectFolder(projPath)
+    End If
 End Sub
 
 '' the following not used.
