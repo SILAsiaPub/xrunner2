@@ -7,7 +7,7 @@ BODY {
 }
 h2 {margin: 6pt 0 6pt 0;}
 iframe {margin: 6pt 0 0 0;}
-.widebutton {width:400px}
+.widebutton {width:140px}
 .inibutton, .expertbutton {width:300px;clear:left;display:block}
 .subbutton, .subbutton2 {width:280px;clear:left;display:block}
 .halfbutton {width:210px;display:block;margin-bottom:4pt;}

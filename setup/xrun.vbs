@@ -8,7 +8,7 @@ Set coFSO = CreateObject("Scripting.FileSystemObject")
 Dim projIni, projPath, projectTxt, projectInfo, projectxslt, htacmdline, cmdlineproj, report
 ' Setup files
 Dim dquote, shell, cmdline, strUserProfile, setupvarxslt, title, xrundata, tskgrp 
-Dim xrunini, zero, level, boxlist, tasklen
+Dim xrunini, zero, level, boxlist, tasklen, activelimit
 ' Programs 
 Dim texteditor, program, xmleditor, xrunxslt, npp 
 Dim WshShell, strCurDir, WScript 
@@ -32,6 +32,7 @@ projPath =  ReadIni(xrunini,"setup","projecthome")
 setupvarxslt =  "scripts\projectvariables-v2.xslt"
 xrunxslt =  ReadIni(xrunini,"setup","xrunnerpath") & "\scripts\xrun.xslt"
 texteditor =  ReadIni(xrunini,"tools","editor")
+activelimit =  ReadIni(xrunini,"active","limit")
 npp =  ReadIni(xrunini,"tools","npp")
 xmleditor =  ReadIni(xrunini,"tools","xmleditor")
 projectInfo =  projPath & "\project-info.txt" 
@@ -574,11 +575,40 @@ Sub Window_onLoad
             reloadTextInfo(projectInfo)
           End If
       End If
-    else
-      SelectFolder(projPath)
     End If
+    call buildActiveList()
 End Sub
 
+Sub StartActiveProject()
+  Dim activeproj, op, opdata, oppath
+  activeproj = document.getElementById("ActiveProjectChoice").Value
+  op = "op" & activeproj
+  opdata = ReadIni(xrunini,"active",op)
+  oppath = Trim(Mid(opdata, InStr(opdata, ";") + 1))
+  projectTxt = oppath & "\project.txt"
+  projectInfo = oppath & "\project-info.txt"
+  If coFSO.FileExists(projectTxt) Then
+    buttonShow(projectTxt)
+    subButtons(projectTxt)
+    Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
+    Document.getElementById("ShowSelectedFolder").InnerText = oppath
+    reloadText(projectTxt)
+    reloadTextInfo(projectInfo)
+  End If
+End Sub
+
+Sub buildActiveList()
+  Dim x, op, opt, opdata, oplabel
+  For x = 0 To activelimit
+    Set opt = document.createElement("option")
+    opt.Value = x
+    op = "op" & x
+    opdata = ReadIni(xrunini,"active",op)
+    oplabel = Left(opdata, InStr(opdata, ";") - 1)
+    opt.Text = oplabel
+    ActiveProjectChoice.add opt
+  Next
+End Sub
 '' the following not used.
 'Function groupLabel(file)
 '  dim x, group, prefix, textlen, curid, label, text
