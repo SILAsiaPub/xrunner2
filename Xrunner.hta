@@ -1,37 +1,38 @@
-
 <html xmlns:HTA="HyperTextApplication">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <!--   Create GUI for bat file.      -->
-        <title>Xrunner2</title>
-        <HTA:application applicationName="xrunner2 app" Icon="setup/x2.ico" ID="oHTA"/>
-        <link rel="stylesheet" href="setup/xrun.css"/>
-        <script type="text/vbscript" src="setup/xrun.vbs"></script>
-         <!-- <script type="text/javascript" src="setup/xrun.js"></script> -->
-        <!-- <script language="JavaScript"></script> -->
-    </head>
-    <body><!--  onload="call presets()" -->
-        <div class="floatright">
-            <button onclick="SelectFolder(projPath)" name="ChoosePath" class="widebutton">1. Click here to select your project folder</button>
-            <br/>
-            <input type="text" name="ShowSelectedFolder" size="60" maxLength="255"/>
-        </div>
-        <h3 id="title">Open project here &gt;</h2>
-        <!-- Tab links -->
-        <div id="tab" class="tab">
-            <button class="tablinks active" onclick="call OpenTab(maintab,'project')" id="projecttab">Project</button>
-            <button class="tablinks" onclick="call OpenTab(maintab,'subrunner1')" id="subrunner1tab">Subs 1</button>
-            <button class="tablinks" onclick="call OpenTab(maintab,'subrunner2')" id="subrunner2tab">Subs 2</button>
-            <button class="tablinks" onclick="call OpenTab(maintab,'projectinfo')" id="projectinfotab">Proj Info</button>
-            <button class="tablinks" onclick="call OpenTab(maintab,'docs')" id="docstab">Docs</button>
-            <button class="tablinks" onclick="call OpenTab(maintab,'expert')" id="experttab">Expert</button>
-        </div>
-        <!-- ============================================= Tab content ================================================== -->
-        <div id="project" class="tabcontent active">
-            <form>
-                <textarea name="DataArea" rows="18" cols="68" readonly=""></textarea>
-            </form>
-            <div class="settings">
+      <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+            <!--   Create GUI for bat file.      -->
+            <title>Xrunner2</title>
+            <HTA:application applicationName="xrunner2 app" Icon="setup/x2.ico" ID="oHTA"/>
+            <link rel="stylesheet" href="setup/xrun.css"/>
+            <script type="text/vbscript" src="setup/xrun.vbs"></script>
+            <!-- <script type="text/javascript" src="setup/xrun.js"></script> -->
+            <!-- <script language="JavaScript"></script> -->
+      </head>
+      <body>
+            <!--  onload="call presets()" -->
+            <select name="ActiveProjectChoice" id="ActiveProjectChoice" size="1" class="floatright" onchange="call StartActiveProject()">
+            </select>
+            <h3 id="title">&#160;</h3>
+            <p>
+                  <input type="text" name="ShowSelectedFolder" size="65" maxLength="255"/>
+                  <button onclick="SelectFolder(projPath)" name="ChoosePath" class="widebutton">Select project folder</button>
+            </p>
+            <!-- Tab links -->
+            <div id="tab" class="tab">
+                  <button class="tablinks active" onclick="call OpenTab(maintab,'project')" id="projecttab">Project</button>
+                  <button class="tablinks" onclick="call OpenTab(maintab,'subrunner1')" id="subrunner1tab">Subs 1</button>
+                  <button class="tablinks" onclick="call OpenTab(maintab,'subrunner2')" id="subrunner2tab">Subs 2</button>
+                  <button class="tablinks" onclick="call OpenTab(maintab,'projectinfo')" id="projectinfotab">Proj Info</button>
+                  <button class="tablinks" onclick="call OpenTab(maintab,'docs')" id="docstab">Docs</button>
+                  <button class="tablinks" onclick="call OpenTab(maintab,'expert')" id="experttab">Expert</button>
+            </div>
+            <!-- ============================================= Tab content ================================================== -->
+            <div id="project" class="tabcontent active">
+                  <form>
+                        <textarea name="DataArea" rows="18" cols="68" readonly=""></textarea>
+                  </form>
+                  <div class="settings">
                <input type="BUTTON" value="Refresh from source" onclick="reloadProject(projectTxt)" class="halfbutton"/>
                <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="halfbutton" >Open Project folder</button>
                <input type="BUTTON" value="Edit project.txt file" onclick="editFileExternal(projectTxt)" class="halfbutton"/>
@@ -49,369 +50,368 @@
             	  <button onclick="editFileExternal('scripts\func.cmd')" name="LoadValues" id="LoadValues" class="halfbutton">Edit func.cmd expert only!</button>
                   <button onclick="editFileExternal('xrunner.cmd')" name="LoadValues" id="LoadValues" class="halfbutton">Edit xrunner.cmd expert only!</button>
   </div>
-            <div id="grouplabela"></div>
-            <button onclick="call xrun('a')" class="inibutton" id="buttona">Run group A tasks</button>
-            <div id="grouplabelb"></div>
-            <button onclick="call xrun('b')" class="inibutton" id="buttonb">Run group B tasks</button>
-            <div id="grouplabelc"></div>
-            <button onclick="call xrun('c')" class="inibutton" id="buttonc">Run group C tasks</button>
-            <div id="grouplabeld"></div>
-            <button onclick="call xrun('d')" class="inibutton" id="buttond">Run group D tasks</button>
-            <div id="grouplabele"></div>
-            <button onclick="call xrun('e')" class="inibutton" id="buttone">Run group E tasks</button>
-            <div id="grouplabelf"></div>
-            <button onclick="call xrun('f')" class="inibutton" id="buttonf">Run group F tasks</button>
-            <div id="grouplabelg"></div>
-            <button onclick="call xrun('g')" class="inibutton" id="buttong">Run group G tasks</button>
-            <div id="grouplabelh"></div>
-            <button onclick="call xrun('h')" class="inibutton" id="buttonh">Run group H tasks</button>
-            <div id="grouplabeli"></div>
-            <button onclick="call xrun('i')" class="inibutton" id="buttoni">Run group I tasks</button>
-            <div id="grouplabelj"></div>
-            <button onclick="call xrun('j')" class="inibutton" id="buttonj">Run group J tasks</button>
-            <div id="grouplabelk"></div>
-            <button onclick="call xrun('k')" class="inibutton" id="buttonk">Run group K tasks</button>
-            <div id="grouplabell"></div>
-            <button onclick="call xrun('l')" class="inibutton" id="buttonl">Run group L tasks</button>
-            <div id="grouplabelm"></div>
-            <button onclick="call xrun('m')" class="inibutton" id="buttonm">Run group M tasks</button>
-            <div id="grouplabeln"></div>
-            <button onclick="call xrun('n')" class="inibutton" id="buttonn">Run group N tasks</button>
-            <div id="grouplabelo"></div>
-            <button onclick="call xrun('o')" class="inibutton" id="buttono">Run group O tasks</button>
-            <div id="grouplabelp"></div>
-            <button onclick="call xrun('p')" class="inibutton" id="buttonp">Run group P tasks</button>
-            <div id="grouplabelq"></div>
-            <button onclick="call xrun('q')" class="inibutton" id="buttonq">Run group Q tasks</button>
-            <div id="grouplabelr"></div>
-            <button onclick="call xrun('r')" class="inibutton" id="buttonr">Run group R tasks</button>
-            <div id="grouplabels"></div>
-            <button onclick="call xrun('s')" class="inibutton" id="buttons">Run group S tasks</button>
-            <div id="grouplabelt"></div>
-            <button onclick="call xrun('t')" class="inibutton" id="buttont">Run group T tasks</button>
-            <div id="grouplabelu"></div>
-            <button onclick="call xrun('u')" class="inibutton" id="buttonu">Run group U tasks</button>
-            <div id="grouplabelv"></div>
-            <button onclick="call xrun('v')" class="inibutton" id="buttonv">Run group V tasks</button>
-            <div id="grouplabelw"></div>
-            <button onclick="call xrun('w')" class="inibutton" id="buttonw">Run group W tasks</button>
-            <div id="grouplabelx"></div>
-            <button onclick="call xrun('x')" class="inibutton" id="buttonx">Run group X tasks</button>
-            <div id="grouplabely"></div>
-            <button onclick="call xrun('y')" class="inibutton" id="buttony">Run group Y tasks</button>
-            <div id="grouplabelz"></div>
-            <button onclick="call xrun('z')" class="inibutton" id="buttonz">Run group Z tasks</button>
-            <!-- <hr>
+                  <div id="grouplabela"></div>
+                  <button onclick="call xrun('a')" class="inibutton" id="buttona">Run group A tasks</button>
+                  <div id="grouplabelb"></div>
+                  <button onclick="call xrun('b')" class="inibutton" id="buttonb">Run group B tasks</button>
+                  <div id="grouplabelc"></div>
+                  <button onclick="call xrun('c')" class="inibutton" id="buttonc">Run group C tasks</button>
+                  <div id="grouplabeld"></div>
+                  <button onclick="call xrun('d')" class="inibutton" id="buttond">Run group D tasks</button>
+                  <div id="grouplabele"></div>
+                  <button onclick="call xrun('e')" class="inibutton" id="buttone">Run group E tasks</button>
+                  <div id="grouplabelf"></div>
+                  <button onclick="call xrun('f')" class="inibutton" id="buttonf">Run group F tasks</button>
+                  <div id="grouplabelg"></div>
+                  <button onclick="call xrun('g')" class="inibutton" id="buttong">Run group G tasks</button>
+                  <div id="grouplabelh"></div>
+                  <button onclick="call xrun('h')" class="inibutton" id="buttonh">Run group H tasks</button>
+                  <div id="grouplabeli"></div>
+                  <button onclick="call xrun('i')" class="inibutton" id="buttoni">Run group I tasks</button>
+                  <div id="grouplabelj"></div>
+                  <button onclick="call xrun('j')" class="inibutton" id="buttonj">Run group J tasks</button>
+                  <div id="grouplabelk"></div>
+                  <button onclick="call xrun('k')" class="inibutton" id="buttonk">Run group K tasks</button>
+                  <div id="grouplabell"></div>
+                  <button onclick="call xrun('l')" class="inibutton" id="buttonl">Run group L tasks</button>
+                  <div id="grouplabelm"></div>
+                  <button onclick="call xrun('m')" class="inibutton" id="buttonm">Run group M tasks</button>
+                  <div id="grouplabeln"></div>
+                  <button onclick="call xrun('n')" class="inibutton" id="buttonn">Run group N tasks</button>
+                  <div id="grouplabelo"></div>
+                  <button onclick="call xrun('o')" class="inibutton" id="buttono">Run group O tasks</button>
+                  <div id="grouplabelp"></div>
+                  <button onclick="call xrun('p')" class="inibutton" id="buttonp">Run group P tasks</button>
+                  <div id="grouplabelq"></div>
+                  <button onclick="call xrun('q')" class="inibutton" id="buttonq">Run group Q tasks</button>
+                  <div id="grouplabelr"></div>
+                  <button onclick="call xrun('r')" class="inibutton" id="buttonr">Run group R tasks</button>
+                  <div id="grouplabels"></div>
+                  <button onclick="call xrun('s')" class="inibutton" id="buttons">Run group S tasks</button>
+                  <div id="grouplabelt"></div>
+                  <button onclick="call xrun('t')" class="inibutton" id="buttont">Run group T tasks</button>
+                  <div id="grouplabelu"></div>
+                  <button onclick="call xrun('u')" class="inibutton" id="buttonu">Run group U tasks</button>
+                  <div id="grouplabelv"></div>
+                  <button onclick="call xrun('v')" class="inibutton" id="buttonv">Run group V tasks</button>
+                  <div id="grouplabelw"></div>
+                  <button onclick="call xrun('w')" class="inibutton" id="buttonw">Run group W tasks</button>
+                  <div id="grouplabelx"></div>
+                  <button onclick="call xrun('x')" class="inibutton" id="buttonx">Run group X tasks</button>
+                  <div id="grouplabely"></div>
+                  <button onclick="call xrun('y')" class="inibutton" id="buttony">Run group Y tasks</button>
+                  <div id="grouplabelz"></div>
+                  <button onclick="call xrun('z')" class="inibutton" id="buttonz">Run group Z tasks</button>
+                  <!-- <hr>
       <div id=Results>&nbsp</div> -->
-        </div>
-        <div id="subrunner1" class="tabcontent">
-            <input type="BUTTON" value="Refresh page" onclick="subButtons(projectTxt)" class="halfbutton"/>
-            <div class="fleft">
-                <div id="subgroup1" class="subbutton"></div>
-                <button onclick="call subrunx('s1',0)" class="subbutton" id="s1-0">Run sub 0</button>
-                <button onclick="call subrunx('s1',1)" class="subbutton" id="s1-1">Run sub 1</button>
-                <button onclick="call subrunx('s1',2)" class="subbutton" id="s1-2">Run sub 2</button>
-                <button onclick="call subrunx('s1',3)" class="subbutton" id="s1-3">Run sub 3</button>
-                <button onclick="call subrunx('s1',4)" class="subbutton" id="s1-4">Run sub 4</button>
-                <button onclick="call subrunx('s1',5)" class="subbutton" id="s1-5">Run sub 5</button>
-                <button onclick="call subrunx('s1',6)" class="subbutton" id="s1-6">Run sub 6</button>
-                <button onclick="call subrunx('s1',7)" class="subbutton" id="s1-7">Run sub 7</button>
-                <button onclick="call subrunx('s1',8)" class="subbutton" id="s1-8">Run sub 8</button>
-                <button onclick="call subrunx('s1',9)" class="subbutton" id="s1-9">Run sub 9</button>
             </div>
-            <div class="fleft" style="padding-top:1em">
-                <div id="subgroup2" class="subbutton"></div>
-                <button onclick="call subrunx('s2',0)" class="subbutton" id="s2-0">Run sub 10</button>
-                <button onclick="call subrunx('s2',1)" class="subbutton" id="s2-1">Run sub 11</button>
-                <button onclick="call subrunx('s2',2)" class="subbutton" id="s2-2">Run sub 12</button>
-                <button onclick="call subrunx('s2',3)" class="subbutton" id="s2-3">Run sub 13</button>
-                <button onclick="call subrunx('s2',4)" class="subbutton" id="s2-4">Run sub 14</button>
-                <button onclick="call subrunx('s2',5)" class="subbutton" id="s2-5">Run sub 15</button>
-                <button onclick="call subrunx('s2',6)" class="subbutton" id="s2-6">Run sub 16</button>
-                <button onclick="call subrunx('s2',7)" class="subbutton" id="s2-7">Run sub 17</button>
-                <button onclick="call subrunx('s2',8)" class="subbutton" id="s2-8">Run sub 18</button>
-                <button onclick="call subrunx('s2',9)" class="subbutton" id="s2-9">Run sub 19</button>
+            <div id="subrunner1" class="tabcontent">
+                  <input type="BUTTON" value="Refresh page" onclick="subButtons(projectTxt)" class="halfbutton"/>
+                  <div class="fleft">
+                        <div id="subgroup1" class="subbutton"></div>
+                        <button onclick="call subrunx('s1',0)" class="subbutton" id="s1-0">Run sub 0</button>
+                        <button onclick="call subrunx('s1',1)" class="subbutton" id="s1-1">Run sub 1</button>
+                        <button onclick="call subrunx('s1',2)" class="subbutton" id="s1-2">Run sub 2</button>
+                        <button onclick="call subrunx('s1',3)" class="subbutton" id="s1-3">Run sub 3</button>
+                        <button onclick="call subrunx('s1',4)" class="subbutton" id="s1-4">Run sub 4</button>
+                        <button onclick="call subrunx('s1',5)" class="subbutton" id="s1-5">Run sub 5</button>
+                        <button onclick="call subrunx('s1',6)" class="subbutton" id="s1-6">Run sub 6</button>
+                        <button onclick="call subrunx('s1',7)" class="subbutton" id="s1-7">Run sub 7</button>
+                        <button onclick="call subrunx('s1',8)" class="subbutton" id="s1-8">Run sub 8</button>
+                        <button onclick="call subrunx('s1',9)" class="subbutton" id="s1-9">Run sub 9</button>
+                  </div>
+                  <div class="fleft" style="padding-top:1em">
+                        <div id="subgroup2" class="subbutton"></div>
+                        <button onclick="call subrunx('s2',0)" class="subbutton" id="s2-0">Run sub 10</button>
+                        <button onclick="call subrunx('s2',1)" class="subbutton" id="s2-1">Run sub 11</button>
+                        <button onclick="call subrunx('s2',2)" class="subbutton" id="s2-2">Run sub 12</button>
+                        <button onclick="call subrunx('s2',3)" class="subbutton" id="s2-3">Run sub 13</button>
+                        <button onclick="call subrunx('s2',4)" class="subbutton" id="s2-4">Run sub 14</button>
+                        <button onclick="call subrunx('s2',5)" class="subbutton" id="s2-5">Run sub 15</button>
+                        <button onclick="call subrunx('s2',6)" class="subbutton" id="s2-6">Run sub 16</button>
+                        <button onclick="call subrunx('s2',7)" class="subbutton" id="s2-7">Run sub 17</button>
+                        <button onclick="call subrunx('s2',8)" class="subbutton" id="s2-8">Run sub 18</button>
+                        <button onclick="call subrunx('s2',9)" class="subbutton" id="s2-9">Run sub 19</button>
+                  </div>
+                  <div class="fleft" style="padding-top:1em">
+                        <div id="subgroup3" class="subbutton"></div>
+                        <button onclick="call subrunx('s3',0)" class="subbutton" id="s3-0">Run sub 20</button>
+                        <button onclick="call subrunx('s3',1)" class="subbutton" id="s3-1">Run sub 21</button>
+                        <button onclick="call subrunx('s3',2)" class="subbutton" id="s3-2">Run sub 22</button>
+                        <button onclick="call subrunx('s3',3)" class="subbutton" id="s3-3">Run sub 23</button>
+                        <button onclick="call subrunx('s3',4)" class="subbutton" id="s3-4">Run sub 24</button>
+                        <button onclick="call subrunx('s3',5)" class="subbutton" id="s3-5">Run sub 25</button>
+                        <button onclick="call subrunx('s3',6)" class="subbutton" id="s3-6">Run sub 26</button>
+                        <button onclick="call subrunx('s3',7)" class="subbutton" id="s3-7">Run sub 27</button>
+                        <button onclick="call subrunx('s3',8)" class="subbutton" id="s3-8">Run sub 28</button>
+                        <button onclick="call subrunx('s3',9)" class="subbutton" id="s3-9">Run sub 29</button>
+                  </div>
+                  <div class="fleft" style="padding-top:1em">
+                        <div id="subgroup4" class="subbutton"></div>
+                        <button onclick="call subrunx('s4',0)" class="subbutton" id="s4-0">Run sub 30</button>
+                        <button onclick="call subrunx('s4',1)" class="subbutton" id="s4-1">Run sub 31</button>
+                        <button onclick="call subrunx('s4',2)" class="subbutton" id="s4-2">Run sub 32</button>
+                        <button onclick="call subrunx('s4',3)" class="subbutton" id="s4-3">Run sub 33</button>
+                        <button onclick="call subrunx('s4',4)" class="subbutton" id="s4-4">Run sub 34</button>
+                        <button onclick="call subrunx('s4',5)" class="subbutton" id="s4-5">Run sub 35</button>
+                        <button onclick="call subrunx('s4',6)" class="subbutton" id="s4-6">Run sub 36</button>
+                        <button onclick="call subrunx('s4',7)" class="subbutton" id="s4-7">Run sub 37</button>
+                        <button onclick="call subrunx('s4',8)" class="subbutton" id="s4-8">Run sub 38</button>
+                        <button onclick="call subrunx('s4',9)" class="subbutton" id="s4-9">Run sub 39</button>
+                  </div>
+                  <div class="fleft" style="padding-top:1em">
+                        <div id="subgroup5" class="subbutton"></div>
+                        <button onclick="call subrunx('s5',0)" class="subbutton" id="s5-0">Run sub 40</button>
+                        <button onclick="call subrunx('s5',1)" class="subbutton" id="s5-1">Run sub 41</button>
+                        <button onclick="call subrunx('s5',2)" class="subbutton" id="s5-2">Run sub 42</button>
+                        <button onclick="call subrunx('s5',3)" class="subbutton" id="s5-3">Run sub 43</button>
+                        <button onclick="call subrunx('s5',4)" class="subbutton" id="s5-4">Run sub 44</button>
+                        <button onclick="call subrunx('s5',5)" class="subbutton" id="s5-5">Run sub 45</button>
+                        <button onclick="call subrunx('s5',6)" class="subbutton" id="s5-6">Run sub 46</button>
+                        <button onclick="call subrunx('s5',7)" class="subbutton" id="s5-7">Run sub 47</button>
+                        <button onclick="call subrunx('s5',8)" class="subbutton" id="s5-8">Run sub 48</button>
+                        <button onclick="call subrunx('s5',9)" class="subbutton" id="s5-9">Run sub 49</button>
+                  </div>
+                  <div class="floatright">
+                        <div id="subgroup6" class="subbutton"></div>
+                        <button onclick="call subrunx('s6',0)" class="subbutton" id="s6-0">Run sub 50</button>
+                        <button onclick="call subrunx('s6',1)" class="subbutton" id="s6-1">Run sub 51</button>
+                        <button onclick="call subrunx('s6',2)" class="subbutton" id="s6-2">Run sub 52</button>
+                        <button onclick="call subrunx('s6',3)" class="subbutton" id="s6-3">Run sub 53</button>
+                        <button onclick="call subrunx('s6',4)" class="subbutton" id="s6-4">Run sub 54</button>
+                        <button onclick="call subrunx('s6',5)" class="subbutton" id="s6-5">Run sub 55</button>
+                        <button onclick="call subrunx('s6',6)" class="subbutton" id="s6-6">Run sub 56</button>
+                        <button onclick="call subrunx('s6',7)" class="subbutton" id="s6-7">Run sub 57</button>
+                        <button onclick="call subrunx('s6',8)" class="subbutton" id="s6-8">Run sub 58</button>
+                        <button onclick="call subrunx('s6',9)" class="subbutton" id="s6-9">Run sub 59</button>
+                  </div>
+                  <div class="floatright" style="padding-top:1em">
+                        <div id="subgroup7" class="subbutton"></div>
+                        <button onclick="call subrunx('s7',0)" class="subbutton" id="s7-0">Run sub 60</button>
+                        <button onclick="call subrunx('s7',1)" class="subbutton" id="s7-1">Run sub 61</button>
+                        <button onclick="call subrunx('s7',2)" class="subbutton" id="s7-2">Run sub 62</button>
+                        <button onclick="call subrunx('s7',3)" class="subbutton" id="s7-3">Run sub 63</button>
+                        <button onclick="call subrunx('s7',4)" class="subbutton" id="s7-4">Run sub 64</button>
+                        <button onclick="call subrunx('s7',5)" class="subbutton" id="s7-5">Run sub 65</button>
+                        <button onclick="call subrunx('s7',6)" class="subbutton" id="s7-6">Run sub 66</button>
+                        <button onclick="call subrunx('s7',7)" class="subbutton" id="s7-7">Run sub 67</button>
+                        <button onclick="call subrunx('s7',8)" class="subbutton" id="s7-8">Run sub 68</button>
+                        <button onclick="call subrunx('s7',9)" class="subbutton" id="s7-9">Run sub 69</button>
+                  </div>
+                  <div class="floatright" style="padding-top:1em">
+                        <div id="subgroup8" class="subbutton"></div>
+                        <button onclick="call subrunx('s8',0)" class="subbutton" id="s8-0">Run sub 70</button>
+                        <button onclick="call subrunx('s8',1)" class="subbutton" id="s8-1">Run sub 71</button>
+                        <button onclick="call subrunx('s8',2)" class="subbutton" id="s8-2">Run sub 72</button>
+                        <button onclick="call subrunx('s8',3)" class="subbutton" id="s8-3">Run sub 73</button>
+                        <button onclick="call subrunx('s8',4)" class="subbutton" id="s8-4">Run sub 74</button>
+                        <button onclick="call subrunx('s8',5)" class="subbutton" id="s8-5">Run sub 75</button>
+                        <button onclick="call subrunx('s8',6)" class="subbutton" id="s8-6">Run sub 76</button>
+                        <button onclick="call subrunx('s8',7)" class="subbutton" id="s8-7">Run sub 77</button>
+                        <button onclick="call subrunx('s8',8)" class="subbutton" id="s8-8">Run sub 78</button>
+                        <button onclick="call subrunx('s8',9)" class="subbutton" id="s8-9">Run sub 79</button>
+                  </div>
+                  <div class="floatright" style="padding-top:1em">
+                        <div id="subgroup9" class="subbutton"></div>
+                        <button onclick="call subrunx('s9',0)" class="subbutton" id="s9-0">Run sub 80</button>
+                        <button onclick="call subrunx('s9',1)" class="subbutton" id="s9-1">Run sub 81</button>
+                        <button onclick="call subrunx('s9',2)" class="subbutton" id="s9-2">Run sub 82</button>
+                        <button onclick="call subrunx('s9',3)" class="subbutton" id="s9-3">Run sub 83</button>
+                        <button onclick="call subrunx('s9',4)" class="subbutton" id="s9-4">Run sub 84</button>
+                        <button onclick="call subrunx('s9',5)" class="subbutton" id="s9-5">Run sub 85</button>
+                        <button onclick="call subrunx('s9',6)" class="subbutton" id="s9-6">Run sub 86</button>
+                        <button onclick="call subrunx('s9',7)" class="subbutton" id="s9-7">Run sub 87</button>
+                        <button onclick="call subrunx('s9',8)" class="subbutton" id="s9-8">Run sub 88</button>
+                        <button onclick="call subrunx('s9',9)" class="subbutton" id="s9-9">Run sub 89</button>
+                  </div>
+                  <div class="floatright" style="padding-top:1em">
+                        <div id="subgroup10" class="subbutton"></div>
+                        <button onclick="call subrunx('s10',0)" class="subbutton" id="s10-0">Run sub 90</button>
+                        <button onclick="call subrunx('s10',1)" class="subbutton" id="s10-1">Run sub 91</button>
+                        <button onclick="call subrunx('s10',2)" class="subbutton" id="s10-2">Run sub 92</button>
+                        <button onclick="call subrunx('s10',3)" class="subbutton" id="s10-3">Run sub 93</button>
+                        <button onclick="call subrunx('s10',4)" class="subbutton" id="s10-4">Run sub 94</button>
+                        <button onclick="call subrunx('s10',5)" class="subbutton" id="s10-5">Run sub 95</button>
+                        <button onclick="call subrunx('s10',6)" class="subbutton" id="s10-6">Run sub 96</button>
+                        <button onclick="call subrunx('s10',7)" class="subbutton" id="s10-7">Run sub 97</button>
+                        <button onclick="call subrunx('s10',8)" class="subbutton" id="s10-8">Run sub 98</button>
+                        <button onclick="call subrunx('s10',9)" class="subbutton" id="s10-9">Run sub 99</button>
+                  </div>
             </div>
-            <div class="fleft" style="padding-top:1em">
-                <div id="subgroup3" class="subbutton"></div>
-                <button onclick="call subrunx('s3',0)" class="subbutton" id="s3-0">Run sub 20</button>
-                <button onclick="call subrunx('s3',1)" class="subbutton" id="s3-1">Run sub 21</button>
-                <button onclick="call subrunx('s3',2)" class="subbutton" id="s3-2">Run sub 22</button>
-                <button onclick="call subrunx('s3',3)" class="subbutton" id="s3-3">Run sub 23</button>
-                <button onclick="call subrunx('s3',4)" class="subbutton" id="s3-4">Run sub 24</button>
-                <button onclick="call subrunx('s3',5)" class="subbutton" id="s3-5">Run sub 25</button>
-                <button onclick="call subrunx('s3',6)" class="subbutton" id="s3-6">Run sub 26</button>
-                <button onclick="call subrunx('s3',7)" class="subbutton" id="s3-7">Run sub 27</button>
-                <button onclick="call subrunx('s3',8)" class="subbutton" id="s3-8">Run sub 28</button>
-                <button onclick="call subrunx('s3',9)" class="subbutton" id="s3-9">Run sub 29</button>
+            <div id="subrunner2" class="tabcontent">
+                  <input type="BUTTON" value="Refresh page" onclick="subButtons(projectTxt)" class="halfbutton"/>
+                  <div class="fleft">
+                        <div id="subgroup11" class="subbutton"></div>
+                        <button onclick="call subrunx('s11',0)" class="subbutton" id="s11-0">Run sub 0</button>
+                        <button onclick="call subrunx('s11',1)" class="subbutton" id="s11-1">Run sub 1</button>
+                        <button onclick="call subrunx('s11',2)" class="subbutton" id="s11-2">Run sub 2</button>
+                        <button onclick="call subrunx('s11',3)" class="subbutton" id="s11-3">Run sub 3</button>
+                        <button onclick="call subrunx('s11',4)" class="subbutton" id="s11-4">Run sub 4</button>
+                        <button onclick="call subrunx('s11',5)" class="subbutton" id="s11-5">Run sub 5</button>
+                        <button onclick="call subrunx('s11',6)" class="subbutton" id="s11-6">Run sub 6</button>
+                        <button onclick="call subrunx('s11',7)" class="subbutton" id="s11-7">Run sub 7</button>
+                        <button onclick="call subrunx('s11',8)" class="subbutton" id="s11-8">Run sub 8</button>
+                        <button onclick="call subrunx('s11',9)" class="subbutton" id="s11-9">Run sub 9</button>
+                  </div>
+                  <div class="fleft" style="padding-top:1em">
+                        <div id="subgroup12" class="subbutton"></div>
+                        <button onclick="call subrunx('s12',0)" class="subbutton" id="s12-0">Run sub 10</button>
+                        <button onclick="call subrunx('s12',1)" class="subbutton" id="s12-1">Run sub 11</button>
+                        <button onclick="call subrunx('s12',2)" class="subbutton" id="s12-2">Run sub 12</button>
+                        <button onclick="call subrunx('s12',3)" class="subbutton" id="s12-3">Run sub 13</button>
+                        <button onclick="call subrunx('s12',4)" class="subbutton" id="s12-4">Run sub 14</button>
+                        <button onclick="call subrunx('s12',5)" class="subbutton" id="s12-5">Run sub 15</button>
+                        <button onclick="call subrunx('s12',6)" class="subbutton" id="s12-6">Run sub 16</button>
+                        <button onclick="call subrunx('s12',7)" class="subbutton" id="s12-7">Run sub 17</button>
+                        <button onclick="call subrunx('s12',8)" class="subbutton" id="s12-8">Run sub 18</button>
+                        <button onclick="call subrunx('s12',9)" class="subbutton" id="s12-9">Run sub 19</button>
+                  </div>
+                  <div class="fleft" style="padding-top:1em">
+                        <div id="subgroup13" class="subbutton"></div>
+                        <button onclick="call subrunx('s13',0)" class="subbutton" id="s13-0">Run sub 20</button>
+                        <button onclick="call subrunx('s13',1)" class="subbutton" id="s13-1">Run sub 21</button>
+                        <button onclick="call subrunx('s13',2)" class="subbutton" id="s13-2">Run sub 22</button>
+                        <button onclick="call subrunx('s13',3)" class="subbutton" id="s13-3">Run sub 23</button>
+                        <button onclick="call subrunx('s13',4)" class="subbutton" id="s13-4">Run sub 24</button>
+                        <button onclick="call subrunx('s13',5)" class="subbutton" id="s13-5">Run sub 25</button>
+                        <button onclick="call subrunx('s13',6)" class="subbutton" id="s13-6">Run sub 26</button>
+                        <button onclick="call subrunx('s13',7)" class="subbutton" id="s13-7">Run sub 27</button>
+                        <button onclick="call subrunx('s13',8)" class="subbutton" id="s13-8">Run sub 28</button>
+                        <button onclick="call subrunx('s13',9)" class="subbutton" id="s13-9">Run sub 29</button>
+                  </div>
+                  <div class="fleft" style="padding-top:1em">
+                        <div id="subgroup14" class="subbutton"></div>
+                        <button onclick="call subrunx('s14',0)" class="subbutton" id="s14-0">Run sub 30</button>
+                        <button onclick="call subrunx('s14',1)" class="subbutton" id="s14-1">Run sub 31</button>
+                        <button onclick="call subrunx('s14',2)" class="subbutton" id="s14-2">Run sub 32</button>
+                        <button onclick="call subrunx('s14',3)" class="subbutton" id="s14-3">Run sub 33</button>
+                        <button onclick="call subrunx('s14',4)" class="subbutton" id="s14-4">Run sub 34</button>
+                        <button onclick="call subrunx('s14',5)" class="subbutton" id="s14-5">Run sub 35</button>
+                        <button onclick="call subrunx('s14',6)" class="subbutton" id="s14-6">Run sub 36</button>
+                        <button onclick="call subrunx('s14',7)" class="subbutton" id="s14-7">Run sub 37</button>
+                        <button onclick="call subrunx('s14',8)" class="subbutton" id="s14-8">Run sub 38</button>
+                        <button onclick="call subrunx('s14',9)" class="subbutton" id="s14-9">Run sub 39</button>
+                  </div>
+                  <div class="fleft" style="padding-top:1em">
+                        <div id="subgroup15" class="subbutton"></div>
+                        <button onclick="call subrunx('s15',0)" class="subbutton" id="s15-0">Run sub 40</button>
+                        <button onclick="call subrunx('s15',1)" class="subbutton" id="s15-1">Run sub 41</button>
+                        <button onclick="call subrunx('s15',2)" class="subbutton" id="s15-2">Run sub 42</button>
+                        <button onclick="call subrunx('s15',3)" class="subbutton" id="s15-3">Run sub 43</button>
+                        <button onclick="call subrunx('s15',4)" class="subbutton" id="s15-4">Run sub 44</button>
+                        <button onclick="call subrunx('s15',5)" class="subbutton" id="s15-5">Run sub 45</button>
+                        <button onclick="call subrunx('s15',6)" class="subbutton" id="s15-6">Run sub 46</button>
+                        <button onclick="call subrunx('s15',7)" class="subbutton" id="s15-7">Run sub 47</button>
+                        <button onclick="call subrunx('s15',8)" class="subbutton" id="s15-8">Run sub 48</button>
+                        <button onclick="call subrunx('s15',9)" class="subbutton" id="s15-9">Run sub 49</button>
+                  </div>
+                  <div class="floatright">
+                        <div id="subgroup16" class="subbutton"></div>
+                        <button onclick="call subrunx('s16',0)" class="subbutton" id="s16-0">Run sub 50</button>
+                        <button onclick="call subrunx('s16',1)" class="subbutton" id="s16-1">Run sub 51</button>
+                        <button onclick="call subrunx('s16',2)" class="subbutton" id="s16-2">Run sub 52</button>
+                        <button onclick="call subrunx('s16',3)" class="subbutton" id="s16-3">Run sub 53</button>
+                        <button onclick="call subrunx('s16',4)" class="subbutton" id="s16-4">Run sub 54</button>
+                        <button onclick="call subrunx('s16',5)" class="subbutton" id="s16-5">Run sub 55</button>
+                        <button onclick="call subrunx('s16',6)" class="subbutton" id="s16-6">Run sub 56</button>
+                        <button onclick="call subrunx('s16',7)" class="subbutton" id="s16-7">Run sub 57</button>
+                        <button onclick="call subrunx('s16',8)" class="subbutton" id="s16-8">Run sub 58</button>
+                        <button onclick="call subrunx('s16',9)" class="subbutton" id="s16-9">Run sub 59</button>
+                  </div>
+                  <div class="floatright" style="padding-top:1em">
+                        <div id="subgroup17" class="subbutton"></div>
+                        <button onclick="call subrunx('s17',0)" class="subbutton" id="s17-0">Run sub 60</button>
+                        <button onclick="call subrunx('s17',1)" class="subbutton" id="s17-1">Run sub 61</button>
+                        <button onclick="call subrunx('s17',2)" class="subbutton" id="s17-2">Run sub 62</button>
+                        <button onclick="call subrunx('s17',3)" class="subbutton" id="s17-3">Run sub 63</button>
+                        <button onclick="call subrunx('s17',4)" class="subbutton" id="s17-4">Run sub 64</button>
+                        <button onclick="call subrunx('s17',5)" class="subbutton" id="s17-5">Run sub 65</button>
+                        <button onclick="call subrunx('s17',6)" class="subbutton" id="s17-6">Run sub 66</button>
+                        <button onclick="call subrunx('s17',7)" class="subbutton" id="s17-7">Run sub 67</button>
+                        <button onclick="call subrunx('s17',8)" class="subbutton" id="s17-8">Run sub 68</button>
+                        <button onclick="call subrunx('s17',9)" class="subbutton" id="s17-9">Run sub 69</button>
+                  </div>
+                  <div class="floatright" style="padding-top:1em">
+                        <div id="subgroup18" class="subbutton"></div>
+                        <button onclick="call subrunx('s18',0)" class="subbutton" id="s18-0">Run sub 70</button>
+                        <button onclick="call subrunx('s18',1)" class="subbutton" id="s18-1">Run sub 71</button>
+                        <button onclick="call subrunx('s18',2)" class="subbutton" id="s18-2">Run sub 72</button>
+                        <button onclick="call subrunx('s18',3)" class="subbutton" id="s18-3">Run sub 73</button>
+                        <button onclick="call subrunx('s18',4)" class="subbutton" id="s18-4">Run sub 74</button>
+                        <button onclick="call subrunx('s18',5)" class="subbutton" id="s18-5">Run sub 75</button>
+                        <button onclick="call subrunx('s18',6)" class="subbutton" id="s18-6">Run sub 76</button>
+                        <button onclick="call subrunx('s18',7)" class="subbutton" id="s18-7">Run sub 77</button>
+                        <button onclick="call subrunx('s18',8)" class="subbutton" id="s18-8">Run sub 78</button>
+                        <button onclick="call subrunx('s18',9)" class="subbutton" id="s18-9">Run sub 79</button>
+                  </div>
+                  <div class="floatright" style="padding-top:1em">
+                        <div id="subgroup19" class="subbutton"></div>
+                        <button onclick="call subrunx('s19',0)" class="subbutton" id="s19-0">Run sub 80</button>
+                        <button onclick="call subrunx('s19',1)" class="subbutton" id="s19-1">Run sub 81</button>
+                        <button onclick="call subrunx('s19',2)" class="subbutton" id="s19-2">Run sub 82</button>
+                        <button onclick="call subrunx('s19',3)" class="subbutton" id="s19-3">Run sub 83</button>
+                        <button onclick="call subrunx('s19',4)" class="subbutton" id="s19-4">Run sub 84</button>
+                        <button onclick="call subrunx('s19',5)" class="subbutton" id="s19-5">Run sub 85</button>
+                        <button onclick="call subrunx('s19',6)" class="subbutton" id="s19-6">Run sub 86</button>
+                        <button onclick="call subrunx('s19',7)" class="subbutton" id="s19-7">Run sub 87</button>
+                        <button onclick="call subrunx('s19',8)" class="subbutton" id="s19-8">Run sub 88</button>
+                        <button onclick="call subrunx('s19',9)" class="subbutton" id="s19-9">Run sub 89</button>
+                  </div>
+                  <div class="floatright" style="padding-top:1em">
+                        <div id="subgroup20" class="subbutton"></div>
+                        <button onclick="call subrunx('s20',0)" class="subbutton" id="s20-0">Run sub 90</button>
+                        <button onclick="call subrunx('s20',1)" class="subbutton" id="s20-1">Run sub 91</button>
+                        <button onclick="call subrunx('s20',2)" class="subbutton" id="s20-2">Run sub 92</button>
+                        <button onclick="call subrunx('s20',3)" class="subbutton" id="s20-3">Run sub 93</button>
+                        <button onclick="call subrunx('s20',4)" class="subbutton" id="s20-4">Run sub 94</button>
+                        <button onclick="call subrunx('s20',5)" class="subbutton" id="s20-5">Run sub 95</button>
+                        <button onclick="call subrunx('s20',6)" class="subbutton" id="s20-6">Run sub 96</button>
+                        <button onclick="call subrunx('s20',7)" class="subbutton" id="s20-7">Run sub 97</button>
+                        <button onclick="call subrunx('s20',8)" class="subbutton" id="s20-8">Run sub 98</button>
+                        <button onclick="call subrunx('s20',9)" class="subbutton" id="s20-9">Run sub 99</button>
+                  </div>
             </div>
-            <div class="fleft" style="padding-top:1em">
-                <div id="subgroup4" class="subbutton"></div>
-                <button onclick="call subrunx('s4',0)" class="subbutton" id="s4-0">Run sub 30</button>
-                <button onclick="call subrunx('s4',1)" class="subbutton" id="s4-1">Run sub 31</button>
-                <button onclick="call subrunx('s4',2)" class="subbutton" id="s4-2">Run sub 32</button>
-                <button onclick="call subrunx('s4',3)" class="subbutton" id="s4-3">Run sub 33</button>
-                <button onclick="call subrunx('s4',4)" class="subbutton" id="s4-4">Run sub 34</button>
-                <button onclick="call subrunx('s4',5)" class="subbutton" id="s4-5">Run sub 35</button>
-                <button onclick="call subrunx('s4',6)" class="subbutton" id="s4-6">Run sub 36</button>
-                <button onclick="call subrunx('s4',7)" class="subbutton" id="s4-7">Run sub 37</button>
-                <button onclick="call subrunx('s4',8)" class="subbutton" id="s4-8">Run sub 38</button>
-                <button onclick="call subrunx('s4',9)" class="subbutton" id="s4-9">Run sub 39</button>
+            <div id="projectinfo" class="tabcontent">
+                  <form>
+                        <textarea id="InfoArea" rows="18" readonly="" cols="88"></textarea>
+                        <div class="floatright">
+                              <input type="BUTTON" value="Refresh from source" onclick="reloadTextInfo(projectInfo)" class="halfbutton"/>
+                              <input type="BUTTON" value="Edit project-info.txt" onclick="call editFileExternal(projectInfo)" class="halfbutton"/>
+                        </div>
+                  </form>
+                  <!-- iframe id="" src="setup/project-info.txt" width="715" height="700" frameborder="2"></iframe> -->
             </div>
-            <div class="fleft" style="padding-top:1em">
-                <div id="subgroup5" class="subbutton"></div>
-                <button onclick="call subrunx('s5',0)" class="subbutton" id="s5-0">Run sub 40</button>
-                <button onclick="call subrunx('s5',1)" class="subbutton" id="s5-1">Run sub 41</button>
-                <button onclick="call subrunx('s5',2)" class="subbutton" id="s5-2">Run sub 42</button>
-                <button onclick="call subrunx('s5',3)" class="subbutton" id="s5-3">Run sub 43</button>
-                <button onclick="call subrunx('s5',4)" class="subbutton" id="s5-4">Run sub 44</button>
-                <button onclick="call subrunx('s5',5)" class="subbutton" id="s5-5">Run sub 45</button>
-                <button onclick="call subrunx('s5',6)" class="subbutton" id="s5-6">Run sub 46</button>
-                <button onclick="call subrunx('s5',7)" class="subbutton" id="s5-7">Run sub 47</button>
-                <button onclick="call subrunx('s5',8)" class="subbutton" id="s5-8">Run sub 48</button>
-                <button onclick="call subrunx('s5',9)" class="subbutton" id="s5-9">Run sub 49</button>
+            <div id="docs" class="tabcontent">
+                  <button class="tablinks active" onclick="call OpenTab(doctab,'Xrunner_info')" id="Xrunner_infotab">Introduction</button>
+                  <button class="tablinks" onclick="call OpenTab(doctab,'Xrunner_func')" id="Xrunner_functab">xrunner.cmd doc</button>
+                  <button class="tablinks" onclick="call OpenTab(doctab,'Xrun_func')" id="Xrun_functab">func.cmd doc</button>
+                  <div id="Xrunner_info" class="tabcontent active">
+                        <iframe src="index.html" width="715" height="700" frameborder="2"></iframe>
+                  </div>
+                  <div id="Xrunner_func" class="tabcontent">
+                        <iframe src="docs/xrunner-doc.html" width="715" height="700" frameborder="2"></iframe>
+                  </div>
+                  <div id="Xrun_func" class="tabcontent">
+                        <iframe src="docs/func-doc.html" width="715" height="700" frameborder="2"></iframe>
+                  </div>
             </div>
-            <div class="floatright">
-                <div id="subgroup6" class="subbutton"></div>
-                <button onclick="call subrunx('s6',0)" class="subbutton" id="s6-0">Run sub 50</button>
-                <button onclick="call subrunx('s6',1)" class="subbutton" id="s6-1">Run sub 51</button>
-                <button onclick="call subrunx('s6',2)" class="subbutton" id="s6-2">Run sub 52</button>
-                <button onclick="call subrunx('s6',3)" class="subbutton" id="s6-3">Run sub 53</button>
-                <button onclick="call subrunx('s6',4)" class="subbutton" id="s6-4">Run sub 54</button>
-                <button onclick="call subrunx('s6',5)" class="subbutton" id="s6-5">Run sub 55</button>
-                <button onclick="call subrunx('s6',6)" class="subbutton" id="s6-6">Run sub 56</button>
-                <button onclick="call subrunx('s6',7)" class="subbutton" id="s6-7">Run sub 57</button>
-                <button onclick="call subrunx('s6',8)" class="subbutton" id="s6-8">Run sub 58</button>
-                <button onclick="call subrunx('s6',9)" class="subbutton" id="s6-9">Run sub 59</button>
-            </div>
-            <div class="floatright" style="padding-top:1em">
-                <div id="subgroup7" class="subbutton"></div>
-                <button onclick="call subrunx('s7',0)" class="subbutton" id="s7-0">Run sub 60</button>
-                <button onclick="call subrunx('s7',1)" class="subbutton" id="s7-1">Run sub 61</button>
-                <button onclick="call subrunx('s7',2)" class="subbutton" id="s7-2">Run sub 62</button>
-                <button onclick="call subrunx('s7',3)" class="subbutton" id="s7-3">Run sub 63</button>
-                <button onclick="call subrunx('s7',4)" class="subbutton" id="s7-4">Run sub 64</button>
-                <button onclick="call subrunx('s7',5)" class="subbutton" id="s7-5">Run sub 65</button>
-                <button onclick="call subrunx('s7',6)" class="subbutton" id="s7-6">Run sub 66</button>
-                <button onclick="call subrunx('s7',7)" class="subbutton" id="s7-7">Run sub 67</button>
-                <button onclick="call subrunx('s7',8)" class="subbutton" id="s7-8">Run sub 68</button>
-                <button onclick="call subrunx('s7',9)" class="subbutton" id="s7-9">Run sub 69</button>
-            </div>
-            <div class="floatright" style="padding-top:1em">
-                <div id="subgroup8" class="subbutton"></div>
-                <button onclick="call subrunx('s8',0)" class="subbutton" id="s8-0">Run sub 70</button>
-                <button onclick="call subrunx('s8',1)" class="subbutton" id="s8-1">Run sub 71</button>
-                <button onclick="call subrunx('s8',2)" class="subbutton" id="s8-2">Run sub 72</button>
-                <button onclick="call subrunx('s8',3)" class="subbutton" id="s8-3">Run sub 73</button>
-                <button onclick="call subrunx('s8',4)" class="subbutton" id="s8-4">Run sub 74</button>
-                <button onclick="call subrunx('s8',5)" class="subbutton" id="s8-5">Run sub 75</button>
-                <button onclick="call subrunx('s8',6)" class="subbutton" id="s8-6">Run sub 76</button>
-                <button onclick="call subrunx('s8',7)" class="subbutton" id="s8-7">Run sub 77</button>
-                <button onclick="call subrunx('s8',8)" class="subbutton" id="s8-8">Run sub 78</button>
-                <button onclick="call subrunx('s8',9)" class="subbutton" id="s8-9">Run sub 79</button>
-            </div>
-            <div class="floatright" style="padding-top:1em">
-                <div id="subgroup9" class="subbutton"></div>
-                <button onclick="call subrunx('s9',0)" class="subbutton" id="s9-0">Run sub 80</button>
-                <button onclick="call subrunx('s9',1)" class="subbutton" id="s9-1">Run sub 81</button>
-                <button onclick="call subrunx('s9',2)" class="subbutton" id="s9-2">Run sub 82</button>
-                <button onclick="call subrunx('s9',3)" class="subbutton" id="s9-3">Run sub 83</button>
-                <button onclick="call subrunx('s9',4)" class="subbutton" id="s9-4">Run sub 84</button>
-                <button onclick="call subrunx('s9',5)" class="subbutton" id="s9-5">Run sub 85</button>
-                <button onclick="call subrunx('s9',6)" class="subbutton" id="s9-6">Run sub 86</button>
-                <button onclick="call subrunx('s9',7)" class="subbutton" id="s9-7">Run sub 87</button>
-                <button onclick="call subrunx('s9',8)" class="subbutton" id="s9-8">Run sub 88</button>
-                <button onclick="call subrunx('s9',9)" class="subbutton" id="s9-9">Run sub 89</button>
-            </div>
-            <div class="floatright" style="padding-top:1em">
-                <div id="subgroup10" class="subbutton"></div>
-                <button onclick="call subrunx('s10',0)" class="subbutton" id="s10-0">Run sub 90</button>
-                <button onclick="call subrunx('s10',1)" class="subbutton" id="s10-1">Run sub 91</button>
-                <button onclick="call subrunx('s10',2)" class="subbutton" id="s10-2">Run sub 92</button>
-                <button onclick="call subrunx('s10',3)" class="subbutton" id="s10-3">Run sub 93</button>
-                <button onclick="call subrunx('s10',4)" class="subbutton" id="s10-4">Run sub 94</button>
-                <button onclick="call subrunx('s10',5)" class="subbutton" id="s10-5">Run sub 95</button>
-                <button onclick="call subrunx('s10',6)" class="subbutton" id="s10-6">Run sub 96</button>
-                <button onclick="call subrunx('s10',7)" class="subbutton" id="s10-7">Run sub 97</button>
-                <button onclick="call subrunx('s10',8)" class="subbutton" id="s10-8">Run sub 98</button>
-                <button onclick="call subrunx('s10',9)" class="subbutton" id="s10-9">Run sub 99</button>
-            </div>
-
-        </div>
-        <div id="subrunner2" class="tabcontent">
-            <input type="BUTTON" value="Refresh page" onclick="subButtons(projectTxt)" class="halfbutton"/>
-            <div class="fleft">
-                <div id="subgroup11" class="subbutton"></div>
-                <button onclick="call subrunx('s11',0)" class="subbutton" id="s11-0">Run sub 0</button>
-                <button onclick="call subrunx('s11',1)" class="subbutton" id="s11-1">Run sub 1</button>
-                <button onclick="call subrunx('s11',2)" class="subbutton" id="s11-2">Run sub 2</button>
-                <button onclick="call subrunx('s11',3)" class="subbutton" id="s11-3">Run sub 3</button>
-                <button onclick="call subrunx('s11',4)" class="subbutton" id="s11-4">Run sub 4</button>
-                <button onclick="call subrunx('s11',5)" class="subbutton" id="s11-5">Run sub 5</button>
-                <button onclick="call subrunx('s11',6)" class="subbutton" id="s11-6">Run sub 6</button>
-                <button onclick="call subrunx('s11',7)" class="subbutton" id="s11-7">Run sub 7</button>
-                <button onclick="call subrunx('s11',8)" class="subbutton" id="s11-8">Run sub 8</button>
-                <button onclick="call subrunx('s11',9)" class="subbutton" id="s11-9">Run sub 9</button>
-            </div>
-            <div class="fleft" style="padding-top:1em">
-                <div id="subgroup12" class="subbutton"></div>
-                <button onclick="call subrunx('s12',0)" class="subbutton" id="s12-0">Run sub 10</button>
-                <button onclick="call subrunx('s12',1)" class="subbutton" id="s12-1">Run sub 11</button>
-                <button onclick="call subrunx('s12',2)" class="subbutton" id="s12-2">Run sub 12</button>
-                <button onclick="call subrunx('s12',3)" class="subbutton" id="s12-3">Run sub 13</button>
-                <button onclick="call subrunx('s12',4)" class="subbutton" id="s12-4">Run sub 14</button>
-                <button onclick="call subrunx('s12',5)" class="subbutton" id="s12-5">Run sub 15</button>
-                <button onclick="call subrunx('s12',6)" class="subbutton" id="s12-6">Run sub 16</button>
-                <button onclick="call subrunx('s12',7)" class="subbutton" id="s12-7">Run sub 17</button>
-                <button onclick="call subrunx('s12',8)" class="subbutton" id="s12-8">Run sub 18</button>
-                <button onclick="call subrunx('s12',9)" class="subbutton" id="s12-9">Run sub 19</button>
-            </div>
-            <div class="fleft" style="padding-top:1em">
-                <div id="subgroup13" class="subbutton"></div>
-                <button onclick="call subrunx('s13',0)" class="subbutton" id="s13-0">Run sub 20</button>
-                <button onclick="call subrunx('s13',1)" class="subbutton" id="s13-1">Run sub 21</button>
-                <button onclick="call subrunx('s13',2)" class="subbutton" id="s13-2">Run sub 22</button>
-                <button onclick="call subrunx('s13',3)" class="subbutton" id="s13-3">Run sub 23</button>
-                <button onclick="call subrunx('s13',4)" class="subbutton" id="s13-4">Run sub 24</button>
-                <button onclick="call subrunx('s13',5)" class="subbutton" id="s13-5">Run sub 25</button>
-                <button onclick="call subrunx('s13',6)" class="subbutton" id="s13-6">Run sub 26</button>
-                <button onclick="call subrunx('s13',7)" class="subbutton" id="s13-7">Run sub 27</button>
-                <button onclick="call subrunx('s13',8)" class="subbutton" id="s13-8">Run sub 28</button>
-                <button onclick="call subrunx('s13',9)" class="subbutton" id="s13-9">Run sub 29</button>
-            </div>
-            <div class="fleft" style="padding-top:1em">
-                <div id="subgroup14" class="subbutton"></div>
-                <button onclick="call subrunx('s14',0)" class="subbutton" id="s14-0">Run sub 30</button>
-                <button onclick="call subrunx('s14',1)" class="subbutton" id="s14-1">Run sub 31</button>
-                <button onclick="call subrunx('s14',2)" class="subbutton" id="s14-2">Run sub 32</button>
-                <button onclick="call subrunx('s14',3)" class="subbutton" id="s14-3">Run sub 33</button>
-                <button onclick="call subrunx('s14',4)" class="subbutton" id="s14-4">Run sub 34</button>
-                <button onclick="call subrunx('s14',5)" class="subbutton" id="s14-5">Run sub 35</button>
-                <button onclick="call subrunx('s14',6)" class="subbutton" id="s14-6">Run sub 36</button>
-                <button onclick="call subrunx('s14',7)" class="subbutton" id="s14-7">Run sub 37</button>
-                <button onclick="call subrunx('s14',8)" class="subbutton" id="s14-8">Run sub 38</button>
-                <button onclick="call subrunx('s14',9)" class="subbutton" id="s14-9">Run sub 39</button>
-            </div>
-            <div class="fleft" style="padding-top:1em">
-                <div id="subgroup15" class="subbutton"></div>
-                <button onclick="call subrunx('s15',0)" class="subbutton" id="s15-0">Run sub 40</button>
-                <button onclick="call subrunx('s15',1)" class="subbutton" id="s15-1">Run sub 41</button>
-                <button onclick="call subrunx('s15',2)" class="subbutton" id="s15-2">Run sub 42</button>
-                <button onclick="call subrunx('s15',3)" class="subbutton" id="s15-3">Run sub 43</button>
-                <button onclick="call subrunx('s15',4)" class="subbutton" id="s15-4">Run sub 44</button>
-                <button onclick="call subrunx('s15',5)" class="subbutton" id="s15-5">Run sub 45</button>
-                <button onclick="call subrunx('s15',6)" class="subbutton" id="s15-6">Run sub 46</button>
-                <button onclick="call subrunx('s15',7)" class="subbutton" id="s15-7">Run sub 47</button>
-                <button onclick="call subrunx('s15',8)" class="subbutton" id="s15-8">Run sub 48</button>
-                <button onclick="call subrunx('s15',9)" class="subbutton" id="s15-9">Run sub 49</button>
-            </div>
-            <div class="floatright">
-                <div id="subgroup16" class="subbutton"></div>
-                <button onclick="call subrunx('s16',0)" class="subbutton" id="s16-0">Run sub 50</button>
-                <button onclick="call subrunx('s16',1)" class="subbutton" id="s16-1">Run sub 51</button>
-                <button onclick="call subrunx('s16',2)" class="subbutton" id="s16-2">Run sub 52</button>
-                <button onclick="call subrunx('s16',3)" class="subbutton" id="s16-3">Run sub 53</button>
-                <button onclick="call subrunx('s16',4)" class="subbutton" id="s16-4">Run sub 54</button>
-                <button onclick="call subrunx('s16',5)" class="subbutton" id="s16-5">Run sub 55</button>
-                <button onclick="call subrunx('s16',6)" class="subbutton" id="s16-6">Run sub 56</button>
-                <button onclick="call subrunx('s16',7)" class="subbutton" id="s16-7">Run sub 57</button>
-                <button onclick="call subrunx('s16',8)" class="subbutton" id="s16-8">Run sub 58</button>
-                <button onclick="call subrunx('s16',9)" class="subbutton" id="s16-9">Run sub 59</button>
-            </div>
-            <div class="floatright" style="padding-top:1em">
-                <div id="subgroup17" class="subbutton"></div>
-                <button onclick="call subrunx('s17',0)" class="subbutton" id="s17-0">Run sub 60</button>
-                <button onclick="call subrunx('s17',1)" class="subbutton" id="s17-1">Run sub 61</button>
-                <button onclick="call subrunx('s17',2)" class="subbutton" id="s17-2">Run sub 62</button>
-                <button onclick="call subrunx('s17',3)" class="subbutton" id="s17-3">Run sub 63</button>
-                <button onclick="call subrunx('s17',4)" class="subbutton" id="s17-4">Run sub 64</button>
-                <button onclick="call subrunx('s17',5)" class="subbutton" id="s17-5">Run sub 65</button>
-                <button onclick="call subrunx('s17',6)" class="subbutton" id="s17-6">Run sub 66</button>
-                <button onclick="call subrunx('s17',7)" class="subbutton" id="s17-7">Run sub 67</button>
-                <button onclick="call subrunx('s17',8)" class="subbutton" id="s17-8">Run sub 68</button>
-                <button onclick="call subrunx('s17',9)" class="subbutton" id="s17-9">Run sub 69</button>
-            </div>
-            <div class="floatright" style="padding-top:1em">
-                <div id="subgroup18" class="subbutton"></div>
-                <button onclick="call subrunx('s18',0)" class="subbutton" id="s18-0">Run sub 70</button>
-                <button onclick="call subrunx('s18',1)" class="subbutton" id="s18-1">Run sub 71</button>
-                <button onclick="call subrunx('s18',2)" class="subbutton" id="s18-2">Run sub 72</button>
-                <button onclick="call subrunx('s18',3)" class="subbutton" id="s18-3">Run sub 73</button>
-                <button onclick="call subrunx('s18',4)" class="subbutton" id="s18-4">Run sub 74</button>
-                <button onclick="call subrunx('s18',5)" class="subbutton" id="s18-5">Run sub 75</button>
-                <button onclick="call subrunx('s18',6)" class="subbutton" id="s18-6">Run sub 76</button>
-                <button onclick="call subrunx('s18',7)" class="subbutton" id="s18-7">Run sub 77</button>
-                <button onclick="call subrunx('s18',8)" class="subbutton" id="s18-8">Run sub 78</button>
-                <button onclick="call subrunx('s18',9)" class="subbutton" id="s18-9">Run sub 79</button>
-            </div>
-            <div class="floatright" style="padding-top:1em">
-                <div id="subgroup19" class="subbutton"></div>
-                <button onclick="call subrunx('s19',0)" class="subbutton" id="s19-0">Run sub 80</button>
-                <button onclick="call subrunx('s19',1)" class="subbutton" id="s19-1">Run sub 81</button>
-                <button onclick="call subrunx('s19',2)" class="subbutton" id="s19-2">Run sub 82</button>
-                <button onclick="call subrunx('s19',3)" class="subbutton" id="s19-3">Run sub 83</button>
-                <button onclick="call subrunx('s19',4)" class="subbutton" id="s19-4">Run sub 84</button>
-                <button onclick="call subrunx('s19',5)" class="subbutton" id="s19-5">Run sub 85</button>
-                <button onclick="call subrunx('s19',6)" class="subbutton" id="s19-6">Run sub 86</button>
-                <button onclick="call subrunx('s19',7)" class="subbutton" id="s19-7">Run sub 87</button>
-                <button onclick="call subrunx('s19',8)" class="subbutton" id="s19-8">Run sub 88</button>
-                <button onclick="call subrunx('s19',9)" class="subbutton" id="s19-9">Run sub 89</button>
-            </div>
-            <div class="floatright" style="padding-top:1em">
-                <div id="subgroup20" class="subbutton"></div>
-                <button onclick="call subrunx('s20',0)" class="subbutton" id="s20-0">Run sub 90</button>
-                <button onclick="call subrunx('s20',1)" class="subbutton" id="s20-1">Run sub 91</button>
-                <button onclick="call subrunx('s20',2)" class="subbutton" id="s20-2">Run sub 92</button>
-                <button onclick="call subrunx('s20',3)" class="subbutton" id="s20-3">Run sub 93</button>
-                <button onclick="call subrunx('s20',4)" class="subbutton" id="s20-4">Run sub 94</button>
-                <button onclick="call subrunx('s20',5)" class="subbutton" id="s20-5">Run sub 95</button>
-                <button onclick="call subrunx('s20',6)" class="subbutton" id="s20-6">Run sub 96</button>
-                <button onclick="call subrunx('s20',7)" class="subbutton" id="s20-7">Run sub 97</button>
-                <button onclick="call subrunx('s20',8)" class="subbutton" id="s20-8">Run sub 98</button>
-                <button onclick="call subrunx('s20',9)" class="subbutton" id="s20-9">Run sub 99</button>
-            </div>
-        </div>
-        <div id="projectinfo" class="tabcontent">
-            <form>
-                <textarea id="InfoArea" rows="18" readonly="" cols="88"></textarea>
-                <div class="floatright">
-                    <input type="BUTTON" value="Refresh from source" onclick="reloadTextInfo(projectInfo)" class="halfbutton"/>
-                    <input type="BUTTON" value="Edit project-info.txt" onclick="call editFileExternal(projectInfo)" class="halfbutton"/>
-                </div>
-            </form>
-            <!-- iframe id="" src="setup/project-info.txt" width="715" height="700" frameborder="2"></iframe> -->
-        </div>
-        <div id="docs" class="tabcontent">
-            <button class="tablinks active" onclick="call OpenTab(doctab,'Xrunner_info')" id="Xrunner_infotab">Introduction</button>
-            <button class="tablinks" onclick="call OpenTab(doctab,'Xrunner_func')" id="Xrunner_functab">xrunner.cmd doc</button>
-            <button class="tablinks" onclick="call OpenTab(doctab,'Xrun_func')" id="Xrun_functab">func.cmd doc</button>
-            <div id="Xrunner_info" class="tabcontent active">
-                <iframe src="index.html" width="715" height="700" frameborder="2"></iframe>
-            </div>
-            <div id="Xrunner_func" class="tabcontent">
-                <iframe src="docs/xrunner-doc.html" width="715" height="700" frameborder="2"></iframe>
-            </div>
-            <div id="Xrun_func" class="tabcontent">
-                <iframe src="docs/func-doc.html" width="715" height="700" frameborder="2"></iframe>
-            </div>
-        </div>
             <div id="expert" class="tabcontent">
-                <button onclick="editFileExternal(projectInfo)" name="LoadValues" id="LoadValues" class="expertbutton">Edit Project-Info.txt</button>
-                <button onclick="editFileExternal(projectTxt)" name="LoadValues" id="LoadValues" class="expertbutton">Edit project.txt</button>
-                <button onclick="editFileExternal('setup\xrun.css')" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrun.css</button>
-                <button onclick="call editFileWithProgram('setup\xrun.vbs',npp)" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrun.vbs</button>
-                <button onclick="editFileExternal('setup\xrun.js')" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrun.js</button>
-                <button onclick="editFileExternal('setup\xrun.ini')" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrun.ini</button>
-                <button onclick="editFileExternal('setup\xrunner.md')" name="LoadValues" id="LoadValues" class="expertbutton">Edit Xrunner.md</button>
-                <button onclick="call editFileWithProgram('Xrunner.hta',xmleditor)" name="LoadValues" id="LoadValues" class="expertbutton">Edit Xrunner.hta</button>
-                <button onclick="editFileExternal('scripts\func.cmd')" name="LoadValues" id="LoadValues" class="expertbutton">Edit func.cmd expert only!</button>
-                <button onclick="editFileExternal('xrunner.cmd')" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrunner.cmd expert only!</button>
-                <button onclick="call editFileWithProgram('scripts\projectvariables-v2.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="expertbutton">Edit projectvariables-v2.xslt</button>
-                <button onclick="call editFileWithProgram('scripts\xrun.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="expertbutton">View xrun.xslt</button>
-                <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="expertbutton">Open Project folder</button>
-                <button onclick="call RunCmd2('start', '', strCurDir)" class="expertbutton">Open Xrunner folder</button>
+                  <button onclick="editFileExternal(projectInfo)" name="LoadValues" id="LoadValues" class="expertbutton">Edit Project-Info.txt</button>
+                  <button onclick="editFileExternal(projectTxt)" name="LoadValues" id="LoadValues" class="expertbutton">Edit project.txt</button>
+                  <button onclick="editFileExternal('setup\xrun.css')" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrun.css</button>
+                  <button onclick="call editFileWithProgram('setup\xrun.vbs',npp)" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrun.vbs</button>
+                  <button onclick="editFileExternal('setup\xrun.js')" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrun.js</button>
+                  <button onclick="editFileExternal('setup\xrun.ini')" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrun.ini</button>
+                  <button onclick="editFileExternal('setup\xrunner.md')" name="LoadValues" id="LoadValues" class="expertbutton">Edit Xrunner.md</button>
+                  <button onclick="call editFileWithProgram('Xrunner.hta',xmleditor)" name="LoadValues" id="LoadValues" class="expertbutton">Edit Xrunner.hta</button>
+                  <button onclick="editFileExternal('scripts\func.cmd')" name="LoadValues" id="LoadValues" class="expertbutton">Edit func.cmd expert only!</button>
+                  <button onclick="editFileExternal('xrunner.cmd')" name="LoadValues" id="LoadValues" class="expertbutton">Edit xrunner.cmd expert only!</button>
+                  <button onclick="call editFileWithProgram('scripts\projectvariables-v2.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="expertbutton">Edit projectvariables-v2.xslt</button>
+                  <button onclick="call editFileWithProgram('scripts\xrun.xslt', xmleditor)" name="LoadValues" id="LoadValues" class="expertbutton">View xrun.xslt</button>
+                  <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="expertbutton">Open Project folder</button>
+                  <button onclick="call RunCmd2('start', '', strCurDir)" class="expertbutton">Open Xrunner folder</button>
             </div>
-        <div id="lastcmd"></div>
-        <div id="version"></div>
-    </body>
+            <div id="lastcmd"></div>
+            <div id="version"></div>
+      </body>
 </html>
