@@ -7,15 +7,19 @@ begin               >                   '<?xml version="1.0" encoding="utf-8"?>'
 
 
 group(main)
-'['                 >                   store(nul) use(section)
-prec(newline) any(char) >               '    <xsl:variable name="' dup
-'_list='            >                   d34 ' select=' d34 'tokenize(' d39 store(endtag) "',' ')" endstore
-'='                 >                   d34 ' select=' d34 d39 store(endtag) "'" endstore
-prec(char) nl       >                   out(endtag) d34 '/>' dup back(1)
-endfile             >                   out(rootout) dup
-nl nl               >                   ''
-
+'[setup'                 >              store(nul) use(section)
+'[tools'                 >              store(nul) use(section)
+prec(newline) any(char)  >              '    <xsl:variable name="' dup
+'_list='                >               d34 ' select=' d34 'tokenize(' d39 store(endtag) "',' ')" endstore
+'='                     >               d34 ' select=' d34 d39 store(endtag) "'" endstore
+prec(char) nl           >               out(endtag) d34 '/>' dup back(1)
+nl nl                   >               ''
+'[active]'              >               store(nul) use(exclude) c This excludes this section
+endfile                 >               out(rootout) dup
 
 
 group(section)
 ']'                 >                   endstore use(main)
+
+group(exclude)
+'[end]'             >                   endstore use(main)
