@@ -5,7 +5,7 @@ BODY {
   margin: 10px 10px 10px 10px;
   font: 11px Verdana;  
 }
-h2 {margin: 6pt 0 6pt 0;}
+h3 {margin: 6pt 0 2pt 0;}
 iframe {margin: 6pt 0 0 0;}
 .widebutton {width:140px}
 .inibutton, .expertbutton {width:300px;clear:left;display:block}
