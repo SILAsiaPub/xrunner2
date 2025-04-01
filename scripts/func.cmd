@@ -325,6 +325,23 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:contextxml
+:: Description: Runs Context on html file with environment
+:: Usage: call :context environment_file infile outfile
+  if defined fatal goto :eof
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set env=%~1
+  call :infile "%~2" %0
+  call :outfile "%inpath%\%inname%.pdf"
+  set newname=%~3
+  @echo %cyan%context --environment=%env% "%infile%"%reset%
+  pushd "%inpath%"
+  call context --environment=%env% "%innameext%" 1> "%inpath%\make-%inname%.log" 2> "%inpath%\error-%inname%.log
+  popd
+  ren "%outfile%" "%newname%"
+  @call :funcend %0
+goto :eof
+
 :copy
 :: Description: Provides copying with exit on failure
 :: Usage: call :copy infile outfile [append] [xcopy]
@@ -624,6 +641,20 @@ goto :eof
   @call :funcendtest %0
 goto :eof
 
+:epubAcecheck
+:: Description: Check Epub file with Ace command line tool
+:: Usage: call :epubAcecheck epubfile report_folder
+:: Updated: 2025-02-25
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :infile "%~1" %0
+  set outdir=%~2
+  call :checkdir "%outdir%"
+  @echo %cyan%ace --force "%infile%" -o "%outdir%"%reset%
+  call ace --force "%infile%" -o "%outdir%"
+  start "Chrome" "%chrome%" "%outdir%\report.html"
+  @call :funcend %func%
+goto :eof
+  
 :epubzip
 :: Description: Use 7zip to build zip an epub file.
 :: Usage: call :epubzip epubfilelocation epubname [epubinclude]
@@ -1195,6 +1226,9 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2'"
   set infile=%~1
   set callingfunc=%~2
+  set inpath=%~dp1
+  set inname=%~n1
+  set innameext=%~nx1
   if not defined infile set infile=%outfile%
   if not exist "%infile%" call :fatal %0 "infile %~nx1 not found for %callingfunc%"
   @if defined info4 echo Info: %green%infile = %infile%%reset%
@@ -1391,6 +1425,25 @@ goto :eof
   if defined last set lastfound=on
 goto :eof
 
+:latex2html
+:: Description: convert Latex to xml
+:: Usage: call :latex2html
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  set infile=%~1
+  call :outfile "%~2" "%projectpath%\tmp\latex.xml"
+  call "%latex2html%"  --dest="%outfile%" "%infile%"
+  @call :funcendtest %0
+goto :eof
+
+:latex2xml
+:: Description: convert Latex to xml
+:: Usage: call :latex2xml
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
+  call :infile "%~1"
+  call :outfile "%~2" "%projectpath%\tmp\latex.xml"
+  call "%latex2xml%"  --dest="%outfile%" "%infile%"
+  @call :funcendtest %0
+goto :eof
 
 :libreconvert
 :: Description: Use Libre office to convert document formats
@@ -1638,6 +1691,29 @@ goto :eof
   rem @echo off
 goto :eof
 
+:make4ht
+:: Description: convert XeLaTeX to html or other format
+:: Usage: call :make4ht infile outfile output_format
+:: Output formats: xhtml html5 odt tei docbook
+:: See also: latex2html, latex2xml, tex2ebook
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-make4ht.epub"
+  call :checkdir "%~dp1\%~2"
+  call :drivepath "%~dp2"
+  set outtype=%~3
+  if not defined outtype set outtype=xhtml
+  call :inccount
+  @rem Can't use double quotes around dir or file name in command line.
+  set curcommand=call make4ht -f %outtype% -x -u -d %~2 %~nx1
+  @echo %cyan%%curcommand%%reset%
+  copy ""
+  pushd "%~dp1"
+  @echo %green%%cd%%reset%
+  call %curcommand%
+  popd
+  @call :funcendtest %0
+goto :eof
+
 :make
 :: Description: Run a make file
 :: Usage: call make [makepath makefile] 
@@ -1646,13 +1722,13 @@ goto :eof
   set makefile=%~2
   pushd "%workpath%"  
   if defined makefile (
-    if defined info2 echo %green%Checking: %makefile%%cyan%
+    if defined info3 echo %green%Checking: %makefile%%cyan%
     call %make% -f %makefile%
   ) else (
     if defined info2 echo %green%Checking: makefile in %workpath%
     call %make%
   )
-  echo %green%------- End check: %reset%
+  if defined info3 echo %green%------- End check: %reset%
   popd
   @call :funcend %0
 goto :eof
@@ -1992,6 +2068,37 @@ goto :eof
 
 :prince
 :: Description: Make PDF using PrinceXML
+:: Usage: call :prince [infile [outfile [css [javascript]]]] [infile2] [infile3] [infile4] [infile5] [infile6] [infile7]
+:: Functions called: infile, outfile, funcend
+:: External program: prince.exe  https://www.princexml.com/
+:: External program: prince
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :infile "%~1" %0
+  call :outfile "%~2" "%projectpath%\output\output.pdf" 
+  set css=%~3
+  set javascript=%~4
+  set infile2=%~5
+  set infile3=%~6
+  set infile4=%~7
+  set infile5=%~8
+  set infile6=%~9
+
+  if defined infile2 set infile="%infile%" "%infile2%" 
+  if defined infile3 set infile="%infile%" "%infile3%" 
+  if defined infile4 set infile="%infile%" "%infile4%" 
+  if defined infile5 set infile="%infile%" "%infile5%"
+  if defined infile6 set infile="%infile%" "%infile6%"
+
+  if defined css set css=-s "%css%"
+  if defined javascript set js= -j "%javascript%"
+  set curcommand=call "%prince%" %css%%js% %infile% -o "%outfile%"
+  @if defined info2 echo %cyan%%curcommand%%reset%
+  call %curcommand%
+  @call :funcendtest %0
+goto :eof
+
+:prince10
+:: Description: Make PDF using PrinceXML
 :: Usage: call :prince [infile [outfile [css]]] [infile2] [infile3] [infile4] [infile5] [infile6] [infile7]
 :: Functions called: infile, outfile, funcend
 :: External program: prince.exe  https://www.princexml.com/
@@ -2014,7 +2121,7 @@ goto :eof
   if defined infile6 set infile="%infile%" "%infile6%"
   if defined infile7 set infile="%infile%" "%infile7%"
   if defined css set css=-s "%css%"
-  set curcommand=call "%prince%" %css% %infile% %infile2% %infile3% %infile4% %infile5% %infile6% %infile7% -o "%outfile%"
+  set curcommand=call "%prince10%" %css% %infile% %infile2% %infile3% %infile4% %infile5% %infile6% %infile7% -o "%outfile%"
   @if defined info2 echo %cyan%%curcommand%%reset%
   call %curcommand%
   @call :funcendtest %0
@@ -2158,6 +2265,19 @@ goto :eof
   @call :funcendtest %0
 goto :eof
 
+:purgecss
+:: Description: Purge css of unneeded css
+:: Usage: call :purgecss cssfile htmlfile
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set cssfile=%~1
+  set htmlfile=%~2
+  set inpathname=%~dpn1
+  call :name %~1
+  set command=purgecss --css "%cssfile%" --content "%htmlfile%" --output "%inpathname%-purged.css" 
+  echo %cyan%%command%%reset%
+  call %command%
+  @call :funcendtest %0
+goto :eof
 
 :python
 :: Description: Run a Python3 script
@@ -2404,6 +2524,42 @@ goto :eof
   @call :funcend %0 %~1
 goto :eof
 
+:tcl
+:: Description: run a tcl script
+:: Usage: call :tcl tclscript parm1 param2 param3 param4
+:: Created: 2025-02-04
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  set script=%projectpath%\scripts\%~1
+  call name "%~1"
+  call :infile "%~2" %0
+  call :outfile "%~3" "%projectpath%\tmp\%group%-%coun%-tcl.html"
+  set param3=%~4
+  set param4=%~5
+  echo %cyan%tclsh "%script%" "%infile%" "%outfile%" "%param3%" "%param4%"%reset%
+  call tclsh "%script%" "%infile%" "%outfile%" "%param3%" "%param4%"
+  @call :funcendtest %0
+goto :eof
+
+:tex2ebook
+:: Description: 
+:: Usage: call :tex2ebook infile outfile output_type
+:: Output type: epub, epub3, mobi, azw and azw3. Default epub3
+:: See also: latex2html, latex2xml, make4ht
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-tex2ebook.epub"
+  call :checkdir "%~dp2"
+  set outtype=%~3
+  if not defined outtype set outtype=epub3
+  call :inccount
+  set curcommand=call tex2ebook -f %outtype% -x -u -d %~dp2 %~nx1
+  @echo %cyan%%curcommand%%reset%
+  copy ""
+  pushd "%~dp1"
+  call %curcommand%
+  popd
+  @call :funcendtest %0
+goto :eof
+
 :tidy
 :: Description: Convert HTML to XHTML
 :: Usage: call :tidy ["infile"] ["outfile"] [outspec(default=asxml)] [encoding(default=utf8)]
@@ -2412,7 +2568,7 @@ goto :eof
 :: Required variables: tidy
   @call :funcbegin %0 "'%~1' '%~2'"
   call :infile "%~1" %0
-  call :outfile "%~2" "%projectpath%\tmp\%group%-%coun%-html-tidy.html"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-html-tidy.html"
   call :inccount
   set outspec=%~3
   set encoding=%~4
@@ -2496,6 +2652,20 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :cct tsv2xml-v2.cct "%~1" "%~2"
   @call :funcend %0
+goto :eof
+
+:tsv2xmltcl
+:: Description: use TCL tsv2xml.tcl to create xml from TSV 
+:: Usage: call :tsv2xmltcl tsvinfile xmloutfile
+:: Created: 2025-02-04
+  call tclsh scripts\tsv2xml.tcl "%~1" "%~2"
+goto :eof
+
+:csv2xmltcl
+:: Description: use TCL tsv2xml.tcl to create xml from TSV 
+:: Usage: call :tsv2xmltcl tsvinfile xmloutfile
+:: Created: 2025-02-04
+  call tclsh scripts\csv2xml.tcl "%~1" "%~2"
 goto :eof
 
 :tsv2multixml
@@ -2660,6 +2830,16 @@ goto :eof
   if not exist "%xmlfile%" call :funcend %0 "XML file not found" & goto :eof
   echo Info: Validating xml
   call "%xml%" val -e -b "%xmlfile%"
+goto :eof
+
+:validatecss
+:: Description: Validates CSS
+:: Usage: call :validatecss htmlfile
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  call :infile "%~1"
+  echo %cyan%call %java% -jar scripts\css-validator.jar "%infile%"%reset%
+  call %java% -jar scripts\css-validator.jar file:///%infile%
+  @call :funcend %0
 goto :eof
 
 :validaterng
@@ -2830,8 +3010,8 @@ goto :eof
   rem if defined params set params=%params:::==%
     )
   if defined fatal goto :eof
-  @if defined info2 echo %cyan%%xml% tr "%script%" "%infile%"%params% ^> "%outfile%"%reset%
-  call "%xml%" tr "%script%" "%infile%"%params% > "%outfile%"   
+  @if defined info2 echo %cyan%%xml% tr "%script%"%params% "%infile%" ^> "%outfile%"%reset%
+  call "%xml%" tr "%script%"%params% "%infile%" > "%outfile%"   
   @call :funcendtest %0
 goto :eof
 

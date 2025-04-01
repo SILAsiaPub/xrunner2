@@ -604,9 +604,11 @@ Sub buildActiveList()
     opt.Value = x
     op = "op" & x
     opdata = ReadIni(xrunini,"active",op)
-    oplabel = Left(opdata, InStr(opdata, ";") - 1)
-    opt.Text = oplabel
-    ActiveProjectChoice.add opt
+    If len(opdata) > zero Then
+      oplabel = Left(opdata, InStr(opdata, ";") - 1)
+      opt.Text = oplabel
+      ActiveProjectChoice.add opt
+    End If
   Next
 End Sub
 '' the following not used.
