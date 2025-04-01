@@ -58,17 +58,20 @@ Name: "{app}\docs"
 Name: "{app}\scripts"
 Name: "{app}\tools"
 Name: "{app}\tools\bin"
-Name: "{app}\tools\saxon"
+;Name: "{app}\tools\saxon"
 Name: "{app}\tools\cct"
 
 [INI]
 ;The following line is different to how it is tested on the computer
 Filename: "{app}\setup\xrun.ini"; Section: "setup"; Key: "projecthome"; String: "{app}\_xrunner_projects"; Flags: createkeyifdoesntexist
 Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "ccw32"; String: "{app}\tools\cct\{#ccwexe}"; Flags: createkeyifdoesntexist
-Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "saxon"; String: "{app}\tools\saxon\{#saxonjar}"; Flags: createkeyifdoesntexist
-Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "java"; String: "java"; Flags: createkeyifdoesntexist
+;Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "saxon"; String: "{app}\tools\saxon\{#saxonjar}"; Flags: createkeyifdoesntexist
+;Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "java"; String: "java"; Flags: createkeyifdoesntexist
 Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "editor"; String: "C:\Windows\System32\notepad.exe"; Flags: createkeyifdoesntexist
 Filename: "{app}\setup\xrun.ini"; Section: "tools"; Key: "make"; String: "{app}\tools\bin\make.exe"; Flags: createkeyifdoesntexist
+Filename: "{app}\setup\xrun.ini"; Section: "active"; Key: "limit"; String: "22"; Flags: createkeyifdoesntexist
+Filename: "{app}\setup\xrun.ini"; Section: "active"; Key: "op0"; String: "current projects;"; Flags: createkeyifdoesntexist
+Filename: "{app}\setup\xrun.ini"; Section: "active"; Key: "op1"; String: "My first project;path_to_project"; Flags: createkeyifdoesntexist
 
 
 
