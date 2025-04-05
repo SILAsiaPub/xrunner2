@@ -5,12 +5,12 @@ Dim coFSO, objShell
 Set objShell = CreateObject("Wscript.Shell")
 Set coFSO = CreateObject("Scripting.FileSystemObject")
 ' Project files
-Dim projIni, projPath, projectTxt, projectInfo, projectxslt, htacmdline, cmdlineproj, report
+Dim projIni, projPath, projectTxt, project, projectnpp, projectppr, projectInfo, projectxslt, htacmdline, cmdlineproj, report
 ' Setup files
-Dim dquote, shell, cmdline, strUserProfile, setupvarxslt, title, xrundata, tskgrp 
+Dim dquote, shell, cmdline, strUserProfile, setupvarxslt, rxslt, title, xrundata, tskgrp 
 Dim xrunini, zero, level, boxlist, tasklen, activelimit
 ' Programs 
-Dim texteditor, program, xmleditor, xrunxslt, npp 
+Dim texteditor, tsveditor, program, xmleditor, xrunxslt, npp 
 Dim WshShell, strCurDir, WScript 
 Dim maintab, subgroup, docstab, doctab, subgrp, subarray, grpindex, grouplabel, sublabel
 ' Unused: xrundata, info1, info2, info3, info4, info5, strPath, labelIni, bConsoleSw, 
@@ -32,6 +32,7 @@ projPath =  ReadIni(xrunini,"setup","projecthome")
 setupvarxslt =  "scripts\projectvariables-v2.xslt"
 xrunxslt =  ReadIni(xrunini,"setup","xrunnerpath") & "\scripts\xrun.xslt"
 texteditor =  ReadIni(xrunini,"tools","editor")
+tsveditor =  ReadIni(xrunini,"tools","npp")
 activelimit =  ReadIni(xrunini,"active","limit")
 npp =  ReadIni(xrunini,"tools","npp")
 xmleditor =  ReadIni(xrunini,"tools","xmleditor")
@@ -228,6 +229,8 @@ Function SelectFolder( myStartFolder )
     If IsObject( objfolder ) Then SelectFolder = objFolder.Self.Path
     ShowSelectedFolder.Value = SelectFolder
     projectTxt = SelectFolder & "\project.txt"
+    projectppr = SelectFolder & "\project.ppr"
+    projectnpp = SelectFolder & "\project.npp"
     If coFSO.FileExists(projectTxt) Then
       projectInfo = SelectFolder & "\project-info.txt"
       buttonShow(projectTxt)
@@ -425,11 +428,33 @@ Sub RunScript(script,var1,var2,var3,var4,var5)
     'CmdPrompt(cmdline)
 End Sub
 
+Function editPsPad()
+	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
+	If coFSO.FileExists(projectppr) Then
+    		cmdline = texteditor & " " & projectppr
+	Else
+		cmdline = texteditor & " " & projectTxt
+	End IF
+    objShell.run(cmdline)
+	cmdline = """" & tsveditor & """ -openSession " & projectnpp
+	MsgBox "cmd: " & cmdline
+	objShell.run(cmdline)
+End Function
+
 Function editFileExternal(file)
 	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
     cmdline = texteditor & " " & file
     objShell.run(cmdline)
 End Function
+
+Function editProjects()
+	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
+    cmdline = texteditor & " " & projectppr
+    objShell.run(cmdline)
+    cmdline = tsveditor & " -openSession " & projectnpp
+    objShell.run(cmdline)
+End Function
+
 
 Sub editFileWithProgram(file,program)
     cmdline = dquote & program & dquote & " " & file
@@ -580,18 +605,21 @@ Sub Window_onLoad
 End Sub
 
 Sub StartActiveProject()
-  Dim activeproj, op, opdata, oppath
+  Dim activeproj, op, opdata, oppath, open
   activeproj = document.getElementById("ActiveProjectChoice").Value
   op = "op" & activeproj
   opdata = ReadIni(xrunini,"active",op)
   oppath = Trim(Mid(opdata, InStr(opdata, ";") + 1))
   projectTxt = oppath & "\project.txt"
+  projectppr = oppath & "\project.ppr"
+  projectnpp = oppath & "\project.npp"
   projectInfo = oppath & "\project-info.txt"
   If coFSO.FileExists(projectTxt) Then
     buttonShow(projectTxt)
     subButtons(projectTxt)
     Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
     Document.getElementById("ShowSelectedFolder").InnerText = oppath
+    open = editPsPad()
     reloadText(projectTxt)
     reloadTextInfo(projectInfo)
   End If
