@@ -293,6 +293,7 @@ goto :eof
 :: Variables created: projectpath scripts cctparam syscmd taskscmd projcmd setupcct funccmd ccw count
 :: Variable cleared: firstxslt
   @call :funcbegin %0 "%~1 %~2 %~3"
+  @echo off
   if "%PUBLIC%" == "C:\Users\Public" (
       rem if "%PUBLIC%" == "C:\Users\Public" above is to prevent the following command running on Windows XP
       rem this still does not work for Chinese characters in the path
@@ -312,10 +313,12 @@ goto :eof
   set xtestt=%xtest% %greenbg%%whiteb% TRUE %reset% -
   set xtestf=%xtest% %redbg% FALSE %reset% -
   set projxsltmake=%projectpath%\projxslt.make
+  set au3=C:\Program Files (x86)\AutoIt3\AutoIt3.exe
   call :detectdateformat
   rem xcopy /D /Y setup\proj-cmd.txt "%projectpath%\scripts"
   xcopy /D /Y setup\*.make "%projectpath%" > nul
   call :makef "%projectpath%\projsetup.make"
+  if exist "%au3%" call "%au3%" save-files.au3
   @if defined info1 echo %green%Setup: complete%reset%
   @if defined info1 echo.
   set /A count=0

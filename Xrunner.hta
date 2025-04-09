@@ -33,10 +33,11 @@
                         <textarea name="DataArea" rows="18" cols="68" readonly=""></textarea>
                   </form>
                   <div class="settings">
-               <input type="BUTTON" value="Refresh from source" onclick="reloadProject(projectTxt)" class="halfbutton"/>
-               <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="halfbutton" >Open Project folder</button>
+               <input type="BUTTON" value="Refresh from source" onclick="UpdateHTA(ShowSelectedFolder.Value)" class="halfbutton"/>
+                <!-- <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="halfbutton" >Open Project folder</button> -->
+               <button onclick="OpenFolder(ShowSelectedFolder.Value)" class="halfbutton" >Open Project folder</button>
                 <!-- <input type="BUTTON" value="Edit project.txt file" onclick="editFileExternal(projectTxt)" class="halfbutton"/> -->
-                 <input type="BUTTON" value="Edit project.txt file" onclick="editPsPad()" class="halfbutton"/> 
+                 <input type="BUTTON" value="Edit project file" onclick="StartProjFiles(ShowSelectedFolder.Value)" class="halfbutton"/> 
                 <!-- <input type="BUTTON" value="Load Project in PSPad and NPP" onclick="editProjects()" class="halfbutton"/> -->
                <table class="feedback">
 						<caption>Show feedback info level:</caption>
