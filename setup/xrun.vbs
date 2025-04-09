@@ -1,11 +1,11 @@
 ' VB Script Document
 Option Explicit
-'         <!--define variables-->
+'  define variables 
 Dim coFSO, objShell
 Set objShell = CreateObject("Wscript.Shell")
 Set coFSO = CreateObject("Scripting.FileSystemObject")
 ' Project files
-Dim projIni, projPath, projectTxt, project, projectnpp, projectppr, projectInfo, projectxslt, htacmdline, cmdlineproj, report
+Dim projIni, projPath, projectTxt, project, projectnpp, projectppr, projectInfo, projectxslt, htacmdline, cmdlineproj, report, projkeyval, projlists
 ' Setup files
 Dim dquote, shell, cmdline, strUserProfile, setupvarxslt, rxslt, title, xrundata, tskgrp 
 Dim xrunini, zero, level, boxlist, tasklen, activelimit
@@ -32,7 +32,7 @@ projPath =  ReadIni(xrunini,"setup","projecthome")
 setupvarxslt =  "scripts\projectvariables-v2.xslt"
 xrunxslt =  ReadIni(xrunini,"setup","xrunnerpath") & "\scripts\xrun.xslt"
 texteditor =  ReadIni(xrunini,"tools","editor")
-tsveditor =  ReadIni(xrunini,"tools","npp")
+tsveditor = """" & ReadIni(xrunini,"tools","npp") & """"
 activelimit =  ReadIni(xrunini,"active","limit")
 npp =  ReadIni(xrunini,"tools","npp")
 xmleditor =  ReadIni(xrunini,"tools","xmleditor")
@@ -206,6 +206,7 @@ Sub WriteIni( myFilePath, mySection, myKey, myValue )
 End Sub
 
 Function SelectFolder( myStartFolder )
+' Modified 2025-04-09 removed section to UpdateHTA()
 ' This function opens a "Select Folder" dialog and will
 ' return the fully qualified path of the selected folder
 ' Argument:
@@ -226,24 +227,12 @@ Function SelectFolder( myStartFolder )
     Set objShell  = CreateObject( "Shell.Application" )
     Set objFolder = objShell.BrowseForFolder( 0, "Select Folder", 0, myStartFolder )
     ' Return the path of the selected folder
-    If IsObject( objfolder ) Then SelectFolder = objFolder.Self.Path
+    If IsObject( objfolder ) Then 
+    SelectFolder = objFolder.Self.Path
     ShowSelectedFolder.Value = SelectFolder
-    projectTxt = SelectFolder & "\project.txt"
-    projectppr = SelectFolder & "\project.ppr"
-    projectnpp = SelectFolder & "\project.npp"
-    If coFSO.FileExists(projectTxt) Then
-      projectInfo = SelectFolder & "\project-info.txt"
-      buttonShow(projectTxt)
-      subButtons(projectTxt)
-      Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
-      reloadText(projectTxt)
-      reloadTextInfo(projectInfo)
-    End If
-
-    'document.getElementById("projecttxt").src = projectTxt
-    'document.getElementById("infoarea").src = projectInfo
-    'document.getElementById("projinfoframe").src = projectInfo
-    'copy()
+	End If
+	call UpdateHTA(SelectFolder)
+	call StartProjFiles(SelectFolder)
     ' Standard housekeeping
     Set objFolder = Nothing
     Set objshell  = Nothing
@@ -428,18 +417,7 @@ Sub RunScript(script,var1,var2,var3,var4,var5)
     'CmdPrompt(cmdline)
 End Sub
 
-Function editPsPad()
-	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
-	If coFSO.FileExists(projectppr) Then
-    		cmdline = texteditor & " " & projectppr
-	Else
-		cmdline = texteditor & " " & projectTxt
-	End IF
-    objShell.run(cmdline)
-	cmdline = """" & tsveditor & """ -openSession " & projectnpp
-	MsgBox "cmd: " & cmdline
-	objShell.run(cmdline)
-End Function
+
 
 Function editFileExternal(file)
 	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
@@ -489,16 +467,7 @@ Function reloadTextInfo(file)
   End If
 End Function
 
-Function reloadProject(file)
-  call reloadText(file)
-  call reloadTextInfo(file)
-  call buttonShow(file)
-  call subButtons(file)
-  Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
-End Function
-
 Sub editArea1(file)
-
   If coFSO.FileExists(file) Then
      'Document.getElementsByTagName(namearea)(0).value = coFSO.OpenTextFile(file).ReadAll()
      document.all.DataArea.value = coFSO.OpenTextFile(file).ReadAll()
@@ -584,48 +553,74 @@ Sub arraypos(thisarray,text)
 End Sub
 
 Sub Window_onLoad
+    ' Modified 2025-04-09 section now in UpdateHTA()
     Self.Resizeto 635, 850
     htacmdline = Split(oHTA.CommandLine, Chr(32))
     if UBound(htacmdline) > 1 then
       cmdlineproj = htacmdline(2)
       if len(cmdlineproj) > 0 then
-          projectTxt = cmdlineproj & "\project.txt"
-          projectInfo = cmdlineproj & "\project-info.txt"
-          If coFSO.FileExists(projectTxt) Then
-            buttonShow(projectTxt)
-            subButtons(projectTxt)
-            Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
-            Document.getElementById("ShowSelectedFolder").InnerText = cmdlineproj
-            reloadText(projectTxt)
-            reloadTextInfo(projectInfo)
-          End If
+	      call UpdateHTA(cmdlineproj)
       End If
     End If
     call buildActiveList()
 End Sub
 
 Sub StartActiveProject()
+  ' does what is needed to take info from the Active list
+  ' Modified: 2025-04-09
   Dim activeproj, op, opdata, oppath, open
   activeproj = document.getElementById("ActiveProjectChoice").Value
   op = "op" & activeproj
   opdata = ReadIni(xrunini,"active",op)
   oppath = Trim(Mid(opdata, InStr(opdata, ";") + 1))
-  projectTxt = oppath & "\project.txt"
-  projectppr = oppath & "\project.ppr"
-  projectnpp = oppath & "\project.npp"
-  projectInfo = oppath & "\project-info.txt"
-  If coFSO.FileExists(projectTxt) Then
-    buttonShow(projectTxt)
-    subButtons(projectTxt)
-    Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
-    Document.getElementById("ShowSelectedFolder").InnerText = oppath
-    open = editPsPad()
-    reloadText(projectTxt)
-    reloadTextInfo(projectInfo)
-  End If
+  call UpdateHTA(oppath)
+  call StartProjFiles(oppath)
+End Sub 
+  
+' Modified so just does opening files and folders. 2025-04-09
+sub StartProjFiles(oppath)
+	' Define all the project's known file names.
+	projectTxt = oppath & "\project.txt"
+	projectppr = oppath & "\project.ppr"
+	projectnpp = oppath & "\project.npp"
+	projkeyval = oppath & "\keyvalue.tsv"
+	projlists = oppath & "\lists.tsv"
+	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
+	If coFSO.FileExists(projectppr) Then
+		cmdline = texteditor & " " & projectppr ' Open the project.ppr file if it exists
+	Else
+		cmdline = texteditor & " " & projectTxt ' Else open the project.txt file
+	End IF
+    objShell.run(cmdline)
+	if coFSO.FileExists(projectnpp) Then
+		cmdline = tsveditor & " -openSession " & projectnpp ' Open the Notepad++ session file if it exists
+		'MsgBox "cmd: " & cmdline
+		objShell.run(cmdline)
+	ElseIf coFSO.FileExists(projkeyval) Then
+		cmdline = tsveditor & " " & projkeyval ' Else open the keyvalue.tsv file
+		objShell.run(cmdline)
+		cmdline = tsveditor & " " & projlists ' and open the lists.tsv file
+	    objShell.run(cmdline)
+	End If
+	call OpenFolder(oppath)
+End Sub
+
+' Extracted from 3 locations 2025-04-09
+Sub UpdateHTA(oppath)
+	projectTxt = oppath & "\project.txt"
+	projectInfo = oppath & "\project-info.txt"
+	If coFSO.FileExists(projectTxt) Then
+		buttonShow(projectTxt)
+		subButtons(projectTxt)
+		Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
+		Document.getElementById("ShowSelectedFolder").InnerText = oppath
+		reloadText(projectTxt)
+		reloadTextInfo(projectInfo)
+	End If
 End Sub
 
 Sub buildActiveList()
+  ' Builds list for Active combo menu list 2025-03
   Dim x, op, opt, opdata, oplabel
   For x = 0 To activelimit
     Set opt = document.createElement("option")
@@ -639,41 +634,14 @@ Sub buildActiveList()
     End If
   Next
 End Sub
-'' the following not used.
-'Function groupLabel(file)
-'  dim x, group, prefix, textlen, curid, label, text
-'  group = "subbutton"
-'  prefix = "sub"
-'  prefix = "sublabel"
-'  For x = 0 To Ubound(lblgrp)
-'    label = lblgrp(x)
-'    curid = prefix & label
-'    text = ReadIni(file,group,curid)
-'    textlen = len(text)
-'    If textlen > zero Then
-'        document.getElementById(curid).style.display = "block"
-'        document.getElementById(curid).InnerText = ltext
-'    End If
-'  Next
-'End Function
 
-'Function buttonSubs(file)
-'  dim x, group, textlen, prefix, text, key, curid
-'  group = "subbutton"
-'  prefix = "sub"
-'  For x = 0 To 199
-'    key = CStr(x)
-'    curid = prefix & key
-'    text = ReadIni(file,group,key)
-'    textlen = len(text)
-'    If textlen > zero Then
-'        document.getElementById(curid).style.display = "block"
-'        document.getElementById(curid).InnerText = text
-'    Else
-'        document.getElementById(curid).style.display = "none"
-'    End If
-'  Next
-''  call groupLabel(file)
-'End Function
+' from coPilot 2025-04-09
+Sub OpenFolder(folderPath)
+    Dim objShell
+    Set objShell = CreateObject("Shell.Application")
+    objShell.Open(folderPath)
+    Set objShell = Nothing
+End Sub
+
 
 
