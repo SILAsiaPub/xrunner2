@@ -1,0 +1,121 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Xrunner2</title>
+</head>
+<body>
+<h1><img alt="xrunner icon" src="../setup/x2.ico" /> Xrunner2</h1>
+<h2>New features</h2>
+<ul>
+<li>Updated backend that should be faster</li>
+</ul>
+<h3>Version differences</h3>
+<ul>
+<li>The control of the tasks is now a single cmd file rather than separate .xrun files that are read individually.</li>
+<li>The source function are kept in separate files</li>
+</ul>
+<h2>Introduction</h2>
+<p>Xrunner2 is a GUI to run projects that would be batch files, that may be simple transformations or complex projects. It is designed to have simpler and more consistent syntax than batch files and command line tools. </p>
+<pre><code>:funcname inputfile outputfile parameters
+</code></pre>
+
+<p>When it open it looks like this when no project is loaded.
+<img alt="Open Xrunner.hta" src="../docs/xrunner2-open.png" width="100%"/></p>
+<p>While is was originally created to run XSLT trnasformation using Saxon, it can also run any command line tool. Xrunner2 only prepares for XSLT transformations when needed, thus making it faster to startup. Inspired by Vimod-Pub but simpler to setup. </p>
+<p>A key feature is it can run multiple tasks in each group for tasks. While in a batch file you have to specify the input and output of each command line tool. Xrunner2 only requires you to specify the first input. It is recommended you specify the last output. See the example below.</p>
+<pre><code>[b]
+b=Press this button to run this set of tasks
+t=:inputfile &quot;%sourcexml%&quot;
+t=:xslt transfom.xslt
+t=:cct changetable.cct
+t=:outputfile &quot;%outxml%&quot; start
+</code></pre>
+
+<p>Xrunner2 differes from Xrunner in that it is much faster to start. The original Xrunner always built a project.xslt file, even if no XSLT transformation was needed. Now Xrunner2 only builds a project.xslt if that file is needed and is either missing or out of date. It uses a Makefile to do this quickly.</p>
+<p>Xrunner2 is all scripts. It can be modified at many points. The GUI HTA file is basically a HTML file with CSS, some Javascript and mostly VBScript. The <strong>xrunner.cmd</strong> file is just a small collection of batch file functions that does the setup, command and control and then runs <strong>func.cmd</strong>. The majority of the content is in the <strong>func.cmd</strong> file that is a library of functions. More functions can be added to that if you need them. Just follow the pattern in ones like <strong>:cct</strong>.</p>
+<p>When you click a button on Xrunner2 GUI it runs <strong>xrunner.cmd</strong> with a number of parameters. 
+1. The location of the project.txt file.
+2. The button that was pressed. One of a-z.
+3. The informatin feed back level. The default is 2. Higher levels give more debugging information.
+4. The last option pause causes the command window to pause otherwise a countdown of 30 secondes is started that will close the window.</p>
+<p>Xrunner2 allows you to have serial tasks run, without the need to specify the input and output file names. That is handled for you. You can just reorder two tasks without needing to update the input and output files. See the <a href="#Examples">Examples section</a>.</p>
+<p>All the variable and tasks and groups of tasks are contained in one <strong>project.txt</strong> file. Other variables for use in XSLT trnasformation can be stored in the <strong>lists.tsv</strong> file or key value pairs stored in the <strong>keyvalue.tsv</strong> file.</p>
+<p>The <strong>project.txt</strong> file is an INI like file. The variabels are kept in the <code>[variables]</code> section. This is a variable name followed by = followed by the value.</p>
+<pre><code>sourcexml=%projectpath%\source\data.xml
+</code></pre>
+
+<p>One key variable does not need to be created and that is <code>%projectpath%</code>. It is created for you. You do not need double quotes on the variable values. Do not have spaces before or after the = sign unless intended.</p>
+<h2>Examples</h2>
+<p>As an example running a XSLT2 transformation with Java and the Saxon JAR file looks like this:</p>
+<pre><code>%java% -jar &quot;%saxon%&quot; -o:&quot;%outfile%&quot; &quot;%infile%&quot; &quot;%script%&quot; %params%
+</code></pre>
+
+<p>But in Xrunner it looks like this:</p>
+<pre><code>t=:xslt %script% &quot;%infile%&quot; &quot;%outfile%&quot; %params%
+</code></pre>
+
+<p>But it can be even simplier if the input file is the output of the last task:</p>
+<pre><code>t=:xslt %script%
+</code></pre>
+
+<p>The input as taken from the previous tasks output and the new output file is named based on the script and the sequence of the task. The advantiage of this system is that tasks can be quickly rearranged in the order without the need to change the input and output file.</p>
+<h2>Setting up a simple project</h2>
+<ul>
+<li>You create a folder in the Projects folder. </li>
+<li>Within that folder create a plain text file called project.txt.</li>
+<li>Create a <code>[variables]</code> section.</li>
+<li>Define your variables.</li>
+</ul>
+<pre><code>[variables]
+title=This is the title that show on the top of Xrunner
+sourcexml=%projectpath%\source\data.xml
+outxml=%projectpath%\output\new-data.xml
+</code></pre>
+
+<ul>
+<li>Create a section for your tasks <code>[a]</code></li>
+<li>Define your task to run starting with the t=</li>
+<li>Then a <code>:</code> and the task type i.e. <code>xslt</code> </li>
+<li>Then the script name and extension that is located in the <code>scripts</code> folder of the project.</li>
+</ul>
+<pre><code>[a]
+button=Press this button to run this set of tasks
+t=:xslt transfom.xslt &quot;%sourcexml%&quot;
+t=:cct changetable.cct &quot;&quot; &quot;%outxml%&quot;
+</code></pre>
+
+<p>or it can be written</p>
+<pre><code>[b]
+button=Press this button to run this set of tasks
+t=:inputfile &quot;%sourcexml%&quot;
+t=:xslt transfom.xslt
+t=:cct changetable.cct
+t=:outputfile &quot;%outxml%&quot; start
+</code></pre>
+
+<ul>
+<li>In the first example <code>[a]</code>, looking at the line: <code>t=:xslt transfom.xslt "%sourcexml%"</code> this has no output file specified because the file naming will happen automatically. In the second <code>t=:cct changetable.cct "" "%outxml%"</code> the empty double quotes use the output from the previous task.</li>
+<li>The second example <code>[b]</code> demonstrates how you can just specify the start and end file and have the file passed to the next task without worrying about the naming. The output file can also be started by the relevant associated program by adding <code>start</code> as the second parameter.</li>
+<li>The number of sections for task groups is limited to <code>a-z</code>.</li>
+<li>You can specify sub tasks groups by starting them with a name that is not one of the <code>a-z</code> single letters <code>[subtask]</code>. This is handy when running a loop and passing a file to the same set of tasks.</li>
+</ul>
+<pre><code>[c]
+b=rename files
+t=:loopfiles renamefile &quot;%projectpath%\source\*.sfm&quot;
+
+[renamefile]
+t=:name &quot;%~1&quot;
+t=:cmd &quot;ren '%~1' '%name%.newext'&quot; &quot;&quot; &quot;%projectpath%\source&quot;
+</code></pre>
+
+<ul>
+<li>Following the ':loopfiles' we specify the name of the sub task group to run, then we specify the files to to be passed one at a time to the <code>[renamefile]</code>.</li>
+<li>In the <code>[renamefile]</code> group, first we get the filename with out the extension.</li>
+<li>Then we rename that file defined by <code>%~1</code> to its name and the new extension.</li>
+<li>Note after the :cmd there are three sets of double quotes.</li>
+<li>First is the command to be run, THe singel quotes are converted to double quotes incase the file names have spaces in them.</li>
+<li>Second the empty double quotes are where you check if the file exists. As it is empty that checking is not done.</li>
+<li>The third double quotes specify where the command is to be run. If this is absent and the pathe is not spedified before the <code>%~1</code> then it will look where Xrunner2 is installed.</li>
+</ul>
+</body>
+</html>

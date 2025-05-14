@@ -47,7 +47,7 @@ tmp/lists.xml: lists.tsv
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\lists2xml.cct" -o "tmp\lists.xml" "lists.tsv"
 
 tmp/keyvalue.xml: keyvalue.tsv
-	@echo $(cyan)Updated: list.xml$(reset)
+	@echo $(cyan)Updated: keyvalue.xml$(reset)
 	@if not exist keyvalue.tsv type nul > keyvalue.tsv
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\keyvalue2xml.cct" -o "tmp\keyvalue.xml" "keyvalue.tsv"
 
