@@ -2079,8 +2079,6 @@ goto :eof
   set outfile=%~1
   set outname=%~n1
   set var2=%~2
-  seÿ va ꀻ翴 ~3
-  set var4=%~4
   rem if defined var2 set %var2%=%~1
   if defined fatal goto :eof
   call :checkdir "%outfile%"
