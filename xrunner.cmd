@@ -318,7 +318,9 @@ goto :eof
   rem xcopy /D /Y setup\proj-cmd.txt "%projectpath%\scripts"
   xcopy /D /Y setup\*.make "%projectpath%" > nul
   call :makef "%projectpath%\projsetup.make"
+  set curerrorlevel=%errorlevel%
   if exist "%au3%" call "%au3%" save-files.au3
+  if %curerrorlevel%. neq %errorlevel%. echo %red%Autoit3 error from script save-files.au3%reset% & set errorlevel=0
   @if defined info1 echo %green%Setup: complete%reset%
   @if defined info1 echo.
   set /A count=0

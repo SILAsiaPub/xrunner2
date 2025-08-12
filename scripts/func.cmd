@@ -1,3 +1,32 @@
+:aceepubcheck
+:: Description: Checks the Accesibility of the epub for errors
+:: Usage: call :aceepubcheck "epub-path-name" "output_folder"
+:: Purpose: Generates a report and loads into a browser
+:: External apps: ace.cmd an NPM script https://daisy.github.io/ace/getting-started/installation/
+:: Note: ace.cmd is in the Path because of the NPM installation.
+:: Functions called: funcbegin funcend
+:: Created: 2025-04-15
+  @call :funcbegin %0 "'%~1' '%~2' %~3"
+  call :infile "%~1"
+  set outdir=%~2
+  set indir=%~dp1
+  call :checkdir "%outdir%"
+  rem echo %cyan%call ace.cmd -f -o "%outdir%" "%infile%"%rese%
+  echo %cyan%call node.exe C:\Users\india\AppData\Roaming\npm\node_modules\@daisy\ace\bin\ace.js  -f -o "%outdir%" "%infile%"%rese%
+  pushd "%indir%"
+  call node.exe %USERPROFILE%\AppData\Roaming\npm\node_modules\@daisy\ace\bin\ace.js -o "%outdir%" -t "D:\temp" -f "%infile%"
+  popd
+  call :getfiledatetime "%~1" d1
+  call :getfiledatetime "%outdir%\report.html" d2
+  rem call ace.cmd -f -o "%outdir%" "%infile%"
+  if %d2%. gtr %d1%. (
+    start "Ace_report" "%outdir%\report.html"
+  ) else (
+    @echo %red%Error: Report file not created.%reset%
+  )
+  @call :funcend %0
+goto :eof
+
 :ampmhour
 :: Description: Converts AM/PM time to 24hour format. 
 :: Usage: call :ampmhour hours ampm
@@ -513,6 +542,23 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:diff
+:: Description: Make a diff file of two files
+:: Usage: call :diff file1 file2 outfile
+:: Make use of: diff.exe from Unixutils https://sourceforge.net/projects/unxutils/
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' "
+  set file1=%~1
+  set file2=%~2
+  set file2name=%~n2
+  set outfile=%~3
+  call :date
+  if not defined file2 echo %red%You must have two files as imput.%reset% & goto :eof
+  if not defined outfile set outfile=%projectpath%\checks\diff\%file2nam%-%curisodatetime%.diff
+  call :checkdir "%outfile%"
+  %cd%\tools\bin\diff.exe "%file1%" "%fiel2%" > "%outfile%"
+  @call :funcendtest %0
+goto :eof
+
 :ifnewerdofunc
 :: Description: Compares two file modified date-time and runs a function if true
 :: Usage: call :dofuncifgreater file1 file2 :ifnewfunc [funcparam1 funcparam2 funcparam3 funcparam4 funcparam5 funcparam6]
@@ -520,7 +566,7 @@ goto :eof
   set f1=%~1
   set f2=%~2
   set ifnewfunc=%~3
-  set param4=%~4
+  seÿ pa ꀻ翴 =%~4
   set param5=%~5
   set param6=%~6
   set param7=%~7
@@ -615,12 +661,26 @@ goto :eof
 :: Updated: 2024-06-25
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1" %0
+  call :name "%~1"
   call :outfile "%~2" "%projectpath%\checks\epub-report.txt" 
+  set tempout=%projectpath%\tmp\epubrpt.txt
+  set cctcommand="%ccw%" -u -b %cctparam% -t "epub-shorten-report.cct" -o "%outfile%" "%tempout%"
+  @if defined info2 echo %cyan%%java% -jar "%epubcheckjar%" "%infile%" 2^> "%tempout%"%reset%
+  %java% -jar "%epubcheckjar%" %infile% 2> "%tempout%"
+  call :movedate "%outfile%" "%projectpath%\checks\epubcheck"
+  pushd "%scripts%"
+  call %cctcommand%
+  popd
+  @call :funcendtest %0
+goto :eof
+
+:scrapepubcheck
   set tempout=%projectpath%\tmp\epubrpt.txt
   rem set oldout=%projectpath%\tmp\epub-old-report.txt
   set dateout=%projectpath%\tmp\dateout.txt
   call :checkdir "%tempout%"
   rem call :date
+  echo -- %name% -- >> "%outfile%"
   echo. >> "%outfile%"
   if %dateformat%. == 0. echo %date:~10,4%-%date:~4,2%-%date:~7,2% %time:~0,5%> "%outfile%"
   if %dateformat%. == 1. echo %date:~10,4%-%date:~7,2%-%date:~4,2% %time:~0,5%> "%outfile%"
@@ -630,15 +690,14 @@ goto :eof
   %java% -jar "%epubcheckjar%" %infile% 2> "%tempout%"
   set cctcommand="%ccw%" -u -b %cctparam% -t "epub-shorten-report.cct" -o "%tempout%2" "%tempout%"
   @if defined info2 echo %cyan%%cctcommand%%reset%
-  pushd "%scripts%"
-  call %cctcommand%
-  popd
+  rem pushd "%scripts%"
+  rem call %cctcommand%
+  rem popd
   @if defined info3 echo %cyan%type "%tempout%2" ^>^> "%outfile%"%reset%
   type "%tempout%2" >> "%outfile%"
   @if defined info3 echo.
   @if defined info3 echo %cyan%type "%outfile%.prev" ^>^> "%outfile%"%reset%
   type "%outfile%.prev" >> "%outfile%"
-  @call :funcendtest %0
 goto :eof
 
 :epubAcecheck
@@ -659,35 +718,39 @@ goto :eof
 :: Description: Use 7zip to build zip an epub file.
 :: Usage: call :epubzip epubfilelocation epubname [epubinclude]
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  rem if not exist "%7zip%" echo %red%7zip not found.%reset% & goto :eof
   setlocal DISABLEDELAYEDEXPANSION
   xcopy /D/Y "%cd%\setup\!mimetype" "%projectpath%\output"
   set hostpath=%1
   set epubname=%2
   set epubinclude=%3
-  if not defined epubinclude (set epubinclude=..\epub-add.list & xcopy /D/Y "%cd%\setup\epub-add.list" "%projectpath%\output")
+  if not defined epubinclude (
+    set epubinclude=..\epub-add.list 
+    if not exist "%projectpath%\output\epub-add.list" xcopy /D/Y "%cd%\setup\epub-add.list" "%projectpath%\output"
+    )
   rem if not exist "%epubinclude%" call :fatal %0 "Epub include file not found!" & goto :eof
   set hostpath=%hostpath:"=%
   set epubname=%epubname:"=%
   set errorlevel=
-  call :outfile "%hostpath%\%epubname%.epub"
+  call :outfile "%hostpath%\%epubname%.epub" "%projectpath%\output\%title: =_%.epub"
   @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%.epub%reset%
   pushd "%hostpath%\%epubname%"
   call :date
-  if exist ..\7zip-epub-build-prev.log del ..\7zip-epub-build-prev.log
-  if exist ..\7zip-epub-build-errors-prev.log del ..\7zip-epub-build-errors-prev.log
-  ren ..\7zip-epub-build.log 7zip-epub-build-prev.log
-  ren ..\7zip-epub-build-errors.log 7zip-epub-build-errors-prev.log
+  rem if exist ..\7zip-epub-build-prev.log del ..\7zip-epub-build-prev.log
+  rem if exist ..\7zip-epub-build-errors-prev.log del ..\7zip-epub-build-errors-prev.log
+  rem ren ..\7zip-epub-build.log 7zip-epub-build-prev.log
+  rem ren ..\7zip-epub-build-errors.log 7zip-epub-build-errors-prev.log
   echo ========== %curisodatetime% ========== > ..\7zip-epub-build.log
   echo ========== %curisodatetime% ========== > ..\7zip-epub-build-errors.log
-  "C:\Program Files\7-Zip\7z.exe" a -t* ..\%epubname%.epub ..\!mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
+  "%zip%" a -t* ..\%epubname%.epub ..\!mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Added !mimetype to zip" "Error adding !mimetype to zip"
-  "C:\Program Files\7-Zip\7z.exe" u -tzip ..\%epubname%.epub @%epubinclude% 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
+  "%zip%" u -tzip ..\%epubname%.epub @%epubinclude% 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Added content to zip" "Error adding content to zip"
-  "C:\Program Files\7-Zip\7z.exe" rn ..\%epubname%.epub !mimetype mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
+  "%zip%" rn ..\%epubname%.epub !mimetype mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
   call :errortest 0 "Renamed file !mimetype to mimetype in zip" "Error renaming file !mimetype to mimetype in zip"
-  type ..\7zip-epub-build-prev.log >> ..\7zip-epub-build.log
-  type ..\7zip-epub-build-errors-prev.log >> ..\7zip-epub-build-errors.log
   popd
+  call :filedate %projectpath%\output\7zip-epub-build.log "%projectpath%\checks\7zip"
+  call :filedate %projectpath%\output\7zip-epub-build-errors.log "%projectpath%\checks\7zip"
   set errorlevel=
   SETLOCAL ENABLEDELAYEDEXPANSION
   @call :funcendtest %0
@@ -766,14 +829,32 @@ goto :eof
 goto :eof
 
 :filedate
-:: Description: Get the file date and time in usable string
-:: Usage: call :filedate infile varname
+:: Description: Add date to end of filename can move or rename
+:: Usage: call :filedate infile [outpath]
+:: Updated: 2025-06-30; 2025-07-01
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1"
   set s=%~t1
-  set numb=%s:~8,2%%s:~3,2%%s:~0,2%%s:~11,2%%s:~14,2%
-  set %~2=%numb%
-  set i%~2=%green%DateTime: %yellow%%numb%%reset%
-  @if defined info3 echo %green%DateTime: %yellow%%numb% %green%%infile:~40%%reset%
+  set outpath=%~dp1
+  rem set outpath=%~2
+  set outvar=%~2
+  rem echo %magenta%File date: %~t1 %reset%
+  set numb=%s:~6,4%-%s:~3,2%-%s:~0,2%T%s:~11,2%%s:~14,2%
+  rem if not defined outpath set outpath=%indrivepath%
+  set outname=%~n1_%numb%%~x1
+  set %outvar%name=%~n1_%numb%%~x1
+  set outfile=%outpath%\%outname%
+  set filedated=%outfile%
+  if defined info2 echo %cyan%ren "%infile%" "%outname%" %reset%
+  if defined outvar set !outvar!=%outfile%
+  ren "%infile%" "%outname%"
+  echo %!outvar!name%> %projectpath%\output\%outvar%.txt
+rem  if "%outpath%" neq "%indrivepath%" (
+rem    call :checkdir "%outpath%"
+rem    if defined info2 echo %cyan%move /Y "%indrivepath%\%outname%" "%outpath%" %reset%
+rem    move /Y "%indrivepath%\%outname%" "%outpath%"
+rem  ) 
+  @call :funcendtest %0
 goto :eof
 
 :funcbegin
@@ -798,7 +879,7 @@ goto :eof
   @set message2=%~3
   @if defined message1 echo %green%Info: %message1%%reset%
   @if defined message2 echo %green%Info: %message2%%reset%
-  @if defined info4 echo %magenta%------------------------------------ %func% %funcendtext%%reset%
+  @if defined info4 echo %magenta%------------------------------------ %func% %outfile:~-30% %funcendtext%%reset%
   @if defined pausefunc FOR %%s IN (%pausefunc%) DO if "%%s" == "%funcname%" echo ========= %func% paused for review ========= & pause
   @rem the following form of %func:~1% removes the colon from the begining of the func.
   @if defined echofunc FOR %%s IN (%echofunc%) DO @if "%%s" == "%funcname%" echo ========= %func% echo switched OFF ========= & echo off
@@ -816,7 +897,7 @@ goto :eof
   @if defined outfile if not exist "%outfile%" Echo %redbg%Task failed: Output file not created! %reset%
   @if defined outfile if not exist "%outfile%" set skiptasks=on  & if not defined unittest pause
   @if defined info2 if exist "%outfile%" echo.
-  @call :funcend  %0
+  @call :funcend  %0 "%outfile%"
 @goto :eof
 
 :getfiledatetime
@@ -1011,7 +1092,7 @@ goto :eof
     %multivar:'="%
     rem %param2% %param3% %param4% %param5% %param6%     
   ) else (
-    if defined info3 echo %xtestf% %nameext% does not exist. %green%Action:%reset% none.
+    if defined info2 echo %xtestf% %nameext% does not exist. %green%Action:%reset% none.
   )
   @call :funcend %0
 goto :eof
@@ -1417,6 +1498,27 @@ echo Please set the JAVA_HOME variable in your environment to match the
 echo location of your Java installation.
 goto :eof
 
+:kindleview
+:: Description: Convert epub to kpf file and show it
+:: Usage: call :kindleview infile
+  @call :funcbegin %0
+  call :infile %~1
+  echo %cyan%start "kindlepreviewer" kindlepreviewer.bat "%infile%" -showpreview%reset%
+  start "kindlepreviewer" kindlepreviewer.bat "%infile%" -showpreview
+  @call :funcend %0
+goto :eof
+
+:kindlelog
+:: Description: Evaluate epub generating a log with psudo conversion to kpf
+:: Usage: call :kindlelog infile
+  @call :funcbegin %0
+  call :infile %~1
+  call :checkdir "%projectpath%\checks\kindlelog"
+  echo %cyan%call kindlepreviewer.bat "%infile%" -log -output "%projectpath%\checks\kindlelog"%reset%
+  call kindlepreviewer.bat "%infile%" -log -output "%projectpath%\checks\kindlelog"
+  @call :funcend %0
+goto :eof
+
 :last
 :: Description: Find the last parameter in a set of numbered params. Usually called by a loop.
 :: Usage: call :last par_name number
@@ -1437,11 +1539,14 @@ goto :eof
 
 :latex2xml
 :: Description: convert Latex to xml
-:: Usage: call :latex2xml
+:: Usage: call :latex2xml infile [outfile]
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
   call :infile "%~1"
   call :outfile "%~2" "%projectpath%\tmp\latex.xml"
+  set inpath=%~dp1
+  pushd "%inpath%"
   call "%latex2xml%"  --dest="%outfile%" "%infile%"
+  popd
   @call :funcendtest %0
 goto :eof
 
@@ -1693,24 +1798,26 @@ goto :eof
 
 :make4ht
 :: Description: convert XeLaTeX to html or other format
-:: Usage: call :make4ht infile outfile output_format
+:: Usage: call :make4ht infile outfile output_format output_path
 :: Output formats: xhtml html5 odt tei docbook
 :: See also: latex2html, latex2xml, tex2ebook
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-make4ht.epub"
-  call :checkdir "%~dp1\%~2"
-  call :drivepath "%~dp2"
-  set outtype=%~3
+  call :checkdir "%~dp3"
+  call :infile "%~1"
+  set outtype=%~2
+  set outpath=%~3
   if not defined outtype set outtype=xhtml
+  if not defined outpath set outpath=%projectpath%\output\xhtml
   call :inccount
   @rem Can't use double quotes around dir or file name in command line.
-  set curcommand=call make4ht -f %outtype% -x -u -d %~2 %~nx1
+  set curcommand=call make4ht -f %outtype% -x -u -d %outpath% %infile%
   @echo %cyan%%curcommand%%reset%
-  copy ""
-  pushd "%~dp1"
-  @echo %green%%cd%%reset%
+  rem copy ""
+  rem pushd "%~dp1"
+  rem @echo %green%%cd%%reset%
   call %curcommand%
-  popd
+  rem popd
   @call :funcendtest %0
 goto :eof
 
@@ -1852,6 +1959,20 @@ goto :eof
   move /Y "%~1" "%~2"
 goto :eof
 
+:movedate
+:: Description: Moves a file to a new folder and adds the date and time to the file name.
+:: Usage: call :movedate infile outpath
+  set file=%~1
+  set outpath=%~2
+  set name=%~n1
+  set ext=%~x1
+  if not exist "%file%" goto :eof
+  for /f "tokens=1,2 delims=," %%A in ('powershell -command "(Get-Item '%file%').CreationTime.ToString('yyyy-MM-dd_HH-mm-ss')"') do (
+      set "datetime=%%A"
+  )
+  move "%file%" "%outpath%\%name%_%datetime%%ext%"
+goto :eof
+
 :multivarlist
 :: Descriptions: if varaible string contains a space put double quotes around it.
 :: Usage: call quotevar var_name start_numb end_numb
@@ -1949,27 +2070,28 @@ goto :eof
 
 :outputfile
 :: Description: Copies last out file to new name. Used to make a static name other tasklists can use.
-:: Usage: :outputfile drive:\path\file.ext [start] [validate] [copy]
+:: Usage: :outputfile drive:\path\file.ext [start|diff|copy]
 :: Functions called: checkdir, funcend, validate
   if defined fatal goto :eof
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  set curfile=%outfile%
   set infile=%outfile%
   set outfile=%~1
+  set outname=%~n1
   set var2=%~2
-  set var3=%~3
+  seÿ va ꀻ翴 ~3
   set var4=%~4
-  if defined var2 set %var2%=%~1
+  rem if defined var2 set %var2%=%~1
   if defined fatal goto :eof
   call :checkdir "%outfile%"
-  if not defined var4 (
-    move /Y "%infile%" "%outfile%" >> log.txt
-  ) else ( 
+  call :date
+  if "%var2%" == "diff" call :diff "%curfile%" "%outfile%" "%projectpath%\checks\diff\%outname%-%curisodatetime%.diff"
+  if "%var2%" == "copy" (
     call :copy "%infile%" "%outfile%"
+  ) else ( 
+    move /Y "%infile%" "%outfile%" >> log.txt
   )
   if "%var2%" == "start" if exist "%outfile%" start "" "%outfile%"
-  if "%var3%" == "start" if exist "%outfile%" start "" "%outfile%"
-  if "%var2%" == "validate" call :validate "%outfile%"
-  if "%var3%" == "validate" call :validate "%outfile%"
   @call :funcendtest %0 Renamed:
 goto :eof
 
@@ -2530,7 +2652,7 @@ goto :eof
 :: Created: 2025-02-04
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
   set script=%projectpath%\scripts\%~1
-  call name "%~1"
+  call :name "%~1"
   call :infile "%~2" %0
   call :outfile "%~3" "%projectpath%\tmp\%group%-%coun%-tcl.html"
   set param3=%~4
@@ -2538,6 +2660,12 @@ goto :eof
   echo %cyan%tclsh "%script%" "%infile%" "%outfile%" "%param3%" "%param4%"%reset%
   call tclsh "%script%" "%infile%" "%outfile%" "%param3%" "%param4%"
   @call :funcendtest %0
+goto :eof
+
+:scripttest
+:: Description: Testing various script types
+:: Usage: call :scripttest [xslt|xpath|cct] script infile outfile
+  call :%stype% %tscript% "%projectpath%\%tinput%" "%projectpath%\%tresult%"
 goto :eof
 
 :tex2ebook
@@ -2780,8 +2908,8 @@ goto :eof
   set nameext=%~nx1
   call :outpath  "%~2"
   if defined info2 echo %green%Checking: %nameext% %reset%
-  if defined info2 echo %green%Source: %~1 %reset%
-  if defined info2 echo %green%Target: %outpath% %reset%
+  if defined info3 echo %green%Source: %~1 %reset%
+  if defined info3 echo %green%Target: %outpath% %reset%
   xcopy /D/Q/Y "%infile%" "%outpath%"
   set prevpath=%outpath%
   @call :funcend %0
@@ -2789,7 +2917,7 @@ goto :eof
 
 :sync
 :: Description: Syncronizes two files to the latest version
-:: Usage: call :synce file1 file2
+:: Usage: call :sync file1 file2
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
   set f1=%~1
   set f1p=%~dp1
@@ -2809,10 +2937,10 @@ goto :eof
     )
   if not exist "%f1p%" md "%f1p%" & echo %green%Created: %f1p% folder%reset%
   if not exist "%f2p%" md "%f2p%" & echo %green%Created: %f2p% folder%reset%
-  if %s1%%s2%. == -12. echo %cyan%Copied: %f2n%    2 ^> 1%reset% &copy /Y "%f2%" "%f1p%" & echo Copied: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
-  if %s1%%s2%. == 1-2. echo %cyan%Copied: %f1n%    1 ^> 2%reset% &copy /Y "%f1%" "%f2p%" & echo Copied: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
-  call :filedate "%~1" d1
-  call :filedate "%~2" d2
+  if %s1%%s2%. == -12. echo %cyan%Copied: %f2n%    2 ^> 1%reset% &copy /Y "%f2%" "%f1p%" > nul & echo Copied: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
+  if %s1%%s2%. == 1-2. echo %cyan%Copied: %f1n%    1 ^> 2%reset% &copy /Y "%f1%" "%f2p%" > nul & echo Copied: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
+  call :getfiledatetime "%~1" d1
+  call :getfiledatetime "%~2" d2
   if %d1%. gtr %d2%. echo %cyan%Updated: %f1n%    1 ^> 2%reset% &xcopy /D/Q/Y "%f1%" "%f2%" & echo Updated: %f1n% from %f1p% to %f2p% >> "%projectpath%\checks\sync.log"
   if %d2%. gtr %d1%. echo %cyan%Updated: %f1n%    2 ^> 1%reset% &xcopy /D/Q/Y "%f2%" "%f1%" & echo Updated: %f2n% from %f2p% to %f1p% >> "%projectpath%\checks\sync.log"
   set prevpath=%outpath%
@@ -2823,13 +2951,10 @@ goto :eof
 :: Description: Validate an XML file
 :: Usage: call :validate "xmlfile"
 :: Depends on: External program 'xml.exe' from  XMLstarlet http://xmlstar.sourceforge.net/
-  set xmlfile=%~1
-  set isxml=%outfile:~-3%
-  if not defined xmlfile if "%isxml%" == "xml" set xmlfile=%outfile%
-  if not defined xmlfile call :funcend %0 "xml file parameter missing" & goto :eof
-  if not exist "%xmlfile%" call :funcend %0 "XML file not found" & goto :eof
+  call :infile "%~1"
+  if not exist "%infile%" call :funcend %0 "XML file not found" & goto :eof
   echo Info: Validating xml
-  call "%xml%" val -e -b "%xmlfile%"
+  call "%xml%" val -e -b "%infile%"
 goto :eof
 
 :validatecss
@@ -2929,7 +3054,7 @@ goto :eof
   set script=%projectpath%\scripts\%scriptname%
   if not exist "%script%" call :fatal %0 "Missing xquery script!"
   if defined allparam set param=%allparam:'="%
-  set curcommand="%java%" -jar "%saxon%" net.sf.saxon.Query "%script%" -o:"%outfile%" -s:"%infile%" %param%
+  set curcommand="%java%" -jar "%saxon%" net.sf.saxon.Query -o:"%outfile%" -s:"%infile%" "%script%" %param%
   @if defined info2 echo %cyan%%curcommand%%reset%
   call %curcommand%
   @call :funcendtest %0

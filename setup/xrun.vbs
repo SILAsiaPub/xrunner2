@@ -5,10 +5,10 @@ Dim coFSO, objShell
 Set objShell = CreateObject("Wscript.Shell")
 Set coFSO = CreateObject("Scripting.FileSystemObject")
 ' Project files
-Dim projIni, projPath, projectTxt, project, projectnpp, projectppr, projectInfo, projectxslt, htacmdline, cmdlineproj, report, projkeyval, projlists
+Dim projIni, projPath, projectTxt, project, projectnpp, projectppr, projectInfo, projectxslt, htacmdline, cmdlineproj, report, projkeyval, projlists, openassocfile
 ' Setup files
 Dim dquote, shell, cmdline, strUserProfile, setupvarxslt, rxslt, title, xrundata, tskgrp 
-Dim xrunini, zero, level, boxlist, tasklen, activelimit
+Dim xrunini, zero, level, boxlist, tasklen, activelimit, selectedStype
 ' Programs 
 Dim texteditor, tsveditor, program, xmleditor, xrunxslt, npp 
 Dim WshShell, strCurDir, WScript 
@@ -18,7 +18,7 @@ Set WshShell = CreateObject("WScript.Shell")
 strCurDir    = WshShell.CurrentDirectory
 tskgrp =  Array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
 boxlist = Array("Checkbox1","Checkbox2","Checkbox3","Checkbox4","Checkbox5")
-maintab = Array("project","subrunner1","subrunner2","projectinfo","docs","expert")
+maintab = Array("project","subrunner1","subrunner2","projectinfo","docs","expert","testing")
 doctab = Array("Xrunner_info","Xrunner_func","Xrun_func")
 sublabel = "sub"
 subgrp = Array("s1","s2","s3","s4","s5","s6","s7","s8","s9","s10","s11","s12","s13","s14","s15","s16","s17","s18","s19","s20")
@@ -228,8 +228,8 @@ Function SelectFolder( myStartFolder )
     Set objFolder = objShell.BrowseForFolder( 0, "Select Folder", 0, myStartFolder )
     ' Return the path of the selected folder
     If IsObject( objfolder ) Then 
-    SelectFolder = objFolder.Self.Path
-    ShowSelectedFolder.Value = SelectFolder
+		SelectFolder = objFolder.Self.Path
+		ShowSelectedFolder.Value = SelectFolder
 	End If
 	call UpdateHTA(SelectFolder)
 	call StartProjFiles(SelectFolder)
@@ -349,6 +349,19 @@ Function subbuttonHide()
   Next
 End Function
 
+Sub OnSelectChange()
+    selectedStype = document.getElementsByName("stype")(0).value
+End Sub
+
+Function testscript()
+  Dim ppath, tscript, tinput, tresult
+  ppath = document.getElementsByName("ShowSelectedFolder")(0).value
+  tscript = document.getElementsByName("tscript")(0).value
+  tinput = document.getElementsByName("tinput")(0).value
+  tresult = document.getElementsByName("tresult")(0).value
+  call RunScript("scripttest",ppath,selectedStype,tscript,tinput,tresult)
+End Function
+
 
 Sub xrun(group)
     Dim x, pauseatend, unittest
@@ -425,6 +438,13 @@ Function editFileExternal(file)
     objShell.run(cmdline)
 End Function
 
+Function editProjectText()
+	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
+	projectTxt = oppath & "\project.txt"
+    cmdline = texteditor & " " & projectTxt
+    objShell.run(cmdline)
+End Function
+
 Function editProjects()
 	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
     cmdline = texteditor & " " & projectppr
@@ -443,7 +463,7 @@ Function OpenTab(tabgrp,tabid)
     Dim tab, x, Elem, Elemon, Elemtab , Elemtc, ifrm, tabname, tabactive
     tab = tabgrp
     tabactive = tabid & "tab"
-    For x = 0 To Ubound(tab)
+    For x = 0 To Ubound(tabgrp)
       tabname = tab(x) & "tab"
       document.getElementById(tab(x)).style.display = "none"
       document.getElementById(tabname).style.background = "#f1f1f1"
@@ -463,7 +483,7 @@ End Function
 Function reloadTextInfo(file)
   If coFSO.FileExists(file) Then
      'Document.getElementsByTagName(namearea)(0).value = coFSO.OpenTextFile(file).ReadAll()
-     document.all.InfoArea.value = coFSO.OpenTextFile(file).ReadAll()
+     Document.all.InfoArea.value = coFSO.OpenTextFile(file).ReadAll()
   End If
 End Function
 
@@ -500,7 +520,6 @@ Sub toggleIni(ini,section,key)
   End If
 End Sub
 
-
 Sub  SetRadioFromIni(ini, section,key,idname,last)
   dim x, infolevel, radio
   infolevel = ReadIni(xrunini,section,key)
@@ -518,8 +537,6 @@ Sub  SetRadioFromIni(ini, section,key,idname,last)
     End If
   Next
 End Sub
-
-
 
 Sub  SetCboxByIdNumbSetFromIni(ini, section,key,idname,last)
   dim x
@@ -586,23 +603,25 @@ sub StartProjFiles(oppath)
 	projkeyval = oppath & "\keyvalue.tsv"
 	projlists = oppath & "\lists.tsv"
 	' Does not support filepaths supplied with spaces unless they are supplied with double quotes around the string.
-	If coFSO.FileExists(projectppr) Then
-		cmdline = texteditor & " " & projectppr ' Open the project.ppr file if it exists
-	Else
-		cmdline = texteditor & " " & projectTxt ' Else open the project.txt file
+	IF document.getElementById("assocfiles").checked Then
+		If coFSO.FileExists(projectppr) Then
+			cmdline = texteditor & " " & projectppr ' Open the project.ppr file if it exists
+		Else
+			cmdline = texteditor & " " & projectTxt ' Else open the project.txt file
+		End IF
+		objShell.run(cmdline)
+		if coFSO.FileExists(projectnpp) Then
+			cmdline = tsveditor & " -openSession " & projectnpp ' Open the Notepad++ session file if it exists
+			'MsgBox "cmd: " & cmdline
+			objShell.run(cmdline)
+		ElseIf coFSO.FileExists(projkeyval) Then
+			cmdline = tsveditor & " " & projkeyval ' Else open the keyvalue.tsv file
+			objShell.run(cmdline)
+			cmdline = tsveditor & " " & projlists ' and open the lists.tsv file
+			objShell.run(cmdline)
+		End If
+		call OpenFolder(oppath)
 	End IF
-    objShell.run(cmdline)
-	if coFSO.FileExists(projectnpp) Then
-		cmdline = tsveditor & " -openSession " & projectnpp ' Open the Notepad++ session file if it exists
-		'MsgBox "cmd: " & cmdline
-		objShell.run(cmdline)
-	ElseIf coFSO.FileExists(projkeyval) Then
-		cmdline = tsveditor & " " & projkeyval ' Else open the keyvalue.tsv file
-		objShell.run(cmdline)
-		cmdline = tsveditor & " " & projlists ' and open the lists.tsv file
-	    objShell.run(cmdline)
-	End If
-	call OpenFolder(oppath)
 End Sub
 
 ' Extracted from 3 locations 2025-04-09
@@ -615,7 +634,7 @@ Sub UpdateHTA(oppath)
 		Document.getElementById("title").InnerText = ReadIni(projectTxt,"variables","title")
 		Document.getElementById("ShowSelectedFolder").InnerText = oppath
 		reloadText(projectTxt)
-		reloadTextInfo(projectInfo)
+		'reloadTextInfo(projectInfo)
 	End If
 End Sub
 
