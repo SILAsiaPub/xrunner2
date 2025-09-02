@@ -720,37 +720,42 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   rem if not exist "%7zip%" echo %red%7zip not found.%reset% & goto :eof
   setlocal DISABLEDELAYEDEXPANSION
-  xcopy /D/Y "%cd%\setup\!mimetype" "%projectpath%\output"
   set hostpath=%1
   set epubname=%2
+  xcopy /D/Y "%cd%\setup\!mimetype" "%hostpath%" > nul
   set epubinclude=%3
   if not defined epubinclude (
-    set epubinclude=..\epub-add.list 
-    if not exist "%projectpath%\output\epub-add.list" xcopy /D/Y "%cd%\setup\epub-add.list" "%projectpath%\output"
+    if not exist "%hostpath%\epub-add.list" (
+        set epubinclude="%cd%\setup\epub-add.list"
+    ) else (
+        set epubinclude=%hostpath%\epub-add.list
     )
+  )
   rem if not exist "%epubinclude%" call :fatal %0 "Epub include file not found!" & goto :eof
   set hostpath=%hostpath:"=%
   set epubname=%epubname:"=%
   set errorlevel=
-  call :outfile "%hostpath%\%epubname%.epub" "%projectpath%\output\%title: =_%.epub"
-  @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%.epub%reset%
+  set epubnamedated=..\%epubname%_%curisodate%.epub
+  set epublog=%projectpath%\checks\7zip\7zip-epub-build_%curisodate%.log
+  set epuberrorlog=%projectpath%\checks\7zip-epub-build-errors_%curisodate%.log
+  call :outfile "%hostpath%\%epubname%_%curisodate%.epub" "%hostpath%\output_%curisodate%.epub"
+  @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%_Starting.epub%reset%
   pushd "%hostpath%\%epubname%"
-  call :date
-  rem if exist ..\7zip-epub-build-prev.log del ..\7zip-epub-build-prev.log
-  rem if exist ..\7zip-epub-build-errors-prev.log del ..\7zip-epub-build-errors-prev.log
-  rem ren ..\7zip-epub-build.log 7zip-epub-build-prev.log
-  rem ren ..\7zip-epub-build-errors.log 7zip-epub-build-errors-prev.log
-  echo ========== %curisodatetime% ========== > ..\7zip-epub-build.log
-  echo ========== %curisodatetime% ========== > ..\7zip-epub-build-errors.log
-  "%zip%" a -t* ..\%epubname%.epub ..\!mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
-  call :errortest 0 "Added !mimetype to zip" "Error adding !mimetype to zip"
-  "%zip%" u -tzip ..\%epubname%.epub @%epubinclude% 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
-  call :errortest 0 "Added content to zip" "Error adding content to zip"
-  "%zip%" rn ..\%epubname%.epub !mimetype mimetype 1>> ..\7zip-epub-build.log 2>> ..\7zip-epub-build-errors.log
-  call :errortest 0 "Renamed file !mimetype to mimetype in zip" "Error renaming file !mimetype to mimetype in zip"
+    rem if exist ..\7zip-epub-build-prev.log del ..\7zip-epub-build-prev.log
+    rem if exist ..\7zip-epub-build-errors-prev.log del ..\7zip-epub-build-errors-prev.log
+    rem ren ..\7zip-epub-build.log 7zip-epub-build-prev.log
+    rem ren ..\7zip-epub-build-errors.log 7zip-epub-build-errors-prev.log
+    echo ========== %curisodatetime% ========== >> %epublog%
+    echo ========== %curisodatetime% ========== >> %epuberrorlog%
+    "%zip%" a -t* %epubnamedated% ..\!mimetype 1>> %epublog% 2>> %epuberrorlog%
+    call :errortest 0 "Added !mimetype to zip" "Error adding !mimetype to zip"
+    "%zip%" u -tzip %epubnamedated% @%epubinclude% 1>> %epublog% 2>> %epuberrorlog%
+    call :errortest 0 "Added content to zip" "Error adding content to zip"
+    "%zip%" rn %epubnamedated% !mimetype mimetype 1>> %epublog% 2>> %epuberrorlog%
+    call :errortest 0 "Renamed file !mimetype to mimetype in zip" "Error renaming file !mimetype to mimetype in zip"
   popd
-  call :filedate %projectpath%\output\7zip-epub-build.log "%projectpath%\checks\7zip"
-  call :filedate %projectpath%\output\7zip-epub-build-errors.log "%projectpath%\checks\7zip"
+  call :checkdir "%hostpath%\audit"
+  copy "%outfile%" "%hostpath%\audit\%epubname%_%curisodatetime%.epub" > nul
   set errorlevel=
   SETLOCAL ENABLEDELAYEDEXPANSION
   @call :funcendtest %0
@@ -830,7 +835,7 @@ goto :eof
 
 :filedate
 :: Description: Add date to end of filename can move or rename
-:: Usage: call :filedate infile [outpath]
+:: Usage: call :filedate infile [outvar]
 :: Updated: 2025-06-30; 2025-07-01
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :infile "%~1"
@@ -897,7 +902,7 @@ goto :eof
   @if defined outfile if not exist "%outfile%" Echo %redbg%Task failed: Output file not created! %reset%
   @if defined outfile if not exist "%outfile%" set skiptasks=on  & if not defined unittest pause
   @if defined info2 if exist "%outfile%" echo.
-  @call :funcend  %0 "%outfile%"
+  @call :funcend  %0
 @goto :eof
 
 :getfiledatetime

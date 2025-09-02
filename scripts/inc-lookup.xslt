@@ -148,6 +148,43 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    <xsl:function name="f:keyvaluedefault">
+        <!-- generic lookup function with 6 parameters
+				uses existing array as input not a string-->
+        <xsl:param name="array"/>
+        <xsl:param name="string"/>
+        <xsl:param name="default"/>
+        <!-- <xsl:param name="field-separator" /> -->
+        <xsl:variable name="field-separator" select="'='"/>
+        <!-- <xsl:param name="find-column"/> -->
+        <xsl:variable name="find-column" select="1"/>
+        <!-- <xsl:param name="return-column"/> -->
+        <xsl:variable name="return-column" select="2"/>
+        <!-- <xsl:param name="default"/> -->
+        <xsl:variable name="searchvalues_list">
+            <xsl:for-each select="$array">
+                <xsl:variable name="subarray" select="tokenize(.,$field-separator)"/>
+                <xsl:value-of select="concat($subarray[$find-column],$field-separator)"/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="searchvalues" select="tokenize($searchvalues_list,$field-separator)"/>
+        <xsl:choose>
+            <!-- make sure the item is in the set of data being searched, if not then return error message in output with string of un matched item -->
+            <xsl:when test="$searchvalues = string($string)">
+                <xsl:for-each select="$array">
+                    <!-- loop through the known data to find a match -->
+                    <xsl:variable name="subarray" select="tokenize(.,$field-separator)"/>
+                    <xsl:if test="string($subarray[number($find-column)]) = string($string)">
+                        <xsl:value-of select="$subarray[number($return-column)]"/>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$default"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+
     <xsl:function name="f:lookupalt">
         <!-- generic lookup function 7 parameters
 				uses existing array as input not a string-->
