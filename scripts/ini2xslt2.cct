@@ -3,23 +3,27 @@ begin               >                   '<?xml version="1.0" encoding="utf-8"?>'
                                         store(char) 'abcdefghijklmnopqrstuvwxyz1234567890' 
                                         store(rootout) '</xsl:stylesheet>'
                                         store(newline) nl endstore 
+                                        store(endvar) "'" d34 '/>' endstore
                                         use(main)
 
 
 group(main)
 '[setup'                 >              store(nul) use(section)
 '[tools'                 >              store(nul) use(section)
-prec(newline) any(char)  >              '    <xsl:variable name="' dup
-'_list='                >               d34 ' select=' d34 'tokenize(' d39 store(endtag) "',' ')" endstore
-'='                     >               d34 ' select=' d34 d39 store(endtag) "'" endstore
-prec(char) nl           >               out(endtag) d34 '/>' dup back(1)
+prec(newline) any(char)  >              set(start) '    <xsl:variable name="' dup
+'='                     >               d34 ' select=' d34 d39 
+prec(char) nl           >               if(start) out(endvar) clear(start) endif dup back(1)
 nl nl                   >               ''
 '[active]'              >               store(nul) use(exclude) c This excludes this section
-endfile                 >               out(rootout) dup
-
+endfile                 >               back(1) use(fileend)
 
 group(section)
 ']'                 >                   endstore use(main)
 
 group(exclude)
-'[end]'             >                   endstore use(main)
+endfile                 >               back(1) use(fileend)
+
+group(fileend)
+endfile                 >               endstore
+                                        if(start) out(endvar) endif
+                                        nl out(rootout) dup
