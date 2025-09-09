@@ -1,7 +1,6 @@
-xrunnerpath := C:/programs/xrunner2
-java := D:\programs\javafx\bin\java.exe
-saxon := C:\programs\xrunner2\tools\saxon\saxon12he.jar
-ccw := C:\programs\xrunner2\tools\cct\Ccw64.exe
+include := xrunnerpath.make
+
+ccw := $(xrunnerpath)\tools\cct\Ccw64.exe
 green := [32m
 reset := [0m
 cyan := [36m

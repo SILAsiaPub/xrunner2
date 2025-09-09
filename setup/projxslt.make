@@ -1,7 +1,8 @@
-xrunnerpath := C:/programs/xrunner2
-java := D:\programs\javafx\bin\java.exe
-saxon := C:\programs\xrunner2\tools\saxon\saxon12he.jar
-ccw := C:\programs\xrunner2\tools\cct\Ccw64.exe
+include := xrunnerpath.make
+
+java := java
+saxon := $(xrunnerpath)\tools\saxon\saxon12he.jar
+ccw := $(xrunnerpath)\tools\cct\Ccw64.exe
 green := [32m
 reset := [0m
 cyan := [36m
@@ -23,23 +24,19 @@ tmp/proj-var.xml: project.txt
 
 scripts/inc-lookup.xslt: $(xrunnerpath)/scripts/inc-lookup.xslt
 	@echo $(cyan)Adding: inc-lookup.xslt into project$(reset)
-	@copy "$(xrunnerpath)\scripts\inc-lookup.xslt" "${CURDIR}\scripts\" > nul
+	@copy "$(xrunnerpath)\scripts\inc-lookup.xslt" "scripts\" > nul
 
 scripts/inc-file2uri.xslt: $(xrunnerpath)/scripts/inc-file2uri.xslt
 	@echo $(cyan)Adding: inc-file2uri.xslt into project$(reset)
-	@copy "$(xrunnerpath)\scripts\inc-file2uri.xslt" "${CURDIR}\scripts\" > nul
+	@copy "$(xrunnerpath)\scripts\inc-file2uri.xslt" "scripts\" > nul
 
 scripts/inc-copy-anything.xslt: $(xrunnerpath)/scripts/inc-copy-anything.xslt
 	@echo $(cyan)Adding: inc-copy-anything.xslt into project$(reset)
-	@copy "$(xrunnerpath)\scripts\inc-copy-anything.xslt" "${CURDIR}\scripts\" > nul
+	@copy "$(xrunnerpath)\scripts\inc-copy-anything.xslt" "scripts\" > nul
 
-scripts/xrun.xslt: $(xrunnerpath)\scripts\xrun.xslt
-	@echo $(cyan)Adding: xrun.xslt into project$(reset)
-	@copy "$(xrunnerpath)\scripts\xrun.xslt" "${CURDIR}\scripts\" > nul
-
-$(xrunnerpath)\scripts\xrun.xslt: $(xrunnerpath)\setup\xrun.ini
+scripts/xrun.xslt: $(xrunnerpath)\setup\xrun.ini
 	@echo $(cyan)Updated: xrun.xslt$(reset)
-	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "$(xrunnerpath)\scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"
 
 tmp/lists.xml: lists.tsv
 	@echo $(cyan)Updated: list.xml$(reset)
@@ -51,6 +48,10 @@ tmp/keyvalue.xml: keyvalue.tsv
 	@if not exist keyvalue.tsv type nul > keyvalue.tsv
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\keyvalue2xml.cct" -o "tmp\keyvalue.xml" "keyvalue.tsv"
 
+$(xrunnerpath)/scripts/projectvariables-v3.xslt: ;
+
 lists.tsv: ;
 
 keyvalue.tsv: ;
+
+$(xrunnerpath)\setup\xrun.ini: ;
