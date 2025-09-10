@@ -1,4 +1,3 @@
-include := xrunnerpath.make
 
 ccw := $(xrunnerpath)\tools\cct\Ccw64.exe
 green := [32m
@@ -6,33 +5,29 @@ reset := [0m
 cyan := [36m
 
 
-setup: $(CURDIR)/tmp $(CURDIR)/scripts $(CURDIR)/scripts/proj.cmd project-info.txt $(CURDIR)/projpath.make
-	@echo $(green)Info: proj.cmd is up to date$(reset)
+$(projpath)/setup: $(projpath)/tmp $(projpath)/scripts $(projpath)/scripts/proj.cmd $(projpath)/project-info.txt
+	@echo $(green)Info: Project is up to date$(reset)
 
 
-$(CURDIR)/tmp: 
+$(projpath)/tmp: 
 	mkdir tmp
 
-$(CURDIR)/scripts :
+$(projpath)/scripts:
 	mkdir scripts
 
 # The following cct has three input files fed to the script: project.txt, xrun.ini, func.cmd
 
-$(CURDIR)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunnerpath)/scripts/func.cmd $(xrunnerpath)/scripts/setup2.cct
+$(projpath)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunnerpath)/scripts/func.cmd $(xrunnerpath)/scripts/setup2.cct
 	@echo $(cyan)Updating proj.cmd$(reset)
-	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup4.cct" -o "scripts\proj.cmd" -i $(xrunnerpath)\setup\proj-cmd.txt
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup4.cct" -o $(projpath)/scripts/proj.cmd -i $(xrunnerpath)\setup\proj-cmd.txt
 
 project-info.txt:
 	echo # Project Notes> project-info.txt
 
-$(CURDIR)/projpath.make:
-	@echo $(cyan)Creating the ES make files for each stage.$(reset)
-	@echo projpath := %cd%> projpath.make
-
-project.txt: ;
+$(projpath)/project.txt: ;
 
 $(xrunnerpath)/setup/xrun.ini: ;
 
 $(xrunnerpath)/scripts/func.cmd: ;
 
-
+$(xrunnerpath)/scripts/setup2.cct: ;
