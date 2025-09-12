@@ -19,7 +19,7 @@ $(projpath)/scripts:
 
 $(projpath)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunnerpath)/scripts/func.cmd $(xrunnerpath)/scripts/setup2.cct
 	@echo $(cyan)Updating proj.cmd$(reset)
-	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup4.cct" -o $(projpath)/scripts/proj.cmd -i $(xrunnerpath)\setup\proj-cmd.txt
+	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup-proj-cmd.cct" -o $(projpath)/scripts/proj.cmd -i $(xrunnerpath)\setup\proj-cmd.txt
 
 project-info.txt:
 	echo # Project Notes> project-info.txt
