@@ -17,6 +17,8 @@ rem Required tools. May need to edit the next three lines
 set ccw=%cd%\tools\cct\Ccw64.exe
 set make=%cd%\tools\bin\make.exe
 set saxon=%cd%\tools\saxon\saxon12he.jar
+if not exist "%ccw%" echo %redbg%%ccw% not found! Fix and try again!%reset%& goto :eof
+if not exist "%make%" echo %redbg%%make% not found! Fix and try again%& goto :eof
 @if defined info4 echo %magenta%%funcstarttext%%reset%
 @if defined info3 echo %magentabg%:xrunner%reset% %fparams%
 call :main %group%
@@ -82,66 +84,57 @@ goto :eof
   @call :funcend %0
 goto :eof
 
-:date
-:: Description: Returns multiple variables with date in three formats, the year in wo formats, month and day date.
-:: Usage: call :date
-:: Purpose: create date variables
-:: Variables created: fdd fmm fyyyy curdate curisodate yyyy-mm-dd curyyyymmdd curyymmdd curUSdate curAUdate curyyyy curyy curmm curdd
-:: Functions used: funcbegin funcend detectdateformat
-:: Variables used: dateformat dateseparator timeseparator
+:getdatetime
+:: Description: Returns multiple variables with 6 individual date and time vraiable prefixed by 00.
+:: Used by: :date
 :: Created: 2016-05-04
-:: Source url: http://www.robvanderwoude.com/datetiment.php#IDate
-  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
-  FOR /F "tokens=1-4 delims=%dateseparator% " %%A IN ("%date%") DO (
-      IF "%dateformat%"=="0" (
-          SET fdd=%%C
-          SET fmm=%%B
-          SET fyyyy=%%D
-      )
-      IF "%dateformat%"=="1" (
-          SET fdd=%%B
-          SET fmm=%%C
-          SET fyyyy=%%D
-      )
-      IF "%dateformat%"=="2" (
-          SET fdd=%%D
-          SET fmm=%%C
-          SET fyyyy=%%B
-      )
+:: Modified: 2024-09-11
+:: Source: got this from: http://www.robvanderwoude.com/datetiment.php#IDate but modified into two func
+  FOR /F "skip=1 tokens=1-6" %%G IN ('WMIC Path Win32_LocalTime Get Day^,Hour^,Minute^,Month^,Second^,Year /Format:table') DO (
+    IF "%%~L"=="" goto :eof
+    set _yyyy=%%L
+    set _mm=00%%J
+    set _dd=00%%G
+    set _hour=00%%H
+    set _minute=00%%I
+    set _second=00%%K
   )
-  set curdate=%fyyyy%-%fmm%-%fdd%
-  set curisodate=%fyyyy%-%fmm%-%fdd%
-  set yyyy-mm-dd=%fyyyy%-%fmm%-%fdd%
-  set curyyyymmdd=%fyyyy%%fmm%%fdd%
-  set curyymmdd=%fyyyy:~2%%fmm%%fdd%
-  set curUSdate=%fmm%/%fdd%/%fyyyy%
-  set curAUdate=%fdd%/%fmm%/%fyyyy%
-  set curyyyy=%fyyyy%
-  set curyy=%fyyyy:~2%
-  set curmm=%fmm%
-  set curdd=%fdd%
-  @call :funcend %0
 goto :eof
 
-:detectdateformat
-:: Description: Get the date format from the Registery: 0=US 1=AU 2=iso
-:: Usage: call :detectdateformat
-:: Purpose: check registry, create variables
-:: Functions used: funcbegin funcend
-:: Variables created: dateformat dateseparator timeseparator
-  @call :funcbegin %0
-  set KEY_DATE="HKCU\Control Panel\International"
-  rem get dateformat number
-  FOR /F "usebackq skip=2 tokens=3" %%A IN (`REG QUERY %KEY_DATE% /v iDate`) DO set dateformat=%%A
-  rem get the date separator: / or -
-  FOR /F "usebackq skip=2 tokens=3" %%A IN (`REG QUERY %KEY_DATE% /v sDate`) DO set dateseparator=%%A
-  rem get the time separator: : or ?
-  FOR /F "usebackq skip=2 tokens=3" %%A IN (`REG QUERY %KEY_DATE% /v sTime`) DO set timeseparator=%%A
-  FOR /F "usebackq skip=2 tokens=3" %%A IN (`REG QUERY %KEY_DATE% /v sShortTime`) DO set timeformat=%%A
-  rem set project log file name by date
+:date
+:: Description: Returns multiple variables with date in three formats, the year in two formats, month, day date and time.
+:: Functions called: funcend funcbegin
+:: Variables Created: _mm _dd _hour _minute _second curhhmm curhhmmss curisohhmmss curhh_mm curhh_mm_ss curdate curisodatetime curisodate yyyy-mm-dd curyyyy-mm curyyyymmdd curyymmdd curUSdate curAUdate curyyyy curyy curmm curdd 
+:: Created: 2016-05-04
+:: Modified: 2024-09-11
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  call :getdatetime
+  Set _mm=%_mm:~-2%
+  Set _dd=%_dd:~-2%
+  Set _hour=%_hour:~-2%
+  Set _minute=%_minute:~-2%
+  Set _second=%_second:~-2%
+  set curhhmm=%_hour%%_minute%
+  set curhhmmss=%_hour%%_minute%%_second%
+  set curisohhmmss=%_hour%-%_minute%-%_second%
+  set curhh_mm=%_hour%:%_minute%
+  set curhh_mm_ss=%_hour%:%_minute%:%_second%
+  set curdate=%_yyyy%-%_mm%-%_dd%
+  set curisodatetime=%_yyyy%-%_mm%-%_dd%T%curisohhmmss%
+  set curisodate=%_yyyy%-%_mm%-%_dd%
+  set yyyy-mm-dd=%_yyyy%-%_mm%-%_dd%
+  set curyyyy-mm=%_yyyy%-%_mm%
+  set curyyyymmdd=%_yyyy%%_mm%%_dd%
+  set curyymmdd=%_yyyy:~2%%_mm%%_dd%
+  set curUSdate=%_mm%/%_dd%/%_yyyy%
+  set curAUdate=%_dd%/%_mm%/%_yyyy%
+  set curyyyy=%_yyyy%
+  set curyy=%_yyyy:~2%
+  set curmm=%_mm%
+  set curdd=%_dd%
   @call :funcend %0
 goto :eof
-
+ 
 :encoding
 :: Description: to check the encoding of a file
 :: Usage: call :encoding file [validate-against]
@@ -314,14 +307,22 @@ goto :eof
   set xtestf=%xtest% %redbg% FALSE %reset% -
   set projxsltmake=%projectpath%\projxslt.make
   set au3=C:\Program Files (x86)\AutoIt3\AutoIt3.exe
-  call :detectdateformat
+  call :date
   rem xcopy /D /Y setup\proj-cmd.txt "%projectpath%\scripts"
-  xcopy /D /Y setup\*.make "%projectpath%" > nul
+  echo xrunnerpath := %cd%> setup\temp.txt
+  echo projpath := %projectpath%>> setup\temp.txt
+  echo ccw := %ccw%>> setup\temp.txt
+  echo saxon := %saxon%>> setup\temp.txt
+  if '%java%' == 'java' ( echo java := java>> setup\temp.txt
+    ) else (echo java := %java%>> setup\temp.txt)
+  copy setup\temp.txt+setup\projsetup.make %projectpath%\projsetup.make > nul 
+  copy setup\temp.txt+setup\projxslt.make %projectpath%\projxslt.make > nul 
+  rem xcopy /D /Y setup\*.make "%projectpath%" > nul
   call :makef "%projectpath%\projsetup.make"
   set curerrorlevel=%errorlevel%
   if exist "%au3%" call "%au3%" save-files.au3
   if %curerrorlevel%. neq %errorlevel%. echo %red%Autoit3 error from script save-files.au3%reset% & set errorlevel=0
-  @if defined info1 echo %green%Setup: complete%reset%
+  @if defined info3 echo %green%Setup: complete%reset%
   @if defined info1 echo.
   set /A count=0
   @call :funcend %0
