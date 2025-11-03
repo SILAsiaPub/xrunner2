@@ -38,12 +38,12 @@ $(projpath)/scripts/xrun.xslt: $(xrunnerpath)\setup\xrun.ini
 	@echo $(cyan)Updated: xrun.xslt$(reset)
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\ini2xslt2.cct" -o "$(projpath)\scripts\xrun.xslt" "$(xrunnerpath)\setup\xrun.ini"
 
-$(projpath)/tmp/lists.xml: lists.tsv
+$(projpath)/tmp/lists.xml: $(projpath)/lists.tsv
 	@echo $(cyan)Updated: list.xml$(reset)
 	@if not exist lists.tsv type nul > lists.tsv
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\lists2xml.cct" -o "$(projpath)\tmp\lists.xml" "$(projpath)\lists.tsv"
 
-$(projpath)/tmp/keyvalue.xml: keyvalue.tsv
+$(projpath)/tmp/keyvalue.xml: $(projpath)/keyvalue.tsv
 	@echo $(cyan)Updated: keyvalue.xml$(reset)
 	@if not exist keyvalue.tsv type nul > keyvalue.tsv
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\keyvalue2xml.cct" -o "$(projpath)\tmp\keyvalue.xml" "$(projpath)\keyvalue.tsv"
@@ -54,4 +54,4 @@ $(projpath)/lists.tsv: ;
 
 $(projpath)/keyvalue.tsv: ;
 
-$(xrunnerpath)\setup\xrun.ini: ;
+$(xrunnerpath)/setup/xrun.ini: ;

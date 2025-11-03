@@ -21,7 +21,7 @@ $(projpath)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunne
 	@echo $(cyan)Updating proj.cmd$(reset)
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup-proj-cmd.cct" -o $(projpath)/scripts/proj.cmd -i $(xrunnerpath)\setup\proj-cmd.txt
 
-project-info.txt:
+$(projpath)/project-info.txt:
 	echo # Project Notes> project-info.txt
 
 $(projpath)/project.txt: ;
