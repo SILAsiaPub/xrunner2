@@ -1537,7 +1537,7 @@ goto :eof
 :: Usage: call :latex2html
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
   set infile=%~1
-  call :outfile "%~2" "%projectpath%\tmp\latex.xml"
+  call :outfile "%~2" "%projectpath%\tmp\latex.html"
   call "%latex2html%"  --dest="%outfile%" "%infile%"
   @call :funcendtest %0
 goto :eof
@@ -2218,7 +2218,7 @@ goto :eof
   if defined javascript set js= -j "%javascript%"
   set curcommand=call "%prince%" %css%%js% %infile% -o "%outfile%"
   @if defined info2 echo %cyan%%curcommand%%reset%
-  call %curcommand%
+  %curcommand%
   @call :funcendtest %0
 goto :eof
 
