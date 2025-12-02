@@ -17,7 +17,7 @@ $(projpath)/scripts:
 
 # The following cct has three input files fed to the script: project.txt, xrun.ini, func.cmd
 
-$(projpath)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunnerpath)/scripts/func.cmd $(xrunnerpath)/scripts/setup2.cct
+$(projpath)/scripts/proj.cmd: project.txt $(xrunnerpath)/setup/xrun.ini $(xrunnerpath)/scripts/func.cmd $(xrunnerpath)/scripts/setup-proj-cmd.cct
 	@echo $(cyan)Updating proj.cmd$(reset)
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\setup-proj-cmd.cct" -o $(projpath)/scripts/proj.cmd -i $(xrunnerpath)\setup\proj-cmd.txt
 
