@@ -33,9 +33,9 @@ goto :eof
   echo ==============================================================================
   echo                                     Xrunner2    
   echo ==============================================================================
-  echo Source: https://github.com/SILAsiaPub/xrunner2
+  echo Source: %green%https://github.com/SILAsiaPub/xrunner2%reset%
   if exist "%projectfile%" (
-    echo Project: %magenta%%projectfile%%reset%
+    echo Project: %green%%projectfile%%reset%
     echo.
     if defined info5 echo on
   ) else (
