@@ -115,6 +115,14 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:audit
+:: Description: create a dated copy to provide a comparison of changes
+:: Usage: call :audit
+  call :name "%outfile%"
+  if not exist "%fpath%\audit" md "%fpath%\audit"
+  copy "%outfile%" "%fpath%\audit\%name%-%curisodatetime%.%fext%"
+goto :eof
+
 :autoit
 :: Description: Pass a script and variables to autoit.
 :: Usage: call :autoit script.au3 infile outfile parm1 etc
@@ -235,7 +243,7 @@ goto :eof
   set curcommand=%curcommand:'="%
   if defined commandpath call :checkdir "%commandpath%"
   if defined commandpath pushd "%commandpath%"
-  @if defined info2 echo %green%Info: current path: %cd%%reset%
+  @if defined info3 echo %green%Info: current path: %cd%%reset%
   @if defined info2 echo %cyan%%curcommand%%reset%
   call %curcommand%
   if defined commandpath popd
@@ -737,9 +745,10 @@ goto :eof
   set errorlevel=
   set epubnamedated=..\%epubname%_%curisodate%.epub
   set epublog=%projectpath%\checks\7zip\7zip-epub-build_%curisodate%.log
+  call :checkdir "%projectpath%\checks\7zip"
   set epuberrorlog=%projectpath%\checks\7zip-epub-build-errors_%curisodate%.log
   call :outfile "%hostpath%\%epubname%_%curisodate%.epub" "%hostpath%\output_%curisodate%.epub"
-  @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%_Starting.epub%reset%
+  @if defined info2 echo %green%Starting 7zip 3 times to create %epubname%.epub%reset%
   pushd "%hostpath%\%epubname%"
     rem if exist ..\7zip-epub-build-prev.log del ..\7zip-epub-build-prev.log
     rem if exist ..\7zip-epub-build-errors-prev.log del ..\7zip-epub-build-errors-prev.log
@@ -1721,8 +1730,8 @@ goto :eof
 :: Description: Used to loop through list supplied in a file
 :: Usage: call :looplist sub_name list-file_specs [param[3-9]]
 :: Functions called: appendnumbparam, last, taskgroup. Can also use any other function.
-  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
   if defined fatal goto :eof
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
   set grouporfunc=%~1
   set listfile=%~2
   if not defined grouporfunc echo %error% Missing func parameter[2]%reset%
@@ -2042,40 +2051,43 @@ goto :eof
   set toutfile=%~1
   set defaultoutfile=%~2
   set check=%~3
-  set outnx=%~nx1
-  set defaultoutdp=%~dp2
-  set defaultoutnx=%~nx2
-  set outpath=%~dp1
-  set outpath=%outpath:~-1%
-  rem the folloing is to preserve wildcards in the outfile. Since *.* when using %~nx1 becomes . not *.*
-  @if defined info3 echo %green%Info: outnx = %outnx%%reset%
-  @if defined info3 echo %green%Info: defaultoutfile = %defaultoutfile%%reset%
-  rem now if toutfile is not defined then use default value
   if defined toutfile (
-    set outfile=%toutfile:)=%
+    set outfile=%~1
+    set outpath=%~dp1
+    set outnx=%~nx1
   ) else (
-    set outfile=%defaultoutfile%
+    rem now if toutfile is not defined then use default value
+    set outfile=%~2
+    set outpath=%~dp2
+    set outnx=%~nx2
   )
-  if not defined toutfile set outpath=%defaultoutdp%
-  if not defined toutfile set outnx=%defaultoutnx%
-  if defined check if "%check%" neq "append" set check=nocheck
-  if not defined check (
-    if not exist "%outpath%" md "%outpath%"
+  if not exist "%outpath%" (
+    if defined info3 echo %cyan%md "%outpath%"%reset%
+    md "%outpath%"
+  )
+  @if defined info4 (
+    echo %green%Info: outnx = %outnx%%reset%
+    echo %green%Info: outpath = %outpath%%reset%
+  )
+  if defined check (
+    if "%check%" neq "append" set check=nocheck
+    ) else (
     if "%outnx%" neq "" (
-    	  rem remove %outfile%.prev if it exists. Works with wildcards
-    	  if exist "%outfile%.prev" del "%outfile%.prev"
-    	  rem if outfile exists then rename to file.ext.prev; this works with wild cards too now.
-    	  if exist "%outfile%" ren "%outfile%" "%outnx%.prev"
+      rem remove %outfile% and %outfile%.prev if it exists. Works with wildcards
+      if exist "%outfile%.prev" del "%outfile%.prev"
+      if exist "%outfile%" ren "%outfile%" "%outnx%.prev"
     )
   )
-  @if defined info5 echo.
-  @if defined info4 echo %green%Info: outfile = %outfile%%reset%
+  @if defined info5 (
+    echo.
+    echo %green%Info: outfile = %outfile%%reset%
+  )  
   @call :funcend %0
 goto :eof
 
 :outputfile
 :: Description: Copies last out file to new name. Used to make a static name other tasklists can use.
-:: Usage: :outputfile drive:\path\file.ext [start|diff|copy]
+:: Usage: :outputfile drive:\path\file.ext [start|diff|copy|audit]
 :: Functions called: checkdir, funcend, validate
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
@@ -2083,11 +2095,12 @@ goto :eof
   set infile=%outfile%
   set outfile=%~1
   set outname=%~n1
+  set outpath=%~dp1
   set var2=%~2
   rem if defined var2 set %var2%=%~1
   if defined fatal goto :eof
-  call :checkdir "%outfile%"
-  call :date
+  if not exist "%outpath%" md "%outpath%"
+  rem call :date
   if "%var2%" == "diff" call :diff "%curfile%" "%outfile%" "%projectpath%\checks\diff\%outname%-%curisodatetime%.diff"
   if "%var2%" == "copy" (
     call :copy "%infile%" "%outfile%"
@@ -2095,6 +2108,12 @@ goto :eof
     move /Y "%infile%" "%outfile%" >> log.txt
   )
   if "%var2%" == "start" if exist "%outfile%" start "" "%outfile%"
+  call :drivepath "%outfile%"
+  if "%var2%" == "audit" (
+    call :nameext "%outfile%"
+    call :drivepath "%outfile%"
+    copy "%outfile%" "%drivepath%\audit\%name%-%curisodatetime%.%ext%"
+  )
   @call :funcendtest %0 Renamed:
 goto :eof
 
@@ -2148,6 +2167,36 @@ goto :eof
   pause
 goto :eof
 
+:pdfbookmarkout
+:: Description: 
+:: Usage: call :pdfbookmarkout input.pdf output_bkmark.txt
+:: External program: 
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' %~5"
+  if not exist "%pdftk%" call :fatal %0 "No pdftk.exe found!" & goto :eof
+  call :infile "%~1"
+  call :outfile "%~2" "%projectpath%\tmp\%group%-%count%-pdfbookmarkout.txt"
+  @if defined info2 echo %cyan%call "%pdftk%" "%infile%" dump_data output "%outfile%""%reset%
+  call "%pdftk%" "%infile%" dump_data output "%outfile%"
+  @call :funcendtest %0
+goto :eof
+
+:pdfbookmarkin
+:: Description: 
+:: Usage: call :pdfbookmarkout input.pdf input_bkmark.txt output.pdf
+:: External program: 
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  if not exist "%java%" call :fatal %0 "No java.exe found!" & goto :eof
+  if not exist "%pdfbookmarkjar%" call :fatal %0 "No pdfWriteBookmarks.jar found!" & goto :eof
+  call :infile "%~1"
+  set bkmarks=%~2
+  call :outfile "%~3" "%projectpath%\tmp\%group%-%count%-pdfexportbookmark.xml"
+  @if defined info2 echo %cyan%call "%java%" -jar "%pdfbookmarkjar%" "%infile%" "%bkmarks%" "%outfile%"%reset%
+  call "%java%" -jar "%pdfbookmarkjar%" "%infile%" "%bkmarks%" "%outfile%"
+  rem @echo %cyan%call "%pdftk%" "%infile%" update_info_utf8 "%bkmarks%" output "%outfile%"%reset%
+  rem call "%pdftk%" "%infile%" update_info_utf8 "%bkmarks%" output "%outfile%"
+  @call :funcendtest %0
+goto :eof
+
 :perl
 :: Description: Privides interface to perl scripts
 :: Usage: call :cct script.cct ["infile.txt" ["outfile.txt" ["par1"]]
@@ -2192,7 +2241,7 @@ goto :eof
 goto :eof
 
 :prince
-:: Description: Make PDF using PrinceXML
+:: Description: Make PDF using PrinceXML Prince for Books
 :: Usage: call :prince [infile [outfile [css [javascript]]]] [infile2] [infile3] [infile4] [infile5] [infile6] [infile7]
 :: Functions called: infile, outfile, funcend
 :: External program: prince.exe  https://www.princexml.com/
@@ -2911,7 +2960,7 @@ goto :eof
   set nameext=%~nx1
   call :outpath  "%~2"
   if defined info2 echo %green%Checking: %nameext% %reset%
-  if defined info3 echo %green%Source: %~1 %reset%
+  if defined info3 echo %green%Source: %infile% %reset%
   if defined info3 echo %green%Target: %outpath% %reset%
   xcopy /D/Q/Y "%infile%" "%outpath%"
   set prevpath=%outpath%

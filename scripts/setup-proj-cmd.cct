@@ -2,7 +2,7 @@ c simplification of setup5.cct and earlier versions.
 c Each section has its own group of changes
 c 2025-09-12
 c By Ian McQuay
-begin       >       store(fend) '@call :funcend %0' nl '@goto :eof' nl nl endstore
+begin       >       store(fend) nl '@call :funcend %0' nl '@goto :eof' nl nl endstore
                     store(goend) '@goto :eof' nl nl endstore
                     store(fbegin) "@call :funcbegin %0 '%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'" endstore
                     store(alpha) "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" endstore
@@ -25,10 +25,10 @@ group(variables)
 prec(lf) any(alpha) >   'set ' dup
 nl '#'              >   nl 'rem ' 
 nl nl               >   nl back(1)
-'['                 >   out(goend) nl nl ':'use(projsect) c exit section
+'['                 >   out(goend) nl nl ':'use(project) c exit section
 
 c Handle the tasks sections of the project.txt file
-group(projsect)
+group(project)
 '[' fol(alpha)  >   out(fend) store(func)
 ']' nl          >   endstore nl ':' out(func)
                     nl '@if defined info2 echo %magenta%[' out(func) ']%reset%'
