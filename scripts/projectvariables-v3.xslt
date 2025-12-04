@@ -250,6 +250,11 @@
                 <xsl:text>inc-lookup.xslt</xsl:text>
             </xsl:attribute>
         </xsl:element>
+        <xsl:element name="xsl:include">
+            <xsl:attribute name="href">
+                <xsl:text>xrun.xslt</xsl:text>
+            </xsl:attribute>
+        </xsl:element>
         <xsl:element name="xsl:param">
             <xsl:attribute name="name">
                 <xsl:text>USERPROFILE</xsl:text>

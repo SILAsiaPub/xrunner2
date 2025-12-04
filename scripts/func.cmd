@@ -1782,8 +1782,8 @@ goto :eof
 :: Usage: call :loopstring grouporfunc "string" [param[3-9]]
 :: Functions called: quotevar, last, taskgroup. Can also use any other function.
 :: Note: action may have multiple parts
-  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7'"
   if defined fatal goto :eof
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7'"
   rem echo on
   set grouporfunc=%~1
   set string=%~2
@@ -1794,10 +1794,14 @@ goto :eof
   set param7=%~7
   set param8=%~8
   set param9=%~9
-  if not defined grouporfunc echo Missing action parameter
-  if not defined grouporfunc echo %funcendtext% %0 
+  if not defined grouporfunc echo %red%Missing action parameter^! Skipping :loopstring%reset%
+  if not defined grouporfunc echo  if defined info4 echo %funcendtext% %0 
   if not defined grouporfunc goto :eof
-  if not defined string echo Missing string parameter
+  if not defined string (
+    echo %red%Missing string parameter^! Skipping :loopstring%reset%
+    echo  if defined info4 echo %funcendtext% %0 
+    goto :eof
+  )
   if not defined string if defined info4 echo %funcendtext% %0 
   if not defined string goto :eof
   rem for /L %%v in (3,1,9) Do call :appendnumbparam numbparam par %%v 
