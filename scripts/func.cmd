@@ -162,7 +162,7 @@ goto :eof
 
 :cct
 :: Description: Privides interface to ccw.
-:: Usage: call :cct script.cct ["infile.txt" ["outfile.txt" [append] list]]
+:: Usage: call :cct script.cct ["infile.txt" ["outfile.txt" [append [list]]]]
 :: Functions called: funcbegin funcendtest inccount infile outfile fatal scriptfind checkdir
 :: External apps: ccw32.exe 
 :: External apps url: https://software.sil.org/cc/
@@ -893,7 +893,7 @@ goto :eof
   @set message2=%~3
   @if defined message1 echo %green%Info: %message1%%reset%
   @if defined message2 echo %green%Info: %message2%%reset%
-  @if defined info4 echo %magenta%------------------------------------ %func% %outfile:~-30% %funcendtext%%reset%
+  @if defined info4 echo %magenta%------------------------------------ %func% %nameext% %funcendtext% %reset%
   @if defined pausefunc FOR %%s IN (%pausefunc%) DO if "%%s" == "%funcname%" echo ========= %func% paused for review ========= & pause
   @rem the following form of %func:~1% removes the colon from the begining of the func.
   @if defined echofunc FOR %%s IN (%echofunc%) DO @if "%%s" == "%funcname%" echo ========= %func% echo switched OFF ========= & echo off
@@ -3127,12 +3127,7 @@ goto :eof
 :: Required variables: java saxon9
   if defined fatal goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
-  if not defined xsltsetup (
-    rem call :makemake "%projectpath%\projxslt.make" 
-    call :makef "%projectpath%\projxslt.make"
-    if not exist "%projectpath%\list-import-error.xml" (set xsltsetup=done) else (espeak "Error making project.xslt" &start "%projectpath%\scripts\project.xslt"& echo %bgred% One or more list variables was not imported into project.xslt%reset% & pause & del /Q "%projectpath%\list-import-error.xml")
-  )
-  rem if not exist "%scripts%\project.xslt" call :fatal %0 "project.xslt not created" & call :funcend %0 & goto :eof
+  if /%setupmethod%/ == /make/ (call :xsltmakesetup) else (call :xsltcmdsetup)
   call :inccount
   set script=%~1
   if defined scripts set script=%scripts%\%~1
@@ -3166,6 +3161,36 @@ goto :eof
     call :xslt3 -xsl:"%script%" -s:"%infile%" -o:"%outfile%" %params%
   ) 
   @call :funcendtest %0
+goto :eof
+
+:xsltmakesetup
+  if not defined xsltsetup (
+    call :makef "%projectpath%\projxslt.make"
+    if not exist "%projectpath%\list-import-error.xml" (
+     set xsltsetup=done
+    ) else (
+      espeak "Error making project.xslt" &start "%projectpath%\scripts\project.xslt"
+      echo %bgred% One or more list variables was not imported into project.xslt%reset% 
+      pause 
+      del /Q "%projectpath%\list-import-error.xml"
+    )
+  )
+goto :eof
+
+:xsltcmdsetup
+  @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  @if not defined xsltsetup (
+    set outfile=%projectpath%\scripts\project.xslt
+    call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
+    call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\keyvalue2xml.cct" -o "%projectpath%\tmp\keyvalue.xml" "%projectpath%\keyvalue.tsv"
+    call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\lists2xml.cct" -o "%projectpath%\tmp\lists.xml" "%projectpath%\lists.tsv"
+    call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\ini2xslt2.cct" -o "%projectpath%\scripts\xrun.xslt" "%xrunnerpath%\setup\xrun.ini"
+    if not exist "%projectpath%\scripts\inc-*.xslt" copy "%xrunnerpath%\scripts\inc-*.xslt" "%projectpath%\scripts\"
+    call "%java%" -jar "%saxon%" -o:"%projectpath%\scripts\project.xslt" "%projectpath%\tmp\proj-var.xml" "%xrunnerpath%\scripts\projectvariables-v3.xslt" projectpath=%projectpath% USERPROFILE="%USERPROFILE%"
+    set xsltsetup=done
+    if exist "%projectpath%\scripts\project.xslt" echo. & echo %green%Info: project.xslt updated.%reset%
+    @call :funcend %0
+  )
 goto :eof
 
 :xslt1
