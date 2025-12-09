@@ -3180,7 +3180,6 @@ goto :eof
 :xsltcmdsetup
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
   @if not defined xsltsetup (
-    set outfile=%projectpath%\scripts\project.xslt
     call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
     call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\keyvalue2xml.cct" -o "%projectpath%\tmp\keyvalue.xml" "%projectpath%\keyvalue.tsv"
     call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\lists2xml.cct" -o "%projectpath%\tmp\lists.xml" "%projectpath%\lists.tsv"
