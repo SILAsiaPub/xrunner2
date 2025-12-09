@@ -11,6 +11,7 @@ set projectpath=%~dp1
 set group=%2
 set infolevel=%3
 set pauseatend=%4
+set setupmethod=cmd
 call :colorvar
 call :setinfolevel %infolevel%
 rem Required tools. May need to edit the next three lines
@@ -307,6 +308,7 @@ goto :eof
   set xtestf=%xtest% %redbg% FALSE %reset% -
   set projxsltmake=%projectpath%\projxslt.make
   set au3=C:\Program Files (x86)\AutoIt3\AutoIt3.exe
+  set xrunnerpath=%cd%
   call :date
   rem xcopy /D /Y setup\proj-cmd.txt "%projectpath%\scripts"
   echo xrunnerpath := %cd%> setup\temp.txt
@@ -318,7 +320,7 @@ goto :eof
   copy setup\temp.txt+setup\projsetup.make %projectpath%\projsetup.make > nul 
   copy setup\temp.txt+setup\projxslt.make %projectpath%\projxslt.make > nul 
   rem xcopy /D /Y setup\*.make "%projectpath%" > nul
-  call :makef "%projectpath%\projsetup.make"
+  if '%setupmethod%' == 'make' (call :makef "%projectpath%\projsetup.make") else (call :projcmdsetup)
   set curerrorlevel=%errorlevel%
   if exist "%au3%" call "%au3%" save-files.au3
   if %curerrorlevel%. neq %errorlevel%. echo %red%Autoit3 error from script save-files.au3%reset% & set errorlevel=0
@@ -327,6 +329,15 @@ goto :eof
   set /A count=0
   @call :funcend %0
   if "%~3" == "5" echo on
+goto :eof
+
+:projcmdsetup
+    if not exist "%scripts%" md "%scripts%"
+    pushd "%projectpath%"
+    %xrunnerpath%\tools\cct\ccw64.exe -u -b -q -n -t "%xrunnerpath%\scripts\setup-proj-cmd.cct" -o "scripts\proj.cmd" -i %xrunnerpath%\setup\proj-cmd.txt
+    popd
+    if exist "%projectpath%/scripts/proj.cmd" Echo %green%Info: proj.cmd updated.%reset%
+    if not exist "%projectpath%/scripts/proj.cmd" Echo %redbg%Fatal: project.cmd missing from scripts folder. Can't proceed^! %reset% & pause & exit /b
 goto :eof
 
 :sec2time
