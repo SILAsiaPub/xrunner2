@@ -11,7 +11,7 @@ set projectpath=%~dp1
 set group=%2
 set infolevel=%3
 set pauseatend=%4
-set setupmethod=cmd
+set setupmethod=make
 call :colorvar
 call :setinfolevel %infolevel%
 rem Required tools. May need to edit the next three lines
@@ -301,7 +301,6 @@ goto :eof
   set syscmd=%scripts%\sys.cmd
   set taskscmd=%scripts%\tasks.cmd
   set projcmd=%scripts%\proj.cmd
-  set setupcct=%cd%\scripts\setup2.cct
   set funccmd=%cd%\scripts\func.cmd
   set xtest=%red%%yellowbg% Test: %reset%
   set xtestt=%xtest% %greenbg%%whiteb% TRUE %reset% -

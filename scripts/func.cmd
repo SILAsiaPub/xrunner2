@@ -837,6 +837,7 @@ goto :eof
   if "%action%" == "copy" set curcommand=copy /y "%infile%" "%outfile%"
   if "%action%" == "xcopy"  set curcommand=xcopy /i/y/s "%infile%" "%outfile%"
   if "%action%" == "move"  set curcommand=move /y "%infile%" "%outfile%"
+  if "%action%" == "parse" call :drivepath "%infile%" & call :nameext "%infile%"
   %curcommand%
   rem echo off
   @call :funcendtest %0
@@ -1325,7 +1326,8 @@ goto :eof
   set inname=%~n1
   set innameext=%~nx1
   if not defined infile set infile=%outfile%
-  if not exist "%infile%" call :fatal %0 "infile %~nx1 not found for %callingfunc%"
+  if not defined infile call :fatal %0 "No file name has been supplied! %callingfunc%"
+  if not exist "%infile%" call :fatal %0 "infile %infile% not found for %callingfunc%"
   @if defined info4 echo Info: %green%infile = %infile%%reset%
   @call :funcend %0
 goto :eof
@@ -1689,11 +1691,11 @@ goto :eof
 
 :looplist
 :: Description: Used to loop through list supplied in a file
-:: Usage: call :looplist sub_name list-file_specs [param[3-9]]
+:: Usage: call :looplist func list-file_specs [param[3-9]]
 :: Functions called: appendnumbparam, last, taskgroup. Can also use any other function.
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
   if defined fatal goto :eof
-  set grouporfunc=%~1
+  set subfunc=%~1
   set listfile=%~2
   set param3=%~3
   set param4=%~4
@@ -1702,9 +1704,9 @@ goto :eof
   set param7=%~7
   set param8=%~8
   set param9=%~9
-  if not defined grouporfunc echo %error% Missing func parameter[2]%reset%
-  if not defined grouporfunc if defined info4 echo %funcendtext% %0 
-  if not defined grouporfunc goto :eof
+  if not defined subfunc echo %error% Missing func parameter[2]%reset%
+  if not defined subfunc if defined info4 echo %funcendtext% %0 
+  if not defined subfunc goto :eof
   if not defined listfile echo %error% Missing list-file parameter[1]%reset%
   if not defined listfile if defined info4 echo %funcendtext% %0 
   if not defined listfile goto :eof
@@ -1712,17 +1714,9 @@ goto :eof
   if not exist "%listfile%" if defined info4 echo %funcendtext% %0 
   if not exist "%listfile%" goto :eof
   call :multivarlist 3 9
-  rem for /L %%v in (3,1,9) Do call :appendnumbparam numbparam par %%v
-  rem for /L %%v in (3,1,9) Do call :last par %%v
-  rem if defined info3 set numbparam
   if defined info4 if defined comment echo %last%
-  if not defined unittest (
-    if "%grouporfunc:~0,1%" == ":" (
-        FOR /F " delims=" %%s IN (%listfile%) DO  call %grouporfunc% "%%s" %multivar:'="%
-      ) else (
-        FOR /F " delims=" %%s IN (%listfile%) DO  call :%grouporfunc% "%%s" %multivar:'="%
-    )  
-  )  
+  if "%subfunc:~0,1%" neq ":" set subfunc=:%subfunc%
+  FOR /F " delims=" %%s IN (%listfile%) DO  call %subfunc% "%%s" %multivar:'="%
   @call :funcend %0
 goto :eof
 
@@ -1889,8 +1883,8 @@ goto :eof
   set file=%~1
   set filenx=%~nx1
   set makesource=%~dp1
-  if \%filenx% == \projxslt.make set makesource=setup
-  if \%filenx% == \projsetup.make set makesource=setup
+  if \%filenx% == \projxslt.make set makesource=%xrunnerpath%\setup
+  if \%filenx% == \projsetup.make set makesource=%xrunnerpath%\setup
   set n1=%~2
   set v1=%~3
   set n2=%~4
@@ -2099,6 +2093,7 @@ goto :eof
   set infile=%outfile%
   set outfile=%~1
   set outname=%~n1
+  set outext=%~x1
   set outpath=%~dp1
   set var2=%~2
   rem if defined var2 set %var2%=%~1
@@ -2112,12 +2107,10 @@ goto :eof
     move /Y "%infile%" "%outfile%" >> log.txt
   )
   if "%var2%" == "start" if exist "%outfile%" start "" "%outfile%"
-  call :drivepath "%outfile%"
   if "%var2%" == "audit" (
-    call :nameext "%outfile%"
-    call :drivepath "%outfile%"
-    copy "%outfile%" "%drivepath%\audit\%name%-%curisodatetime%.%ext%"
-  )
+    call :checkdir "%outpath%\audit\"
+    copy "%outfile%" "%outpath%\audit\%outname%-%curisodatetime%.%outext%"
+    )
   @call :funcendtest %0 Renamed:
 goto :eof
 
@@ -2269,7 +2262,7 @@ goto :eof
 
   if defined css set css=-s "%css%"
   if defined javascript set js= -j "%javascript%"
-  set curcommand=call "%prince%" %css%%js% %infile% -o "%outfile%"
+  set curcommand=call "%prince%" %css%%js% %infile% -o "%outfile%" --pdf-profile=PDF/X-1a:2001
   @if defined info2 echo %cyan%%curcommand%%reset%
   %curcommand%
   @call :funcendtest %0
@@ -2553,6 +2546,19 @@ set controlfile=%~3
 echo "%rtf2sfm%" -c "%controlfile%" -o "%outFile%" "%inFile%"
 "%rtf2sfm%" -c %controlfile% -o %outFile% %inFile%
 goto :eof
+
+:saveasstructxml
+call "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE" "%~1" /mSaveAsXML
+goto :eof
+
+:saveasflatxml
+call "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE" "%~1" /mSaveAsFlatXML
+goto :eof
+
+:saveasfilteredhtml
+call "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE" "%~1" /mSaveAsFilteredHTML
+goto :eof
+
 
 :scriptfind
 :: Description: Find script if it does not exist in the scritps folder
@@ -3133,6 +3139,7 @@ goto :eof
   if defined scripts set script=%scripts%\%~1
   if not defined scripts set script=scripts\%~1
   call :infile "%~2" %0
+  rem echo infile = %infile%
   set nocheck=%~5
   call :outfile "%~3" "%projectpath%\tmp\%group%-%count%-%~n1.xml" %nocheck%
   rem echo on
@@ -3187,7 +3194,7 @@ goto :eof
     if not exist "%projectpath%\scripts\inc-*.xslt" copy "%xrunnerpath%\scripts\inc-*.xslt" "%projectpath%\scripts\"
     call "%java%" -jar "%saxon%" -o:"%projectpath%\scripts\project.xslt" "%projectpath%\tmp\proj-var.xml" "%xrunnerpath%\scripts\projectvariables-v3.xslt" projectpath=%projectpath% USERPROFILE="%USERPROFILE%"
     set xsltsetup=done
-    if exist "%projectpath%\scripts\project.xslt" echo. & echo %green%Info: project.xslt updated.%reset%
+    if exist "%projectpath%\scripts\project.xslt" echo. & echo %green%Info: project.xslt updated.%reset% & echo.
     @call :funcend %0
   )
 goto :eof

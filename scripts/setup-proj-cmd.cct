@@ -31,12 +31,12 @@ c Handle the tasks sections of the project.txt file
 group(project)
 '[' fol(alpha)  >   out(fend) store(func)
 ']' nl          >   endstore nl ':' out(func)
-                    nl '@if defined info2 echo %magenta%[' out(func) ']%reset%'
+                    nl '@if defined info2 echo %yellow%[' out(func) ']%reset%'
                     nl out(fbegin) 
                     nl back(1)
 nl 't='         >   nl 'call '
-nl 's='         >   nl '@if defined info2 echo %magenta      --- %Group: %reset%'
-nl 'g='         >   nl '@if defined info2 echo %magenta      --- %Group: %reset%'
+nl 's='         >   nl '@if defined info2 echo %yellow      --- %Group: %reset%'
+nl 'g='         >   nl '@if defined info2 echo %yellow      --- %Group: %reset%'
 nl '#'          >   nl 'rem ' 
 nl 'b='         >   nl 'set button='
 nl 'button='    >   nl 'set button='
