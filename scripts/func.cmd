@@ -454,6 +454,19 @@ goto :eof
   @call :funcend %0
 goto :eof
 
+:csv2tsv
+:: Description: convert from CSV to TSV
+:: Usage: call :csv2tsv infile outfile
+:: Uses: csv2tsv.exe (a compiled golang script)
+  @call :funcbegin %0 "'%~1' '%~2'"
+  set infile=%~1
+  set name=%~n1
+  set outfile=%~2
+  echo %cyan%call tools\bin\csv2tsv.exe -input "%infile%" -output "%outfile%" %reset%
+  call tools\bin\csv2tsv.exe -input "%infile%" -output "%outfile%"
+  @call :funcendtest %0
+goto :eof
+
 :curl
 :: Description: run a curl command
 :: Usage: call :curl url outfile
@@ -565,6 +578,12 @@ goto :eof
   call :checkdir "%outfile%"
   %cd%\tools\bin\diff.exe "%file1%" "%fiel2%" > "%outfile%"
   @call :funcendtest %0
+goto :eof
+
+:duckdb
+:: Description: interact with DuckDB
+:: Usage: 
+CREATE TABLE slides AS SELECT * FROM read_csv('slides.tsv', delim='\t', header=true);
 goto :eof
 
 :ifnewerdofunc
@@ -872,6 +891,26 @@ rem  )
   @call :funcendtest %0
 goto :eof
 
+
+:fileinfo
+:: Descriptions: get file info in TSV form; file,extension, size, date, path
+:: Modified: 2026-08-31
+  set target=%~1
+  set resultfile=%~2
+  set startdir=%cd%
+  cd /D "%target%"
+  echo file	ext	size	date	path> "%resultfile%"
+  for /R %%I in (*) do (
+    set fname=%%~nI
+    set fpath=%%~pI
+    set fext=%%~xI
+    set fsize=%%~zI
+    set fdate=%%~tI
+    echo !fname!!fext!	!fext!	!fsize!	!fdate!	!fpath! >> "%resultfile%"
+  )
+  cd /D "%startdir%"
+goto :eof
+
 :funcbegin
 :: Descriptions: takes initialization out of funcs
 :: Modified: 2023-01-03
@@ -1042,7 +1081,7 @@ goto :eof
   call :multivarlist 3 9
   set firstact=%action:~0,1%
   if defined %varname% (
-    @if defined info2 echo %xtestt% variable %~1 is defined
+    @if defined info3 echo %xtestt% variable %~1 is defined
     if ~%firstact% neq ~: (
       @if defined info3 echo call :%action% %multivar:'="%
       call :%action% %multivar:'="%
@@ -1051,7 +1090,7 @@ goto :eof
       call %action% %multivar:'="%
     )
   ) else (
-    @if defined info2 echo %xtestf% variable %~1 is not defined
+    @if defined info3 echo %xtestf% variable %~1 is not defined
   )
 goto :eof
 
@@ -1107,7 +1146,7 @@ goto :eof
     %multivar:'="%
     rem %param2% %param3% %param4% %param5% %param6%     
   ) else (
-    if defined info2 echo %xtestf% %nameext% does not exist. %green%Action:%reset% none.
+    if defined info3 echo %xtestf% %nameext% does not exist. %green%Action:%reset% none.
   )
   @call :funcend %0
 goto :eof
@@ -2548,7 +2587,7 @@ echo "%rtf2sfm%" -c "%controlfile%" -o "%outFile%" "%inFile%"
 goto :eof
 
 :saveasstructxml
-call "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE" "%~1" /mSaveAsXML
+call "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE" "%~1" /mSaveAsStructXML
 goto :eof
 
 :saveasflatxml
