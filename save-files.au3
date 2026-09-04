@@ -1,6 +1,7 @@
     Local $ProjectFile = "project.txt"
 	Local $ListFile = "lists.tsv"
 	Local $KeyValueFile = "keyvalue.tsv"
+	Local $cmd = "C:\WINDOWS\system32\cmd.exe"
 
 	If WinExists("[TITLE:" & $ProjectFile & "; CLASS:TfPSPad;]") Then ;
         WinActivate ( $ProjectFile )
@@ -18,3 +19,8 @@
 		WinWaitActive ( $KeyValueFile )
 		Send ( "^s")
 	EndIf
+
+	WinActivate ( $cmd )
+	WinWaitActive ( $cmd )
+
+
