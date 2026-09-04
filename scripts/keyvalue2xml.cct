@@ -9,6 +9,9 @@ group(key)
 tab                 >   '" value="' use(value)
 
 group(value)
+'&'                 >         '&amp;'
+'&amp;'             >         dup
+"'"                 >         "’"
 nl                  >   if(first) clear(first) else '"/>' endif dup '<var name="' use(main)
 nl nl nl endfile    >   '"/>' nl '</data>' dup
 nl nl endfile       >   '"/>' nl '</data>' dup
