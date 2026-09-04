@@ -36,7 +36,7 @@
                 <textarea name="DataArea" rows="18" cols="68" readonly=""></textarea>
             </form>
             <div class="settings">
-               <input type="BUTTON" value="Refresh from source" onclick="UpdateHTA(ShowSelectedFolder.Value)" class="halfbutton"/>
+               
                 <!-- <button onclick="call RunCmd2('start', '', ShowSelectedFolder.Value)" class="halfbutton" >Open Project folder</button> -->
                <button onclick="OpenFolder(ShowSelectedFolder.Value)" class="halfbutton" >Open Project folder</button>
                  <input type="BUTTON" value="Edit project.txt file" onclick="editFileExternal(projectTxt)" class="halfbutton"/> 
@@ -55,6 +55,7 @@
 					</table>      <input id="pauseatend" onclick="" value="pause" type="checkbox" name="checkbox1"/> Pause at the end of the tasks?<br />
             	  <button onclick="editFileExternal('scripts\func.cmd')" name="LoadValues" id="LoadValues" class="halfbutton">Edit func.cmd expert only!</button>
                   <button onclick="editFileExternal('xrunner.cmd')" name="LoadValues" id="LoadValues" class="halfbutton">Edit xrunner.cmd expert only!</button>
+				<input type="BUTTON" value="Refresh from source" onclick="UpdateHTA(ShowSelectedFolder.Value)" class="halfbutton"/>
   </div>
             <div id="grouplabela"></div>
             <button onclick="call xrun('a')" class="inibutton" id="buttona">Run group A tasks</button>
