@@ -9,10 +9,11 @@
 #define ccwexe "ccw64.exe"
 #define makezip "make.zip"
 #define makeexe "make.exe"
+#define CurrentDateTime GetDateTimeString('yyyy-mm-dd_hh-nn', '-', '-')
 
 [Setup]
 ;OutputBaseFilename=Xrunner-installer-with-Java
-OutputBaseFilename=Xrunner2-installer
+OutputBaseFilename=Xrunner2-installer-no-Java_{#CurrentDateTime}
 AppName=Xrunner2
 AppVersion=2.0
 DefaultDirName=C:\programs\xrunner2
@@ -23,7 +24,7 @@ Compression=lzma2
 SolidCompression=yes
 
 [Files]
-Source: "*.hta"; DestDir: "{app}"
+Source: "Xrunner.hta"; DestDir: "{app}"
 Source: "*.cmd"; DestDir: "{app}"
 Source: "setup\*.ico"; DestDir: "{app}\setup"
 Source: "setup\*.css"; DestDir: "{app}\setup"
@@ -41,7 +42,6 @@ Source: "docs\*.png"; DestDir: "{app}\docs"
 Source: "docs\*.html"; DestDir: "{app}\docs"
 
 ; tools
-Source: "tools\bin\make.exe"; DestDir: "{app}\bin"    ; Flags: recursesubdirs
 Source: "tools\cct\*.*"; DestDir: "{app}\tools\cct"     ; Flags: recursesubdirs
 Source: "tools\Saxon\*.*"; DestDir: "{app}\tools\saxon"     ; Flags: recursesubdirs
 

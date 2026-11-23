@@ -3263,6 +3263,8 @@ goto :eof
 
 :xsltcmdsetup
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4'"
+  if not exist "%projectpath%\lists.tsv" echo. > "%projectpath%\lists.tsv"
+  if not exist "%projectpath%\keyvalue.tsv" echo. > "%projectpath%\keyvalue.tsv"
   @if not defined xsltsetup (
     call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\proj-var.cct" -o "%projectpath%\tmp\proj-var.xml" "%projectpath%\project.txt"
     call "%ccw%" -u -b -q -n -t "%xrunnerpath%\scripts\keyvalue2xml.cct" -o "%projectpath%\tmp\keyvalue.xml" "%projectpath%\keyvalue.tsv"

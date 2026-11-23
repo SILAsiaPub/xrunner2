@@ -11,7 +11,6 @@ set projectpath=%~dp1
 set group=%2
 set infolevel=%3
 set pauseatend=%4
-set setupmethod=make
 call :colorvar
 call :setinfolevel %infolevel%
 rem Required tools. May need to edit the next three lines
@@ -19,7 +18,8 @@ set ccw=%cd%\tools\cct\Ccw64.exe
 set make=%cd%\tools\bin\make.exe
 set saxon=%cd%\tools\saxon\saxon12he.jar
 if not exist "%ccw%" echo %redbg%%ccw% not found! Fix and try again!%reset%& goto :eof
-if not exist "%make%" echo %redbg%%make% not found! Fix and try again%& goto :eof
+set setupmethod=make
+if not exist "%make%" set setupmethod=cmd
 @if defined info4 echo %magenta%%funcstarttext%%reset%
 @if defined info3 echo %magentabg%:xrunner%reset% %fparams%
 call :main %group%
@@ -319,9 +319,10 @@ goto :eof
   copy setup\temp.txt+setup\projsetup.make %projectpath%\projsetup.make > nul 
   copy setup\temp.txt+setup\projxslt.make %projectpath%\projxslt.make > nul 
   rem xcopy /D /Y setup\*.make "%projectpath%" > nul
+  echo Setup method: %setupmethod%
   if '%setupmethod%' == 'make' (call :makef "%projectpath%\projsetup.make") else (call :projcmdsetup)
   set curerrorlevel=%errorlevel%
-  if exist "%au3%" call "%au3%" save-files.au3
+  if exist save-files.au3 if exist "%au3%" call "%au3%" save-files.au3
   if %curerrorlevel%. neq %errorlevel%. echo %red%Autoit3 error from script save-files.au3%reset% & set errorlevel=0
   @if defined info3 echo %green%Setup: complete%reset%
   @if defined info1 echo.

@@ -11,7 +11,7 @@ Dim dquote, shell, cmdline, strUserProfile, setupvarxslt, rxslt, title, xrundata
 Dim xrunini, zero, level, boxlist, tasklen, activelimit, selectedStype
 ' Programs 
 Dim texteditor, tsveditor, program, xmleditor, xrunxslt, npp 
-Dim WshShell, strCurDir, WScript 
+Dim WshShell, strCurDir, WScript, activesect
 Dim maintab, subgroup, docstab, doctab, subgrp, subarray, grpindex, grouplabel, sublabel
 ' Unused: xrundata, info1, info2, info3, info4, info5, strPath, labelIni, bConsoleSw, 
 Set WshShell = CreateObject("WScript.Shell")
@@ -33,6 +33,8 @@ setupvarxslt =  "scripts\projectvariables-v2.xslt"
 xrunxslt =  "scripts\xrun.xslt"
 texteditor =  ReadIni(xrunini,"tools","editor")
 tsveditor = """" & ReadIni(xrunini,"tools","npp") & """"
+activesect = IniSectionExists(xrunini, "active")
+
 activelimit =  ReadIni(xrunini,"active","limit")
 npp =  ReadIni(xrunini,"tools","npp")
 xmleditor =  ReadIni(xrunini,"tools","xmleditor")
@@ -641,17 +643,19 @@ End Sub
 Sub buildActiveList()
   ' Builds list for Active combo menu list 2025-03
   Dim x, op, opt, opdata, oplabel
-  For x = 0 To activelimit
-    Set opt = document.createElement("option")
-    opt.Value = x
-    op = "op" & x
-    opdata = ReadIni(xrunini,"active",op)
-    If len(opdata) > zero Then
-      oplabel = Left(opdata, InStr(opdata, ";") - 1)
-      opt.Text = oplabel
-      ActiveProjectChoice.add opt
-    End If
-  Next
+  If activesect = True Then
+	  For x = 0 To activelimit
+		Set opt = document.createElement("option")
+		opt.Value = x
+		op = "op" & x
+		opdata = ReadIni(xrunini,"active",op)
+		If len(opdata) > zero Then
+		  oplabel = Left(opdata, InStr(opdata, ";") - 1)
+		  opt.Text = oplabel
+		  ActiveProjectChoice.add opt
+		End If
+	  Next
+  End If
 End Sub
 
 ' from coPilot 2025-04-09
@@ -662,5 +666,32 @@ Sub OpenFolder(folderPath)
     Set objShell = Nothing
 End Sub
 
-
+Function IniSectionExists(strFilePath, strSection)
+    Dim objFSO, objFile, strLine, strTarget
+    IniSectionExists = False
+    
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    
+    ' Return False if the file does not exist
+    If Not objFSO.FileExists(strFilePath) Then Exit Function
+    
+    ' Format the target header (case-insensitive)
+    strTarget = "[" & LCase(Trim(strSection)) & "]"
+    
+    Set objFile = objFSO.OpenTextFile(strFilePath, 1) ' 1 = ForReading
+    
+    Do Until objFile.AtEndOfStream
+        strLine = LCase(Trim(objFile.ReadLine))
+        
+        ' Check if the trimmed line matches the exact section header
+        If strLine = strTarget Then
+            IniSectionExists = True
+            Exit Do
+        End If
+    Loop
+    
+    objFile.Close
+    Set objFile = Nothing
+    Set objFSO = Nothing
+End Function
 
