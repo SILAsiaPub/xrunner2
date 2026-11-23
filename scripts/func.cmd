@@ -521,6 +521,8 @@ goto :eof
   set curyymmdd=%_yyyy:~2%%_mm%%_dd%
   set curUSdate=%_mm%/%_dd%/%_yyyy%
   set curAUdate=%_dd%/%_mm%/%_yyyy%
+  set curdate=%_yyyy%-%_mm%-%_dd%
+  set curtime=%_hour%%_minute%
   set curyyyy=%_yyyy%
   set curyy=%_yyyy:~2%
   set curmm=%_mm%
@@ -1222,6 +1224,13 @@ goto :eof
   set param7=%~7
   set param8=%~8
   set param9=%~9
+  if defined param3 set param3="%param3%"
+  if defined param4 set param3="%param4%"
+  if defined param5 set param3="%param5%"
+  if defined param6 set param3="%param6%"
+  if defined param7 set param3="%param7%"
+  if defined param8 set param3="%param8%"
+  if defined param9 set param3="%param9%"
   set filename=%~nx1
   call :inccount
   if not defined testfile call :funcend %0 "missing testfile parameter" & goto :eof
@@ -1230,8 +1239,8 @@ goto :eof
   rem set firstact=%action:~0,1%
   if not exist "%testfile%" (
     if defined info3 echo %xtestt% %testfile% does not exist. 
-      if defined info4 echo %multivar:'="%      %multivar:'="%
-      call %action% %multivar:'="%
+    if defined info4 echo %multivar:'="%
+    call %action% %multivar:'="%
   ) else (
     if defined info3 echo %orange%%xtestf% %filename% does exist. No action %action% taken.%reset%
   )
@@ -2030,7 +2039,8 @@ goto :eof
   @call :funcbegin %0 "'%~1' '%~2' '%~3' '%~4' '%~5' '%~6' '%~7' '%~8' '%~9'"
   set startnumb=%~1
   set endnumb=%~2
-  for /L %%v in (%startnumb%,1,%endnumb%) Do if defined param%%v if "!param%%v!" neq "!param%%v: =!" set param%%v='!param%%v!'
+  rem for /L %%v in (%startnumb%,1,%endnumb%) Do if defined param%%v if "!param%%v!" neq "!param%%v: =!" set param%%v='!param%%v!'
+  rem for /L %%v in (%startnumb%,1,%endnumb%) Do if defined param%%v set param%%v='!param%%v!'
   if %startnumb%. == 1. set multivar=%param1% %param2% %param3% %param4% %param5% %param6% %param7% %param8% %param9%
   if %startnumb%. == 2. set multivar=%param2% %param3% %param4% %param5% %param6% %param7% %param8% %param9%
   if %startnumb%. == 3. set multivar=%param3% %param4% %param5% %param6% %param7% %param8% %param9%
@@ -2162,6 +2172,34 @@ goto :eof
   if defined newpath set outpath=%newpath%
   if not defined newpath set outpath=%prevpath%
   if defined newpath if not defined nameext set prevpath=%outpath%
+  @call :funcend %0
+goto :eof
+
+:pandocx2txt
+:: Description: extract text from DOCX file
+:: Usage: call :pandocx2txt "filename.docx" "inpath" "outpath"
+:: Functions called: funcbegin funcend
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set infile=%~1
+  set inpath=%~2
+  set outpath=%~3
+  set name=%~n1
+  echo %cyan%"%pandoc%" -f docx -t plain -o "%outpath%\%name%.txt" "%inpath%\%infile%"%reset%
+  call "%pandoc%" -f docx -t plain -o "%outpath%\%name%.txt" "%inpath%\%infile%"
+  @call :funcend %0
+goto :eof
+
+:pandocx2md
+:: Description: extract text from DOCX file
+:: Usage: call :pandocx2txt "filename.docx" "inpath" "outpath"
+:: Functions called: funcbegin funcend
+  @call :funcbegin %0 "'%~1' '%~2' '%~3'"
+  set infile=%~1
+  set inpath=%~2
+  set outpath=%~3
+  set name=%~n1
+  echo %cyan%"%pandoc%" -f docx -t markdown -o "%outpath%\%name%.txt" "%inpath%\%infile%"%reset%
+  call "%pandoc%" -f docx -t markdown -o "%outpath%\%name%.txt" "%inpath%\%infile%"
   @call :funcend %0
 goto :eof
 

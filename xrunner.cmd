@@ -91,15 +91,15 @@ goto :eof
 :: Created: 2016-05-04
 :: Modified: 2024-09-11
 :: Source: got this from: http://www.robvanderwoude.com/datetiment.php#IDate but modified into two func
-  FOR /F "skip=1 tokens=1-6" %%G IN ('WMIC Path Win32_LocalTime Get Day^,Hour^,Minute^,Month^,Second^,Year /Format:table') DO (
-    IF "%%~L"=="" goto :eof
-    set _yyyy=%%L
-    set _mm=00%%J
-    set _dd=00%%G
-    set _hour=00%%H
-    set _minute=00%%I
-    set _second=00%%K
-  )
+::FOR /F "skip=1 tokens=1-6" %%G IN ('WMIC Path Win32_LocalTime Get Day^,Hour^,Minute^,Month^,Second^,Year /Format:table') DO (
+for /f %%I in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set STAMP=%%I
+    set _yyyy=%STAMP:~0,4%
+    set _mm=%STAMP:~4,2%
+    set _dd=%STAMP:~6,2%
+    set _hour=%STAMP:~9,2%
+    set _minute=%STAMP:~11,2%
+    set _second=%STAMP:~13,2%
+
 goto :eof
 
 :date
@@ -110,11 +110,11 @@ goto :eof
 :: Modified: 2024-09-11
   @call :funcbegin %0 "'%~1' '%~2' '%~3'"
   call :getdatetime
-  Set _mm=%_mm:~-2%
-  Set _dd=%_dd:~-2%
-  Set _hour=%_hour:~-2%
-  Set _minute=%_minute:~-2%
-  Set _second=%_second:~-2%
+  rem Set _mm=%_mm:~-2%
+  rem Set _dd=%_dd:~-2%
+  rem Set _hour=%_hour:~-2%
+  rem Set _minute=%_minute:~-2%
+  rem Set _second=%_second:~-2%
   set curhhmm=%_hour%%_minute%
   set curhhmmss=%_hour%%_minute%%_second%
   set curisohhmmss=%_hour%-%_minute%-%_second%

@@ -7,7 +7,7 @@ green := [32m
 reset := [0m
 cyan := [36m
 
-files := $(projpath)/tmp/proj-var.xml $(projpath)/tmp/lists.xml $(projpath)/tmp/keyvalue.xml $(xrunnerpath)/scripts/projectvariables-v3.xslt $(projpath)/scripts/inc-lookup.xslt $(projpath)/scripts/inc-file2uri.xslt $(projpath)/scripts/inc-copy-anything.xslt $(projpath)/scripts/xrun.xslt
+files := $(projpath)/tmp/proj-var.xml $(projpath)/tmp/lists.xml $(projpath)/tmp/keyvalue.xml $(xrunnerpath)/scripts/projectvariables-v3.xslt $(projpath)/scripts/inc-lookup.xslt $(projpath)/scripts/inc-file2uri.xslt $(projpath)/scripts/inc-copy-anything.xslt $(projpath)/scripts/xrun.xslt 
 
 createxslt: $(projpath)/scripts/project.xslt
 	@echo $(green)Info: project.xslt is up to date$(reset)
@@ -47,6 +47,8 @@ $(projpath)/tmp/keyvalue.xml: $(projpath)/keyvalue.tsv
 	@echo $(cyan)Updated: keyvalue.xml$(reset)
 	@if not exist keyvalue.tsv type nul > keyvalue.tsv
 	@call "$(ccw)" -u -b -q -n -t "$(xrunnerpath)\scripts\keyvalue2xml.cct" -o "$(projpath)\tmp\keyvalue.xml" "$(projpath)\keyvalue.tsv"
+	
+
 
 $(xrunnerpath)/scripts/projectvariables-v3.xslt: ;
 
@@ -54,4 +56,8 @@ $(projpath)/lists.tsv: ;
 
 $(projpath)/keyvalue.tsv: ;
 
-$(xrunnerpath)/setup/xrun.ini: ;
+$(xrunnerpath)/scripts/lists2xml.cct: ;
+
+$(xrunnerpath)/scripts/keyvalue2xml.cct: ;
+
+$(xrunnerpath)/setup/xrun.ini: ;
